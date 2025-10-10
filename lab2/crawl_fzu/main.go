@@ -26,7 +26,7 @@ func main() {
 	start := time.Now()
 
 	// 并发爬取（普通爬取可以调用非Async版本：crawlFzu）
-	articles := crawlFzu(1091)
+	articles := crawlFzuAsync(1091, 100)
 
 	elapsed := time.Since(start)
 	fmt.Printf("Crawl finished in %s.\n", elapsed)
