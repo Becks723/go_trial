@@ -63,7 +63,7 @@ func crawlComments(oid string) (comments []mainComment) {
 	for {
 		fmt.Printf("正在爬取第 %d 页的评论\n", p)
 		offset = crawl(oid, offset, &comments)
-		time.Sleep(2 * time.Second)
+		//time.Sleep(1 * time.Microsecond)
 		p++
 
 		if offset == "" {
@@ -113,7 +113,7 @@ func crawl(oid string, offset string, comments *[]mainComment) (nextOffset strin
 	if err != nil {
 		log.Fatal(err)
 	}
-	fmt.Printf("%s", body)
+	fmt.Printf("%s\n", body)
 
 	var rd replyData
 	if err := json.Unmarshal(body, &rd); err != nil {
