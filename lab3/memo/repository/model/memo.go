@@ -8,7 +8,7 @@ type MemoModel struct {
 	Id        uint `gorm:"primaryKey"`
 	Title     string
 	Content   string
-	Status    MemoStatus
+	Status    MemoStatus `gorm:"default 0"`
 	CreatedAt *time.Time
 	StartsAt  *time.Time
 	EndsAt    *time.Time

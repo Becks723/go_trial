@@ -2,6 +2,7 @@ package main
 
 import (
 	"memo/controller"
+	"memo/middleware"
 	"memo/repository"
 	"memo/service"
 
@@ -17,14 +18,23 @@ func main() {
 }
 
 func newController() *controller.Controller {
+	userRepo := repository.NewUserRepo()
+	memoRepo := repository.NewMemoRepo()
+
 	return controller.NewController(
-		service.NewUserService(repository.NewUserRepo()),
-		service.NewMemoService(repository.NewMemoRepo()))
+		service.NewUserService(userRepo),
+		service.NewMemoService(memoRepo, userRepo))
 }
 
 func initializeRouter(c *controller.Controller) *gin.Engine {
 	router := gin.Default()
 	router.POST("/user/signup", c.UserSignup)
 	router.POST("/user/login", c.UserLogin)
+
+	authed := router.Group("/")
+	authed.Use(middleware.JWT)
+	{
+		authed.POST("memo/add", c.MemoAdd)
+	}
 	return router
 }

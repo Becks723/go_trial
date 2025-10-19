@@ -1,6 +1,7 @@
 package controller
 
 import (
+	"errors"
 	"memo/dto"
 	"memo/pkg/ctl"
 	"memo/pkg/e"
@@ -53,7 +54,28 @@ func (c *Controller) UserLogin(ctx *gin.Context) {
 }
 
 func (c *Controller) MemoAdd(ctx *gin.Context) {
+	var req dto.AddMemoReq
+	if err := ctx.ShouldBind(&req); err != nil {
+		ctx.JSON(e.BadRequest, ctl.ResponseError(err, e.BadRequest))
+		return
+	}
 
+	// retrieve current user id
+	var uid uint
+	var err error
+	if uid, err = c.retrieveCurrentUid(ctx); err != nil {
+		ctx.JSON(e.InternalError, ctl.ResponseError(err))
+		return
+	}
+
+	// do add memo service
+	var resp *dto.Response
+	if resp, err = c.memoServ.Add(uid, &req); err != nil {
+		ctx.JSON(e.InternalError, ctl.ResponseError(err))
+		return
+	}
+
+	ctx.JSON(e.Success, resp)
 }
 
 func (c *Controller) MemoUpdate(ctx *gin.Context) {
@@ -66,4 +88,14 @@ func (c *Controller) MemoFind(ctx *gin.Context) {
 
 func (c *Controller) MemoDelete(ctx *gin.Context) {
 
+}
+
+func (c *Controller) retrieveCurrentUid(ctx *gin.Context) (uid uint, err error) {
+	raw, ok := ctx.Get("uid")
+	if !ok {
+		err = errors.New("Cannot retrieve current uid.") // TODO: i18n
+	} else if uid, ok = raw.(uint); !ok {
+		err = errors.New("Unknown type of uid.") // 不太可能出现，不翻译了
+	}
+	return
 }

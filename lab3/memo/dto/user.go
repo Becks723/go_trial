@@ -12,6 +12,7 @@ type LoginReq struct {
 	Password string `form:"password"`
 }
 
+/* 登录返回的token数据 */
 type TokenData struct {
 	Token string
 }

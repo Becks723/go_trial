@@ -29,6 +29,16 @@ func (repo *UserRepository) InsertUser(user *model.UserModel) (err error) {
 		Error
 }
 
+func (repo *UserRepository) FindUserById(uid uint) (*model.UserModel, error) {
+	var match model.UserModel
+	err := repo.db.
+		Model(&model.UserModel{}).
+		Where("id = ?", uid).
+		First(&match).
+		Error
+	return &match, err
+}
+
 func (repo *UserRepository) FindUserByName(name string) (*model.UserModel, error) {
 	var match model.UserModel
 	err := repo.db.
@@ -36,8 +46,5 @@ func (repo *UserRepository) FindUserByName(name string) (*model.UserModel, error
 		Where("username = ?", name).
 		First(&match).
 		Error
-	if err != nil {
-		return nil, err
-	}
-	return &match, nil
+	return &match, err
 }
