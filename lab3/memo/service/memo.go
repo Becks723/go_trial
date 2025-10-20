@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"memo/config"
 	"memo/dto"
 	"memo/pkg/ctl"
 	"memo/repository"
@@ -73,4 +74,38 @@ func (serv *MemoService) Update(uid uint, req *dto.UpdateMemoReq) (resp *dto.Res
 	}
 
 	return ctl.ResponseSuccess(), nil
+}
+
+func (serv *MemoService) List(uid uint, params *dto.ListMemoParams) (resp *dto.Response, err error) {
+	if params.Limit <= 0 {
+		params.Limit = config.DefaultLimit
+	}
+
+	// 按过滤条件分页查询
+	var records []*model.MemoModel
+	switch params.Filter {
+	case dto.ListFilterNone:
+		records, err = serv.repo.FindAllMemos(uid, params.Limit, params.PageStart, params.PageEnd)
+	case dto.ListFilterPending:
+		records, err = serv.repo.FindPendingMemos(uid, params.Limit, params.PageStart, params.PageEnd)
+	case dto.ListFilterCompleted:
+		records, err = serv.repo.FindCompletedMemos(uid, params.Limit, params.PageStart, params.PageEnd)
+	}
+	if err != nil {
+		return
+	}
+
+	// 作为resp中的data返回
+	var memos []dto.MemoData
+	for _, record := range records {
+		memos = append(memos, dto.MemoData{
+			Id:       record.Id,
+			Title:    record.Title,
+			Content:  record.Content,
+			Status:   record.Status,
+			StartsAt: record.StartsAt,
+			EndsAt:   record.EndsAt,
+		})
+	}
+	return ctl.ResponseSuccessWithData(memos), nil
 }

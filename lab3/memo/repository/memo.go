@@ -1,6 +1,9 @@
 package repository
 
-import "memo/repository/model"
+import (
+	"math"
+	"memo/repository/model"
+)
 
 type MemoRepository struct {
 	baseRepository
@@ -76,5 +79,58 @@ func (repo *MemoRepository) FindCreatorId(id uint) (uid uint, err error) {
 		return
 	}
 	uid = memo.Uid
+	return
+}
+
+func (repo *MemoRepository) CountMemos(uid uint) (count int64, err error) {
+	err = repo.db.
+		Model(&model.MemoModel{}).
+		Where("uid = ?", uid).
+		Count(&count).
+		Error
+	return
+}
+
+func (repo *MemoRepository) FindAllMemos(uid uint, limit, ps, pe int) (records []*model.MemoModel, err error) {
+	records, err = repo.findMemosCore(uid, limit, ps, pe, "")
+	return
+}
+
+func (repo *MemoRepository) FindPendingMemos(uid uint, limit, ps, pe int) (records []*model.MemoModel, err error) {
+	records, err = repo.findMemosCore(uid, limit, ps, pe, "status = ?", model.MemoStatusPending)
+	return
+}
+
+func (repo *MemoRepository) FindCompletedMemos(uid uint, limit, ps, pe int) (records []*model.MemoModel, err error) {
+	records, err = repo.findMemosCore(uid, limit, ps, pe, "status = ?", model.MemoStatusCompleted)
+	return
+}
+
+func (repo *MemoRepository) findMemosCore(uid uint, limit, ps, pe int, query string, args ...any) (records []*model.MemoModel, err error) {
+	tx := repo.db.
+		Model(&model.MemoModel{}).
+		Where("uid = ?", uid)
+
+	// 额外的条件
+	if query != "" {
+		tx = tx.Where(query, args)
+	}
+
+	// 分页查询
+	total, err := repo.CountMemos(uid)
+	if err != nil {
+		return
+	}
+	pages := int64(math.Ceil(float64(total) / float64(limit))) // 总页数
+	if 1 <= ps && int64(ps) <= pages &&
+		1 <= pe && int64(pe) <= pages &&
+		ps <= pe &&
+		limit > 0 {
+		// 仅分页参数合法时分页，否则查询全部
+		tx = tx.Limit((pe - ps + 1) * limit).
+			Offset((ps - 1) * limit)
+	}
+
+	err = tx.Find(&records).Error
 	return
 }
