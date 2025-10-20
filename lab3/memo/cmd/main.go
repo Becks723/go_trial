@@ -35,6 +35,7 @@ func initializeRouter(c *controller.Controller) *gin.Engine {
 	authed.Use(middleware.JWT)
 	{
 		authed.POST("memo/add", c.MemoAdd)
+		authed.POST("memo/update", c.MemoUpdate)
 	}
 	return router
 }

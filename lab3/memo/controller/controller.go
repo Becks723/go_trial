@@ -79,7 +79,28 @@ func (c *Controller) MemoAdd(ctx *gin.Context) {
 }
 
 func (c *Controller) MemoUpdate(ctx *gin.Context) {
+	var req dto.UpdateMemoReq
+	if err := ctx.ShouldBind(&req); err != nil {
+		ctx.JSON(e.BadRequest, ctl.ResponseError(err, e.BadRequest))
+		return
+	}
 
+	// retrieve current user id
+	var uid uint
+	var err error
+	if uid, err = c.retrieveCurrentUid(ctx); err != nil {
+		ctx.JSON(e.InternalError, ctl.ResponseError(err))
+		return
+	}
+
+	// do update memo service
+	var resp *dto.Response
+	if resp, err = c.memoServ.Update(uid, &req); err != nil {
+		ctx.JSON(e.InternalError, ctl.ResponseError(err))
+		return
+	}
+
+	ctx.JSON(e.Success, resp)
 }
 
 func (c *Controller) MemoFind(ctx *gin.Context) {

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"errors"
 	"memo/dto"
 	"memo/pkg/ctl"
 	"memo/repository"
@@ -39,6 +40,35 @@ func (serv *MemoService) Add(uid uint, req *dto.AddMemoReq) (resp *dto.Response,
 	}
 	// 插入数据库
 	if err = serv.repo.InsertMemo(&memo); err != nil {
+		return
+	}
+
+	return ctl.ResponseSuccess(), nil
+}
+
+func (serv *MemoService) Update(uid uint, req *dto.UpdateMemoReq) (resp *dto.Response, err error) {
+	// 找到这条备忘录的创建者，并与传入的uid进行比对
+	whose, err := serv.repo.FindCreatorId(req.Id)
+	if err != nil {
+		return
+	}
+
+	// 每个用户只能修改自己创建的备忘录
+	if whose != uid {
+		err = errors.New("Unknown memo id.") // TODO: i18n
+		return
+	}
+
+	// 更新数据库
+	err = serv.repo.UpdateMemo(&model.MemoModel{
+		Id:       req.Id,
+		Title:    req.Title,
+		Content:  req.Content,
+		Status:   req.Status,
+		StartsAt: req.StartsAt,
+		EndsAt:   req.EndsAt,
+	})
+	if err != nil {
 		return
 	}
 
