@@ -109,3 +109,41 @@ func (serv *MemoService) List(uid uint, params *dto.ListMemoParams) (resp *dto.R
 	}
 	return ctl.ResponseSuccessWithData(memos), nil
 }
+
+func (serv *MemoService) DeleteById(uid uint, req *dto.DeleteMemoByIdReq) (resp *dto.Response, err error) {
+	// 找到这条备忘录的创建者，并与传入的uid进行比对
+	whose, err := serv.repo.FindCreatorId(req.Id)
+	if err != nil {
+		return
+	}
+
+	// 每个用户只能修改自己创建的备忘录
+	if whose != uid {
+		err = errors.New("Unknown memo id.") // TODO: i18n
+		return
+	}
+
+	// 从数据库删除
+	if err = serv.repo.DeleteMemoById(req.Id); err != nil {
+		return
+	}
+
+	return ctl.ResponseSuccess(), nil
+}
+
+func (serv *MemoService) DeleteByFilter(uid uint, req *dto.DeleteMemoByFilterReq) (resp *dto.Response, err error) {
+	// 从数据库删除
+	switch req.Filter {
+	case dto.DeleteFilterNone:
+		err = serv.repo.DeleteAllMemos(uid)
+	case dto.DeleteFilterPending:
+		err = serv.repo.DeletePendingMemos(uid)
+	case dto.DeleteFilterCompleted:
+		err = serv.repo.DeleteCompletedMemos(uid)
+	}
+	if err != nil {
+		return
+	}
+
+	return ctl.ResponseSuccess(), nil
+}

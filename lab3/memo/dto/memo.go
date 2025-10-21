@@ -40,7 +40,22 @@ type ListMemoParams struct {
 type ListFilter int
 
 const (
-	ListFilterNone      ListFilter = iota // 代办
+	ListFilterNone      ListFilter = iota // 所有
 	ListFilterCompleted                   // 已完成
-	ListFilterPending                     // 所有
+	ListFilterPending                     // 代办
+)
+
+type DeleteMemoByIdReq struct {
+	Id uint `form:"id" binding:"required"`
+}
+
+type DeleteMemoByFilterReq struct {
+	Filter DeleteFilter `form:"filter" binding:"required"`
+}
+type DeleteFilter int
+
+const (
+	DeleteFilterNone      DeleteFilter = iota // 所有
+	DeleteFilterCompleted                     // 已完成
+	DeleteFilterPending                       // 代办
 )

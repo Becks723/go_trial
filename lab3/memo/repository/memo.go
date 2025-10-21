@@ -134,3 +134,35 @@ func (repo *MemoRepository) findMemosCore(uid uint, limit, ps, pe int, query str
 	err = tx.Find(&records).Error
 	return
 }
+
+func (repo *MemoRepository) DeleteMemoById(id uint) error {
+	record := model.MemoModel{Id: id}
+	return repo.db.
+		Delete(&record).
+		Error
+}
+
+func (repo *MemoRepository) DeleteAllMemos(uid uint) error {
+	return repo.deleteMemosCore(uid, "")
+}
+
+func (repo *MemoRepository) DeletePendingMemos(uid uint) error {
+	return repo.deleteMemosCore(uid, "status = ?", model.MemoStatusPending)
+}
+
+func (repo *MemoRepository) DeleteCompletedMemos(uid uint) error {
+	return repo.deleteMemosCore(uid, "status = ?", model.MemoStatusCompleted)
+}
+
+func (repo *MemoRepository) deleteMemosCore(uid uint, query string, args ...any) error {
+	tx := repo.db.Where("uid = ?", uid)
+
+	// 额外条件
+	if query != "" {
+		tx = tx.Where(query, args)
+	}
+
+	return tx.
+		Delete(&model.MemoModel{}).
+		Error
+}

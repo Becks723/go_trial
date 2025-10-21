@@ -133,7 +133,41 @@ func (c *Controller) MemoFind(ctx *gin.Context) {
 }
 
 func (c *Controller) MemoDelete(ctx *gin.Context) {
+	// retrieve current user id
+	var uid uint
+	var err error
+	if uid, err = c.retrieveCurrentUid(ctx); err != nil {
+		ctx.JSON(e.InternalError, ctl.ResponseError(err))
+		return
+	}
 
+	var resp *dto.Response
+
+	// try delete by id
+	var ireq dto.DeleteMemoByIdReq
+	if err = ctx.ShouldBind(&ireq); err == nil {
+		// do delete by id service
+		if resp, err = c.memoServ.DeleteById(uid, &ireq); err != nil {
+			ctx.JSON(e.InternalError, ctl.ResponseError(err))
+			return
+		}
+		ctx.JSON(e.Success, resp)
+		return
+	}
+
+	// then try delete by filter
+	var freq dto.DeleteMemoByFilterReq
+	if err = ctx.ShouldBind(&freq); err == nil {
+		// do delete by filter service
+		if resp, err = c.memoServ.DeleteByFilter(uid, &freq); err != nil {
+			ctx.JSON(e.InternalError, ctl.ResponseError(err))
+			return
+		}
+		ctx.JSON(e.Success, resp)
+		return
+	}
+
+	ctx.JSON(e.BadRequest, ctl.ResponseError(err, e.BadRequest))
 }
 
 func (c *Controller) retrieveCurrentUid(ctx *gin.Context) (uid uint, err error) {
