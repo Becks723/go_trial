@@ -117,8 +117,9 @@ func (repo *MemoRepository) findMemosCore(uid uint, limit, ps, pe int, query str
 	}
 
 	// 分页查询
-	total, err := repo.CountMemos(uid)
-	if err != nil {
+	var total int64
+	tx = tx.Count(&total)
+	if err = tx.Error; err != nil {
 		return
 	}
 	if repo.isPageParamsValid(total, limit, ps, pe) {
