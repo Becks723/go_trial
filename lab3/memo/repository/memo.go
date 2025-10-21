@@ -121,11 +121,28 @@ func (repo *MemoRepository) findMemosCore(uid uint, limit, ps, pe int, query str
 	if err != nil {
 		return
 	}
-	pages := int64(math.Ceil(float64(total) / float64(limit))) // 总页数
-	if 1 <= ps && int64(ps) <= pages &&
-		1 <= pe && int64(pe) <= pages &&
-		ps <= pe &&
-		limit > 0 {
+	if repo.isPageParamsValid(total, limit, ps, pe) {
+		// 仅分页参数合法时分页，否则查询全部
+		tx = tx.Limit((pe - ps + 1) * limit).
+			Offset((ps - 1) * limit)
+	}
+
+	err = tx.Find(&records).Error
+	return
+}
+
+func (repo *MemoRepository) SearchMemos(uid uint, keywords string, limit, ps, pe int) (records []*model.MemoModel, err error) {
+	var total int64
+	tx := repo.db.
+		Model(&model.MemoModel{}).
+		Where("uid = ?", uid).
+		Where("title LIKE ? OR content LIKE ?",
+			"%"+keywords+"%", "%"+keywords+"%").
+		Count(&total)
+	if err = tx.Error; err != nil {
+		return
+	}
+	if repo.isPageParamsValid(total, limit, ps, pe) {
 		// 仅分页参数合法时分页，否则查询全部
 		tx = tx.Limit((pe - ps + 1) * limit).
 			Offset((ps - 1) * limit)
@@ -165,4 +182,14 @@ func (repo *MemoRepository) deleteMemosCore(uid uint, query string, args ...any)
 	return tx.
 		Delete(&model.MemoModel{}).
 		Error
+}
+
+func (repo *MemoRepository) isPageParamsValid(total int64, limit, ps, pe int) bool {
+	if limit <= 0 {
+		return false
+	}
+	pages := int64(math.Ceil(float64(total) / float64(limit))) // 总页数
+	return 1 <= ps && int64(ps) <= pages &&
+		1 <= pe && int64(pe) <= pages &&
+		ps <= pe
 }

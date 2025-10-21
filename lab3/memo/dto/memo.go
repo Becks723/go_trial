@@ -45,6 +45,13 @@ const (
 	ListFilterPending                     // 代办
 )
 
+type SearchMemoParams struct {
+	Limit     int    `form:"limit"`                       // 每页容量
+	PageStart int    `form:"ps"`                          // 从第几页开始
+	PageEnd   int    `form:"pe"`                          // 到第几页结束
+	Keywords  string `form:"keywords" binding:"required"` // 关键词
+}
+
 type DeleteMemoByIdReq struct {
 	Id uint `form:"id" binding:"required"`
 }

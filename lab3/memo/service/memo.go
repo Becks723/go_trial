@@ -7,6 +7,7 @@ import (
 	"memo/pkg/ctl"
 	"memo/repository"
 	"memo/repository/model"
+	"strings"
 )
 
 type MemoService struct {
@@ -110,6 +111,31 @@ func (serv *MemoService) List(uid uint, params *dto.ListMemoParams) (resp *dto.R
 	return ctl.ResponseSuccessWithData(memos), nil
 }
 
+func (serv *MemoService) Search(uid uint, params *dto.SearchMemoParams) (resp *dto.Response, err error) {
+	// 处理关键词
+	keywords := serv.normalizeKeywords(params.Keywords)
+
+	// 数据库查询
+	records, err := serv.repo.SearchMemos(uid, keywords, params.Limit, params.PageStart, params.PageEnd)
+	if err != nil {
+		return
+	}
+
+	// 作为resp中的data返回
+	var memos []dto.MemoData
+	for _, record := range records {
+		memos = append(memos, dto.MemoData{
+			Id:       record.Id,
+			Title:    record.Title,
+			Content:  record.Content,
+			Status:   record.Status,
+			StartsAt: record.StartsAt,
+			EndsAt:   record.EndsAt,
+		})
+	}
+	return ctl.ResponseSuccessWithData(memos), nil
+}
+
 func (serv *MemoService) DeleteById(uid uint, req *dto.DeleteMemoByIdReq) (resp *dto.Response, err error) {
 	// 找到这条备忘录的创建者，并与传入的uid进行比对
 	whose, err := serv.repo.FindCreatorId(req.Id)
@@ -146,4 +172,9 @@ func (serv *MemoService) DeleteByFilter(uid uint, req *dto.DeleteMemoByFilterReq
 	}
 
 	return ctl.ResponseSuccess(), nil
+}
+
+func (serv *MemoService) normalizeKeywords(value string) string {
+	result := strings.TrimSpace(value)
+	return result
 }

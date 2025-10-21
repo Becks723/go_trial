@@ -128,8 +128,29 @@ func (c *Controller) MemoList(ctx *gin.Context) {
 	ctx.JSON(e.Success, resp)
 }
 
-func (c *Controller) MemoFind(ctx *gin.Context) {
+func (c *Controller) MemoSearch(ctx *gin.Context) {
+	var params dto.SearchMemoParams
+	if err := ctx.ShouldBindQuery(&params); err != nil {
+		ctx.JSON(e.BadRequest, ctl.ResponseError(err, e.BadRequest))
+		return
+	}
 
+	// retrieve current user id
+	var uid uint
+	var err error
+	if uid, err = c.retrieveCurrentUid(ctx); err != nil {
+		ctx.JSON(e.InternalError, ctl.ResponseError(err))
+		return
+	}
+
+	// do search memo service
+	var resp *dto.Response
+	if resp, err = c.memoServ.Search(uid, &params); err != nil {
+		ctx.JSON(e.InternalError, ctl.ResponseError(err))
+		return
+	}
+
+	ctx.JSON(e.Success, resp)
 }
 
 func (c *Controller) MemoDelete(ctx *gin.Context) {
