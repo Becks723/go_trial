@@ -28,17 +28,20 @@ func newController() *controller.Controller {
 
 func initializeRouter(c *controller.Controller) *gin.Engine {
 	router := gin.Default()
-	router.POST("/user/signup", c.UserSignup)
-	router.POST("/user/login", c.UserLogin)
-
-	authed := router.Group("/")
-	authed.Use(middleware.JWT)
+	v1 := router.Group("/api/v1")
 	{
-		authed.POST("memo/add", c.MemoAdd)
-		authed.POST("memo/update", c.MemoUpdate)
-		authed.GET("memo/list", c.MemoList)
-		authed.GET("memo/search", c.MemoSearch)
-		authed.POST("memo/delete", c.MemoDelete)
+		v1.POST("/user/signup", c.UserSignup)
+		v1.POST("/user/login", c.UserLogin)
+
+		authed := v1.Group("/")
+		authed.Use(middleware.JWT)
+		{
+			authed.POST("/memo/add", c.MemoAdd)
+			authed.POST("/memo/update", c.MemoUpdate)
+			authed.GET("/memo/list", c.MemoList)
+			authed.GET("/memo/search", c.MemoSearch)
+			authed.POST("/memo/delete", c.MemoDelete)
+		}
 	}
 	return router
 }
