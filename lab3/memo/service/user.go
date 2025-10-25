@@ -22,8 +22,7 @@ func NewUserService(repo *repository.UserRepository) *UserService {
 
 func (serv *UserService) Signup(req *dto.SignupReq) (resp *dto.Response, err error) {
 	// 用户名已存在
-	u, err := serv.repo.FindUserByName(req.Username)
-	if u != nil {
+	if _, err = serv.repo.FindUserByName(req.Username); err == nil {
 		err = errors.New("用户已存在") // TODO: i18n
 		return
 	}
