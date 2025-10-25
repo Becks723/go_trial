@@ -36,6 +36,20 @@
                         "name": "content",
                         "in": "formData",
                         "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "开始时间，格式2000-01-01T23:59:59Z",
+                        "name": "starts_at",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "截止时间，格式2000-01-01T23:59:59Z",
+                        "name": "ends_at",
+                        "in": "formData",
+                        "required": true
                     }
                 ],
                 "responses": {
@@ -78,6 +92,18 @@
                         "type": "integer",
                         "description": "代办事项id",
                         "name": "id",
+                        "in": "formData",
+                        "required": true
+                    },
+                    {
+                        "enum": [
+                            0,
+                            1,
+                            2
+                        ],
+                        "type": "integer",
+                        "description": "筛选条件",
+                        "name": "filter",
                         "in": "formData",
                         "required": true
                     }
@@ -201,124 +227,6 @@
                         "description": "必需，搜索关键词",
                         "name": "keywords",
                         "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/dto.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/dto.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/memo/update": {
-            "post": {
-                "description": "更新代办事项",
-                "consumes": [
-                    "application/x-www-form-urlencoded"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "memo"
-                ],
-                "summary": "更新代办事项",
-                "parameters": [
-                    {
-                        "type": "integer",
-                        "description": "代办事项id",
-                        "name": "id",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "标题",
-                        "name": "title",
-                        "in": "formData"
-                    },
-                    {
-                        "type": "string",
-                        "description": "正文",
-                        "name": "content",
-                        "in": "formData"
-                    },
-                    {
-                        "enum": [
-                            0,
-                            1,
-                            2
-                        ],
-                        "type": "integer",
-                        "description": "状态",
-                        "name": "status",
-                        "in": "formData"
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "$ref": "#/definitions/dto.Response"
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "$ref": "#/definitions/dto.Response"
-                        }
-                    },
-                    "500": {
-                        "description": "Internal Server Error",
-                        "schema": {
-                            "$ref": "#/definitions/dto.Response"
-                        }
-                    }
-                }
-            }
-        },
-        "/user/login": {
-            "post": {
-                "description": "用户登录",
-                "consumes": [
-                    "application/x-www-form-urlencoded"
-                ],
-                "produces": [
-                    "application/json"
-                ],
-                "tags": [
-                    "user"
-                ],
-                "summary": "用户登录",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "用户名",
-                        "name": "username",
-                        "in": "formData",
-                        "required": true
-                    },
-                    {
-                        "type": "string",
-                        "description": "密码",
-                        "name": "password",
-                        "in": "formData",
                         "required": true
                     }
                 ],

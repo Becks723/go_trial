@@ -15,14 +15,14 @@ type MemoData struct {
 }
 
 type AddMemoReq struct {
-	Title    string     `form:"title" binding:"required"`
-	Content  string     `form:"content" binding:"required"`
-	StartsAt *time.Time `form:"starts_at" binding:"required"` // RFC3339: 2000-01-01T23:59:59Z
-	EndsAt   *time.Time `form:"ends_at" binding:"required"`
+	Title    string     `form:"title,required"`
+	Content  string     `form:"content,required"`
+	StartsAt *time.Time `form:"starts_at,required" vd:"$!=nil"` // RFC3339: 2000-01-01T23:59:59Z
+	EndsAt   *time.Time `form:"ends_at,required" vd:"$!=nil"`   // TODO: 绑定*time.Time时，required好像没用？所以暂时vd检查了nil，上同
 }
 
 type UpdateMemoReq struct {
-	Id       uint             `form:"id" binding:"required"`
+	Id       uint             `form:"id,required"`
 	Title    string           `form:"title"`
 	Content  string           `form:"content"`
 	Status   model.MemoStatus `form:"status"`
@@ -46,18 +46,18 @@ const (
 )
 
 type SearchMemoParams struct {
-	Limit     int    `form:"limit"`                       // 每页容量
-	PageStart int    `form:"ps"`                          // 从第几页开始
-	PageEnd   int    `form:"pe"`                          // 到第几页结束
-	Keywords  string `form:"keywords" binding:"required"` // 关键词
+	Limit     int    `form:"limit"`             // 每页容量
+	PageStart int    `form:"ps"`                // 从第几页开始
+	PageEnd   int    `form:"pe"`                // 到第几页结束
+	Keywords  string `form:"keywords,required"` // 关键词
 }
 
 type DeleteMemoByIdReq struct {
-	Id uint `form:"id" binding:"required"`
+	Id uint `form:"id,required"`
 }
 
 type DeleteMemoByFilterReq struct {
-	Filter DeleteFilter `form:"filter" binding:"required"`
+	Filter DeleteFilter `form:"filter,required"`
 }
 type DeleteFilter int
 

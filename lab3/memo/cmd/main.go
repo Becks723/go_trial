@@ -7,9 +7,9 @@ import (
 	"memo/repository"
 	"memo/service"
 
-	"github.com/gin-gonic/gin"
+	"github.com/cloudwego/hertz/pkg/app/server"
+	hertzSwagger "github.com/hertz-contrib/swagger"
 	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 // @title Memo API
@@ -34,10 +34,11 @@ func newController() *controller.Controller {
 		service.NewMemoService(memoRepo, userRepo))
 }
 
-func initializeRouter(c *controller.Controller) *gin.Engine {
-	router := gin.Default()
-	router.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-	v1 := router.Group("/api/v1")
+func initializeRouter(c *controller.Controller) *server.Hertz {
+	h := server.Default(
+		server.WithHostPorts("127.0.0.1:8080"))
+	h.GET("/swagger/*any", hertzSwagger.WrapHandler(swaggerFiles.Handler))
+	v1 := h.Group("/api/v1")
 	{
 		v1.POST("/user/signup", c.UserSignup)
 		v1.POST("/user/login", c.UserLogin)
@@ -52,5 +53,5 @@ func initializeRouter(c *controller.Controller) *gin.Engine {
 			authed.POST("/memo/delete", c.MemoDelete)
 		}
 	}
-	return router
+	return h
 }

@@ -1,13 +1,14 @@
 package controller
 
 import (
+	"context"
 	"errors"
 	"memo/dto"
 	"memo/pkg/ctl"
 	"memo/pkg/e"
 	"memo/service"
 
-	"github.com/gin-gonic/gin"
+	"github.com/cloudwego/hertz/pkg/app"
 )
 
 type Controller struct {
@@ -35,18 +36,18 @@ func NewController(userServ *service.UserService, memoServ *service.MemoService)
 // @Failure 400 {object} dto.Response
 // @Failure 500 {object} dto.Response
 // @Router /user/signup [post]
-func (c *Controller) UserSignup(ctx *gin.Context) {
+func (c *Controller) UserSignup(ctx context.Context, r *app.RequestContext) {
 	var req dto.SignupReq
-	if err := ctx.ShouldBind(&req); err == nil {
+	if err := r.BindAndValidate(&req); err == nil {
 		resp, err := c.userServ.Signup(&req)
 		if err == nil {
-			ctx.JSON(e.Success, resp)
+			r.JSON(e.Success, resp)
 		} else {
-			ctx.JSON(e.InternalError, ctl.ResponseError(err))
+			r.JSON(e.InternalError, ctl.ResponseError(err))
 		}
 		return
 	} else {
-		ctx.JSON(e.BadRequest, ctl.ResponseError(err, e.BadRequest))
+		r.JSON(e.BadRequest, ctl.ResponseError(err, e.BadRequest))
 	}
 }
 
@@ -62,18 +63,18 @@ func (c *Controller) UserSignup(ctx *gin.Context) {
 // @Failure 400 {object} dto.Response
 // @Failure 500 {object} dto.Response
 // @Router /user/login [post]
-func (c *Controller) UserLogin(ctx *gin.Context) {
+func (c *Controller) UserLogin(ctx context.Context, r *app.RequestContext) {
 	var req dto.LoginReq
-	if err := ctx.ShouldBind(&req); err == nil {
+	if err := r.BindAndValidate(&req); err == nil {
 		resp, err := c.userServ.Login(&req)
 		if err == nil {
-			ctx.JSON(e.Success, resp)
+			r.JSON(e.Success, resp)
 		} else {
-			ctx.JSON(e.InternalError, ctl.ResponseError(err))
+			r.JSON(e.InternalError, ctl.ResponseError(err))
 		}
 		return
 	} else {
-		ctx.JSON(e.BadRequest, ctl.ResponseError(err, e.BadRequest))
+		r.JSON(e.BadRequest, ctl.ResponseError(err, e.BadRequest))
 	}
 }
 
@@ -92,29 +93,29 @@ func (c *Controller) UserLogin(ctx *gin.Context) {
 // @Failure 400 {object} dto.Response
 // @Failure 500 {object} dto.Response
 // @Router /memo/add [post]
-func (c *Controller) MemoAdd(ctx *gin.Context) {
+func (c *Controller) MemoAdd(ctx context.Context, r *app.RequestContext) {
 	var req dto.AddMemoReq
-	if err := ctx.ShouldBind(&req); err != nil {
-		ctx.JSON(e.BadRequest, ctl.ResponseError(err, e.BadRequest))
+	if err := r.BindAndValidate(&req); err != nil {
+		r.JSON(e.BadRequest, ctl.ResponseError(err, e.BadRequest))
 		return
 	}
 
 	// retrieve current user id
 	var uid uint
 	var err error
-	if uid, err = c.retrieveCurrentUid(ctx); err != nil {
-		ctx.JSON(e.InternalError, ctl.ResponseError(err))
+	if uid, err = c.retrieveCurrentUid(r); err != nil {
+		r.JSON(e.InternalError, ctl.ResponseError(err))
 		return
 	}
 
 	// do add memo service
 	var resp *dto.Response
 	if resp, err = c.memoServ.Add(uid, &req); err != nil {
-		ctx.JSON(e.InternalError, ctl.ResponseError(err))
+		r.JSON(e.InternalError, ctl.ResponseError(err))
 		return
 	}
 
-	ctx.JSON(e.Success, resp)
+	r.JSON(e.Success, resp)
 }
 
 // MemoUpdate godoc
@@ -134,29 +135,29 @@ func (c *Controller) MemoAdd(ctx *gin.Context) {
 // @Failure 400 {object} dto.Response
 // @Failure 500 {object} dto.Response
 // @Router /memo/update [post]
-func (c *Controller) MemoUpdate(ctx *gin.Context) {
+func (c *Controller) MemoUpdate(ctx context.Context, r *app.RequestContext) {
 	var req dto.UpdateMemoReq
-	if err := ctx.ShouldBind(&req); err != nil {
-		ctx.JSON(e.BadRequest, ctl.ResponseError(err, e.BadRequest))
+	if err := r.BindAndValidate(&req); err != nil {
+		r.JSON(e.BadRequest, ctl.ResponseError(err, e.BadRequest))
 		return
 	}
 
 	// retrieve current user id
 	var uid uint
 	var err error
-	if uid, err = c.retrieveCurrentUid(ctx); err != nil {
-		ctx.JSON(e.InternalError, ctl.ResponseError(err))
+	if uid, err = c.retrieveCurrentUid(r); err != nil {
+		r.JSON(e.InternalError, ctl.ResponseError(err))
 		return
 	}
 
 	// do update memo service
 	var resp *dto.Response
 	if resp, err = c.memoServ.Update(uid, &req); err != nil {
-		ctx.JSON(e.InternalError, ctl.ResponseError(err))
+		r.JSON(e.InternalError, ctl.ResponseError(err))
 		return
 	}
 
-	ctx.JSON(e.Success, resp)
+	r.JSON(e.Success, resp)
 }
 
 // MemoList godoc
@@ -173,29 +174,29 @@ func (c *Controller) MemoUpdate(ctx *gin.Context) {
 // @Failure 400 {object} dto.Response
 // @Failure 500 {object} dto.Response
 // @Router /memo/list [get]
-func (c *Controller) MemoList(ctx *gin.Context) {
+func (c *Controller) MemoList(ctx context.Context, r *app.RequestContext) {
 	var params dto.ListMemoParams
-	if err := ctx.ShouldBindQuery(&params); err != nil {
-		ctx.JSON(e.BadRequest, ctl.ResponseError(err, e.BadRequest))
+	if err := r.BindAndValidate(&params); err != nil {
+		r.JSON(e.BadRequest, ctl.ResponseError(err, e.BadRequest))
 		return
 	}
 
 	// retrieve current user id
 	var uid uint
 	var err error
-	if uid, err = c.retrieveCurrentUid(ctx); err != nil {
-		ctx.JSON(e.InternalError, ctl.ResponseError(err))
+	if uid, err = c.retrieveCurrentUid(r); err != nil {
+		r.JSON(e.InternalError, ctl.ResponseError(err))
 		return
 	}
 
 	// do list memo service
 	var resp *dto.Response
 	if resp, err = c.memoServ.List(uid, &params); err != nil {
-		ctx.JSON(e.InternalError, ctl.ResponseError(err))
+		r.JSON(e.InternalError, ctl.ResponseError(err))
 		return
 	}
 
-	ctx.JSON(e.Success, resp)
+	r.JSON(e.Success, resp)
 }
 
 // MemoSearch godoc
@@ -212,29 +213,29 @@ func (c *Controller) MemoList(ctx *gin.Context) {
 // @Failure 400 {object} dto.Response
 // @Failure 500 {object} dto.Response
 // @Router /memo/search [get]
-func (c *Controller) MemoSearch(ctx *gin.Context) {
+func (c *Controller) MemoSearch(ctx context.Context, r *app.RequestContext) {
 	var params dto.SearchMemoParams
-	if err := ctx.ShouldBindQuery(&params); err != nil {
-		ctx.JSON(e.BadRequest, ctl.ResponseError(err, e.BadRequest))
+	if err := r.BindAndValidate(&params); err != nil {
+		r.JSON(e.BadRequest, ctl.ResponseError(err, e.BadRequest))
 		return
 	}
 
 	// retrieve current user id
 	var uid uint
 	var err error
-	if uid, err = c.retrieveCurrentUid(ctx); err != nil {
-		ctx.JSON(e.InternalError, ctl.ResponseError(err))
+	if uid, err = c.retrieveCurrentUid(r); err != nil {
+		r.JSON(e.InternalError, ctl.ResponseError(err))
 		return
 	}
 
 	// do search memo service
 	var resp *dto.Response
 	if resp, err = c.memoServ.Search(uid, &params); err != nil {
-		ctx.JSON(e.InternalError, ctl.ResponseError(err))
+		r.JSON(e.InternalError, ctl.ResponseError(err))
 		return
 	}
 
-	ctx.JSON(e.Success, resp)
+	r.JSON(e.Success, resp)
 }
 
 // MemoDelete godoc
@@ -250,12 +251,12 @@ func (c *Controller) MemoSearch(ctx *gin.Context) {
 // @Failure 400 {object} dto.Response
 // @Failure 500 {object} dto.Response
 // @Router /memo/delete [post]
-func (c *Controller) MemoDelete(ctx *gin.Context) {
+func (c *Controller) MemoDelete(ctx context.Context, r *app.RequestContext) {
 	// retrieve current user id
 	var uid uint
 	var err error
-	if uid, err = c.retrieveCurrentUid(ctx); err != nil {
-		ctx.JSON(e.InternalError, ctl.ResponseError(err))
+	if uid, err = c.retrieveCurrentUid(r); err != nil {
+		r.JSON(e.InternalError, ctl.ResponseError(err))
 		return
 	}
 
@@ -263,33 +264,33 @@ func (c *Controller) MemoDelete(ctx *gin.Context) {
 
 	// try delete by id
 	var ireq dto.DeleteMemoByIdReq
-	if err = ctx.ShouldBind(&ireq); err == nil {
+	if err = r.BindAndValidate(&ireq); err == nil {
 		// do delete by id service
 		if resp, err = c.memoServ.DeleteById(uid, &ireq); err != nil {
-			ctx.JSON(e.InternalError, ctl.ResponseError(err))
+			r.JSON(e.InternalError, ctl.ResponseError(err))
 			return
 		}
-		ctx.JSON(e.Success, resp)
+		r.JSON(e.Success, resp)
 		return
 	}
 
 	// then try delete by filter
 	var freq dto.DeleteMemoByFilterReq
-	if err = ctx.ShouldBind(&freq); err == nil {
+	if err = r.BindAndValidate(&freq); err == nil {
 		// do delete by filter service
 		if resp, err = c.memoServ.DeleteByFilter(uid, &freq); err != nil {
-			ctx.JSON(e.InternalError, ctl.ResponseError(err))
+			r.JSON(e.InternalError, ctl.ResponseError(err))
 			return
 		}
-		ctx.JSON(e.Success, resp)
+		r.JSON(e.Success, resp)
 		return
 	}
 
-	ctx.JSON(e.BadRequest, ctl.ResponseError(err, e.BadRequest))
+	r.JSON(e.BadRequest, ctl.ResponseError(err, e.BadRequest))
 }
 
-func (c *Controller) retrieveCurrentUid(ctx *gin.Context) (uid uint, err error) {
-	raw, ok := ctx.Get("uid")
+func (c *Controller) retrieveCurrentUid(r *app.RequestContext) (uid uint, err error) {
+	raw, ok := r.Get("uid")
 	if !ok {
 		err = errors.New("Cannot retrieve current uid.") // TODO: i18n
 	} else if uid, ok = raw.(uint); !ok {

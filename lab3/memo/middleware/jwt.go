@@ -1,30 +1,31 @@
 package middleware
 
 import (
+	"context"
 	"memo/pkg/util"
 	"net/http"
 	"time"
 
-	"github.com/gin-gonic/gin"
+	"github.com/cloudwego/hertz/pkg/app"
 )
 
-func JWT(ctx *gin.Context) {
-	token := ctx.GetHeader("Authorization")
+func JWT(ctx context.Context, r *app.RequestContext) {
+	token := string(r.GetHeader("Authorization"))
 	if token == "" {
-		ctx.JSON(http.StatusBadRequest, 0) // TODO
-		ctx.Abort()
+		r.JSON(http.StatusBadRequest, 0) // TODO
+		r.Abort()
 		return
 	}
 
 	claims, err := util.ParseToken(token)
 	if err != nil {
 		// TODO: 解析token失败
-		ctx.Abort()
+		r.Abort()
 	} else if time.Now().Unix() > claims.ExpiresAt.Unix() {
 		// TODO: token过期
-		ctx.Abort()
+		r.Abort()
 	} else {
-		ctx.Set("uid", claims.UserId)
-		ctx.Next()
+		r.Set("uid", claims.UserId)
+		r.Next(ctx)
 	}
 }

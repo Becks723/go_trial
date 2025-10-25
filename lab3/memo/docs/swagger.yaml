@@ -34,6 +34,16 @@ paths:
         name: content
         required: true
         type: string
+      - description: 开始时间，格式2000-01-01T23:59:59Z
+        in: formData
+        name: starts_at
+        required: true
+        type: string
+      - description: 截止时间，格式2000-01-01T23:59:59Z
+        in: formData
+        name: ends_at
+        required: true
+        type: string
       produces:
       - application/json
       responses:
@@ -61,6 +71,15 @@ paths:
       - description: 代办事项id
         in: formData
         name: id
+        required: true
+        type: integer
+      - description: 筛选条件
+        enum:
+        - 0
+        - 1
+        - 2
+        in: formData
+        name: filter
         required: true
         type: integer
       produces:
@@ -162,85 +181,6 @@ paths:
       summary: 搜索代办事项
       tags:
       - memo
-  /memo/update:
-    post:
-      consumes:
-      - application/x-www-form-urlencoded
-      description: 更新代办事项
-      parameters:
-      - description: 代办事项id
-        in: formData
-        name: id
-        required: true
-        type: integer
-      - description: 标题
-        in: formData
-        name: title
-        type: string
-      - description: 正文
-        in: formData
-        name: content
-        type: string
-      - description: 状态
-        enum:
-        - 0
-        - 1
-        - 2
-        in: formData
-        name: status
-        type: integer
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/dto.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/dto.Response'
-      summary: 更新代办事项
-      tags:
-      - memo
-  /user/login:
-    post:
-      consumes:
-      - application/x-www-form-urlencoded
-      description: 用户登录
-      parameters:
-      - description: 用户名
-        in: formData
-        name: username
-        required: true
-        type: string
-      - description: 密码
-        in: formData
-        name: password
-        required: true
-        type: string
-      produces:
-      - application/json
-      responses:
-        "200":
-          description: OK
-          schema:
-            $ref: '#/definitions/dto.Response'
-        "400":
-          description: Bad Request
-          schema:
-            $ref: '#/definitions/dto.Response'
-        "500":
-          description: Internal Server Error
-          schema:
-            $ref: '#/definitions/dto.Response'
-      summary: 用户登录
-      tags:
-      - user
   /user/signup:
     post:
       consumes:
