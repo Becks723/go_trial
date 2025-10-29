@@ -1,5 +1,20 @@
 # Memo简易备忘录
 
+## 构建 & 运行
+
+```bash
+git clone https://github.com/Becks723/go_trial
+cd go_trial/lab3/memo
+
+# 构建
+docker compose build
+
+# 后台运行
+docker compose up -d
+```
+
+
+
 ## 项目依赖
 
 - 语言：Golang1.25.1
@@ -9,6 +24,7 @@
 - 数据库：MySQL8.0.42
 - 数据库交互：gorm
 - 文档：swaggo
+- 部署：docker compose
 
 
 
@@ -50,7 +66,7 @@ lab3/memo/
 
    5. 应对代码变动：
 
-      本项目由于先做了gin实现，后期需要迁移为hertz实现。迁移变动位于commit aa432276 中。观察这个commit不难发现，实际上真正变化的部分仅仅有 Controller层、dto对象以及更上层的客户代码；而三层架构的下两层（Service和DA层）无需任何改动，达到了“隔离变化”的功能，符合三层架构的设计初衷。
+      本项目由于先做了gin实现，后期需要迁移为hertz实现。迁移变动位于commit [aa432276](https://github.com/Becks723/go_trial/commit/aa432276f69029a9c35325931ae99c9516c57f26)中。观察这个commit不难发现，实际上真正变化的部分仅仅有 Controller层、dto对象以及更上层的客户代码；而三层架构的下两层（Service和DA层）无需任何改动，达到了“隔离变化”的功能，符合三层架构的设计初衷。
 
 3. 考虑数据库交互安全性：
 
