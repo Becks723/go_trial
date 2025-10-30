@@ -1,11 +1,23 @@
 package config
 
-var (
-	DBUsername string = "root"
-	DBPassword string = "123456"
-	DBIp       string = "memo-mysql"
-	DBPort     string = "3306"
-	DBName     string = "memo_lab3"
+type config struct {
+	Server  serverConfig  `mapstructure:"server"`
+	MySQL   mySQLConfig   `mapstructure:"mysql"`
+	General generalConfig `mapstructure:"general"`
+}
 
-	DefaultLimit = 5
-)
+type serverConfig struct {
+	Port int `mapstructure:"port"`
+}
+
+type mySQLConfig struct {
+	Host     string `mapstructure:"host"`
+	Port     int    `mapstructure:"port"`
+	Username string `mapstructure:"username"`
+	Password string `mapstructure:"password"`
+	DBName   string `mapstructure:"dbname"`
+}
+
+type generalConfig struct {
+	DefaultLimit int `mapstructure:"limit"`
+}

@@ -24,6 +24,8 @@ WORKDIR /app
 
 # 从构建阶段复制可执行文件
 COPY --from=builder /app/memo .
+# 复制配置文件
+COPY config/config.yaml ./config/config.yaml
 
 # 暴露服务端口
 EXPOSE 8080

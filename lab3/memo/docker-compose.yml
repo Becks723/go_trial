@@ -9,6 +9,8 @@ services:
       - "8080:8080"
     environment:
       - GIN_MODE=release
+    volumes:
+      - ./config:/app/config  # 本地的config目录映射到容器的app/config目录
     command: /app/memo
     restart: always
 

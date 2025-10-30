@@ -15,6 +15,16 @@ docker compose up -d
 
 
 
+## 配置
+
+配置文件位于`config/config.yaml`。修改完配置使用 `restart` 命令生效：
+
+```bash
+docker compose restart
+```
+
+
+
 ## 项目依赖
 
 - 语言：Golang1.25.1
