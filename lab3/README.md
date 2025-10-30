@@ -25,6 +25,15 @@ docker compose restart
 
 
 
+## 调试
+
+本项目使用postman调试api，并已给出postman的预设文件，导入即可。
+
+- collection: `Becks723_lab3_memo.postman_collection.json`
+- environment: `Becks723_lab3_memo_env.postman_environment.json` 
+
+
+
 ## 项目依赖
 
 - 语言：Golang1.25.1
@@ -35,6 +44,7 @@ docker compose restart
 - 数据库交互：gorm
 - 文档：swaggo
 - 部署：docker compose
+- 测试：postman
 
 
 
