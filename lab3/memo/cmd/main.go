@@ -36,7 +36,7 @@ func newController() *controller.Controller {
 
 func initializeRouter(c *controller.Controller) *server.Hertz {
 	h := server.Default(
-		server.WithHostPorts("127.0.0.1:8080"))
+		server.WithHostPorts(":8080"))
 	h.GET("/swagger/*any", hertzSwagger.WrapHandler(swaggerFiles.Handler))
 	v1 := h.Group("/api/v1")
 	{

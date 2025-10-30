@@ -15,8 +15,9 @@ var db *gorm.DB
 /* 初始化数据库 */
 func Load() {
 	// 连接数据库
-	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8mb4&parseTime=true",
-		config.DBUsername, config.DBPassword, config.DBIp, config.DBPort, config.DBName)
+	c := config.Instance().MySQL
+	dsn := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=true",
+		c.Username, c.Password, c.Host, c.Port, c.DBName)
 	db_, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal(err)

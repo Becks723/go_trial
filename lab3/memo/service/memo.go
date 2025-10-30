@@ -79,7 +79,7 @@ func (serv *MemoService) Update(uid uint, req *dto.UpdateMemoReq) (resp *dto.Res
 
 func (serv *MemoService) List(uid uint, params *dto.ListMemoParams) (resp *dto.Response, err error) {
 	if params.Limit <= 0 {
-		params.Limit = config.DefaultLimit
+		params.Limit = config.Instance().General.DefaultLimit
 	}
 
 	// 按过滤条件分页查询
