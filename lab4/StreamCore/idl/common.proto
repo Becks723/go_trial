@@ -1,0 +1,47 @@
+// idl/common.proto
+syntax = "proto3";
+
+package common;
+
+option go_package = "StreamCore/idl/common;common";
+
+import "api.proto";
+
+message RespStatus {
+  int32 code = 1;
+  string msg = 2;
+}
+
+message VideoInfo {
+  string created_at = 1[(api.body)="created_at"];
+  string updated_at = 2[(api.body)="updated_at"];
+  string deleted_at = 3[(api.body)="deleted_at"];
+  string id = 4[(api.body)="id"];
+  string user_id = 5[(api.body)="user_id"];
+  string video_url = 6[(api.body)="video_url"];
+  string cover_url = 7[(api.body)="cover_url"];
+  string title = 8[(api.body)="title"];
+  string description = 9[(api.body)="description"];
+  int32 visit_count = 10[(api.body)="visit_count"];
+  int32 like_count = 11[(api.body)="like_count"];
+  int32 comment_count = 12[(api.body)="comment_count"];
+}
+
+message CommentInfo {
+  string created_at = 1[(api.body)="created_at"];
+  string updated_at = 2[(api.body)="updated_at"];
+  string deleted_at = 3[(api.body)="deleted_at"];
+  string id = 4[(api.body)="id"];
+  string user_id = 5[(api.body)="user_id"];
+  string video_id = 6[(api.body)="video_id"];
+  string parent_id = 7[(api.body)="parent_id"];
+  int32 like_count = 8[(api.body)="like_count"];
+  int32 child_count = 9[(api.body)="child_count"];
+  string content = 10[(api.body)="content"];
+}
+
+message SocialUserInfo {
+  string id = 1[(api.body)="id"];
+  string username = 2[(api.body)="username"];
+  string avatar_url = 3[(api.body)="avatar_url"];
+}

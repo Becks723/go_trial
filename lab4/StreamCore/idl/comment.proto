@@ -1,0 +1,55 @@
+// idl/comment.proto
+syntax = "proto3";
+
+package comment;
+
+option go_package = "StreamCore/idl/comment;comment";
+
+import "api.proto";
+import "common.proto";
+
+message PublishReq {
+  string video_id = 1[(api.form)="video_id"];
+  string comment_id = 2[(api.form)="comment_id"];
+  string content = 3[(api.form)="content"];
+}
+
+message PublishResp {
+  common.RespStatus base = 1;
+}
+
+message ListQuery {
+  string video_id = 1[(api.query)="video_id"];
+  string comment_id = 2[(api.query)="comment_id"];
+  int32 page_size = 3[(api.query)="page_size"];
+  int32 page_num = 4[(api.query)="page_num"];
+}
+
+message ListResp {
+  message Data {
+    repeated common.CommentInfo items = 1;
+  }
+  common.RespStatus base = 1;
+  Data data = 2;
+}
+
+message DeleteReq {
+  string video_id = 1[(api.form)="video_id"];
+  string comment_id = 2[(api.form)="comment_id"];
+}
+
+message DeleteResp {
+  common.RespStatus base = 1;
+}
+
+service CommentService {
+  rpc Publish(PublishReq) returns (PublishResp) {
+    option (api.post)="/comment/publish";
+  }
+  rpc List(ListQuery) returns (ListResp) {
+    option (api.get)="/comment/list";
+  }
+  rpc Delete(DeleteReq) returns (DeleteResp) {
+    option (api.delete)="/comment/delete";
+  }
+}

@@ -1,0 +1,95 @@
+// idl/stream.proto
+syntax = "proto3";
+
+package stream;
+
+option go_package = "StreamCore/idl/stream;stream";
+
+import "api.proto";
+import "common.proto";
+
+message FeedQuery {
+  string latest_time = 1[(api.query)="latest_time"];
+}
+
+message FeedResp {
+  message Data {
+    repeated common.VideoInfo items = 1;
+  }
+  common.RespStatus base = 1;
+  Data data = 2;
+}
+
+message PublishReq {
+  string data = 1[(api.form)="data"];
+  string title = 2[(api.form)="title"];
+  string description = 3[(api.form)="description"];
+}
+
+message PublishResp {
+    common.RespStatus base = 1;
+}
+
+message ListQuery {
+  string user_id = 1[(api.query)="user_id"];
+  int32 page_num = 2[(api.query)="page_num"];
+  int32 page_size = 3[(api.query)="page_size"];
+}
+
+message ListResp {
+  message Data {
+    repeated common.VideoInfo items = 1;
+    int32 total = 2;
+  }
+  common.RespStatus base = 1;
+  Data data = 2;
+}
+
+message PopularQuery {
+  int32 page_num = 2[(api.query)="page_num"];
+  int32 page_size = 3[(api.query)="page_size"];
+}
+
+message PopularResp {
+  message Data {
+    repeated common.VideoInfo items = 1;
+  }
+  common.RespStatus base = 1;
+  Data data = 2;
+}
+
+message SearchReq {
+  string keywords = 1[(api.form)="keywords"];
+  int32 page_num = 2[(api.form)="page_num"];
+  int32 page_size = 3[(api.form)="page_size"];
+  int32 from_date = 4[(api.form)="from_date"];
+  int32 to_date = 5[(api.form)="to_date"];
+  string username = 6[(api.form)="username"];
+}
+
+message SearchResp {
+  message Data {
+    repeated common.VideoInfo items = 1;
+    int32 total = 2;
+  }
+  common.RespStatus base = 1;
+  Data data = 2;
+}
+
+service StreamService {
+  rpc Feed(FeedQuery) returns (FeedResp) {
+    option (api.get)="/video/feed";
+  }
+  rpc Publish(PublishReq) returns (PublishResp) {
+    option (api.post)="/video/publish";
+  }
+  rpc List(ListQuery) returns (ListResp) {
+    option (api.get)="/video/list";
+  }
+  rpc Popular(PopularQuery) returns (PopularResp) {
+    option (api.get)="/video/popular";
+  }
+  rpc Search(SearchReq) returns (SearchResp) {
+    option (api.post)="/video/search";
+  }
+}
