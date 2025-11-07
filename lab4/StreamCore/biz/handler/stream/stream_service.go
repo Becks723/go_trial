@@ -5,7 +5,7 @@ package stream
 import (
 	"context"
 
-	stream "StreamCore/biz/model/idl/stream"
+	stream "StreamCore/biz/model/stream"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )

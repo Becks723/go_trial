@@ -3,7 +3,7 @@ syntax = "proto3";
 
 package social;
 
-option go_package = "StreamCore/idl/social;social";
+option go_package = "StreamCore/social";
 
 import "api.proto";
 import "common.proto";

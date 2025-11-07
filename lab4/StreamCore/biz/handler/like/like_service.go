@@ -5,7 +5,7 @@ package like
 import (
 	"context"
 
-	like "StreamCore/biz/model/idl/like"
+	like "StreamCore/biz/model/like"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )

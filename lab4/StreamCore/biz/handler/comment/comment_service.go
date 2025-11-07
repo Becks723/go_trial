@@ -5,7 +5,7 @@ package comment
 import (
 	"context"
 
-	comment "StreamCore/biz/model/idl/comment"
+	comment "StreamCore/biz/model/comment"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )

@@ -3,7 +3,7 @@ syntax = "proto3";
 
 package comment;
 
-option go_package = "StreamCore/idl/comment;comment";
+option go_package = "StreamCore/comment";
 
 import "api.proto";
 import "common.proto";

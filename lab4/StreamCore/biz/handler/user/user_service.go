@@ -5,7 +5,7 @@ package user
 import (
 	"context"
 
-	user "StreamCore/biz/model/idl/user"
+	user "StreamCore/biz/model/user"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )

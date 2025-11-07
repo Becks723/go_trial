@@ -5,7 +5,7 @@ package social
 import (
 	"context"
 
-	social "StreamCore/biz/model/idl/social"
+	social "StreamCore/biz/model/social"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
