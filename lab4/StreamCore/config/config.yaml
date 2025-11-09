@@ -1,0 +1,12 @@
+mysql:
+  username: root
+  password: 123456
+  host: 0:0:0:0
+  port: 3306
+  dbname: stream_core_lab4
+
+server:
+  host: 8080
+
+general:
+  page_size: 6

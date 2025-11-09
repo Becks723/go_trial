@@ -3,10 +3,14 @@
 package main
 
 import (
+	"StreamCore/biz/repo"
+
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
 func main() {
+	repo.Init()
+
 	h := server.Default()
 
 	register(h)

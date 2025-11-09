@@ -3,25 +3,35 @@
 package user
 
 import (
+	"StreamCore/biz/repo"
+	"StreamCore/biz/service"
+	"StreamCore/pkg/ctl"
 	"context"
 
 	user "StreamCore/biz/model/user"
+
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 
+var serv = service.NewUserService(repo.NewUserRepo())
+
 // Register .
 // @router /user/register [POST]
 func Register(ctx context.Context, c *app.RequestContext) {
-	var err error
 	var req user.RegisterReq
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+	if err := c.BindAndValidate(&req); err != nil {
+		c.JSON(consts.StatusBadRequest, ctl.ResponseError(err, consts.StatusBadRequest))
+		return
+	}
+
+	if err := serv.Register(ctx, &req); err != nil {
+		c.JSON(consts.StatusInternalServerError, ctl.ResponseError(err))
 		return
 	}
 
 	resp := new(user.RegisterResp)
+	resp.Base = ctl.ResponseSuccess()
 
 	c.JSON(consts.StatusOK, resp)
 }
