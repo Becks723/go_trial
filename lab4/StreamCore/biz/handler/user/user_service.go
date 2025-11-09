@@ -3,7 +3,6 @@
 package user
 
 import (
-	"StreamCore/biz/repo"
 	"StreamCore/biz/service"
 	"StreamCore/pkg/ctl"
 	"context"
@@ -14,47 +13,62 @@ import (
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 
-var serv = service.NewUserService(repo.NewUserRepo())
+type UserController struct {
+	serv *service.UserService
+}
+
+func NewUserController(serv *service.UserService) *UserController {
+	return &UserController{
+		serv: serv,
+	}
+}
 
 // Register .
 // @router /user/register [POST]
-func Register(ctx context.Context, c *app.RequestContext) {
+func (uc *UserController) Register(ctx context.Context, c *app.RequestContext) {
 	var req user.RegisterReq
 	if err := c.BindAndValidate(&req); err != nil {
 		c.JSON(consts.StatusBadRequest, ctl.ResponseError(err, consts.StatusBadRequest))
 		return
 	}
 
-	if err := serv.Register(ctx, &req); err != nil {
+	if err := uc.serv.Register(ctx, &req); err != nil {
 		c.JSON(consts.StatusInternalServerError, ctl.ResponseError(err))
 		return
 	}
 
-	resp := new(user.RegisterResp)
-	resp.Base = ctl.ResponseSuccess()
-
+	resp := &user.RegisterResp{
+		Base: ctl.ResponseSuccess(),
+	}
 	c.JSON(consts.StatusOK, resp)
 }
 
 // Login .
 // @router /user/login [POST]
-func Login(ctx context.Context, c *app.RequestContext) {
-	var err error
+func (uc *UserController) Login(ctx context.Context, c *app.RequestContext) {
 	var req user.LoginReq
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+	if err := c.BindAndValidate(&req); err != nil {
+		c.JSON(consts.StatusBadRequest, ctl.ResponseError(err, consts.StatusBadRequest))
 		return
 	}
 
-	resp := new(user.LoginResp)
+	data, auth, err := uc.serv.Login(ctx, &req)
+	if err != nil {
+		c.JSON(consts.StatusInternalServerError, ctl.ResponseError(err))
+		return
+	}
 
+	resp := &user.LoginResp{
+		Base: ctl.ResponseSuccess(),
+		Data: data,
+		Auth: auth,
+	}
 	c.JSON(consts.StatusOK, resp)
 }
 
 // GetInfo .
 // @router /user/info [GET]
-func GetInfo(ctx context.Context, c *app.RequestContext) {
+func (uc *UserController) GetInfo(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req user.InfoQuery
 	err = c.BindAndValidate(&req)
@@ -70,7 +84,7 @@ func GetInfo(ctx context.Context, c *app.RequestContext) {
 
 // UploadAvatar .
 // @router /user/avatar/upload [PUT]
-func UploadAvatar(ctx context.Context, c *app.RequestContext) {
+func (uc *UserController) UploadAvatar(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req user.AvatarReq
 	err = c.BindAndValidate(&req)

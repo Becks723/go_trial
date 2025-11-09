@@ -12,6 +12,11 @@ message RespStatus {
   string msg = 2;
 }
 
+message AuthenticationInfo {
+  string access_token = 1[(api.body)="access_token"];
+  string refresh_token = 2[(api.body)="refresh_token"];
+}
+
 message VideoInfo {
   string created_at = 1[(api.body)="created_at"];
   string updated_at = 2[(api.body)="updated_at"];

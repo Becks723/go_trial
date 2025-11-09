@@ -35,6 +35,7 @@ message LoginReq {
 message LoginResp {
   common.RespStatus base = 1;
   UserInfo data = 2;
+  common.AuthenticationInfo auth = 3;
 }
 
 message InfoQuery {

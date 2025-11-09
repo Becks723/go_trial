@@ -3,6 +3,7 @@ package repo
 import (
 	"StreamCore/biz/domain"
 	"StreamCore/biz/repo/model"
+	"time"
 
 	"gorm.io/gorm"
 )
@@ -48,9 +49,20 @@ func (repo *UserRepository) GetByUsername(username string) (u *domain.User, err 
 		return nil, err
 	}
 	u = &domain.User{
+		Id:        po.ID,
+		CreatedAt: po.CreatedAt,
+		UpdatedAt: po.UpdatedAt,
+		DeletedAt: repo.DeletedAtToPtr(po.DeletedAt),
 		Username:  po.Username,
 		Password:  po.Password,
 		AvatarUrl: po.AvatarUrl,
 	}
 	return u, nil
+}
+
+func (repo *UserRepository) DeletedAtToPtr(t gorm.DeletedAt) *time.Time {
+	if t.Valid {
+		return &t.Time
+	}
+	return nil
 }
