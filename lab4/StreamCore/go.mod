@@ -5,6 +5,7 @@ go 1.25.1
 require (
 	github.com/cloudwego/hertz v0.10.3
 	github.com/spf13/viper v1.21.0
+	go.uber.org/mock v0.6.0
 	golang.org/x/crypto v0.43.0
 	google.golang.org/protobuf v1.36.10
 	gorm.io/driver/mysql v1.6.0

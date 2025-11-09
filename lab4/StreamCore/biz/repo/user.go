@@ -7,6 +7,11 @@ import (
 	"gorm.io/gorm"
 )
 
+type UserRepo interface {
+	Create(u *domain.User) error
+	GetByUsername(username string) (u *domain.User, err error)
+}
+
 type baseRepository struct {
 	db *gorm.DB
 }
