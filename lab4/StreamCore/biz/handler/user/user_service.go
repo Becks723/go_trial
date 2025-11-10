@@ -71,14 +71,21 @@ func (uc *UserController) Login(ctx context.Context, c *app.RequestContext) {
 func (uc *UserController) GetInfo(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req user.InfoQuery
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+	if err = c.BindAndValidate(&req); err != nil {
+		c.JSON(consts.StatusBadRequest, ctl.ResponseError(err, consts.StatusBadRequest))
 		return
 	}
 
-	resp := new(user.InfoResp)
+	data, err := uc.serv.GetInfo(ctx, &req)
+	if err != nil {
+		c.JSON(consts.StatusInternalServerError, ctl.ResponseError(err))
+		return
+	}
 
+	resp := &user.InfoResp{
+		Base: ctl.ResponseSuccess(),
+		Data: data,
+	}
 	c.JSON(consts.StatusOK, resp)
 }
 
@@ -96,4 +103,10 @@ func (uc *UserController) UploadAvatar(ctx context.Context, c *app.RequestContex
 	resp := new(user.AvatarResp)
 
 	c.JSON(consts.StatusOK, resp)
+}
+
+func contextWithUid(ctx context.Context, c *app.RequestContext) context.Context {
+	obj, _ := c.Get("uid")
+	uid, _ := obj.(uint)
+	return context.WithValue(ctx, "uid", uid)
 }

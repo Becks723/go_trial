@@ -64,23 +64,16 @@ func (serv *UserService) Login(ctx context.Context, req *user.LoginReq) (data *c
 
 	// generate access, refresh tokens
 	ev := env.Instance()
-	atoken, err := util.GenerateAccessToken(u, ev.AccessToken_Secret, serv.hoursOf(ev.AccessToken_ExpiryHours))
+	atoken, err := util.GenerateAccessToken(u, ev.AccessToken_Secret, util.HoursOf(ev.AccessToken_ExpiryHours))
 	if err != nil {
 		return
 	}
-	rtoken, err := util.GenerateRefreshToken(u, ev.RefreshToken_Secret, serv.hoursOf(ev.RefreshToken_ExpiryHours))
+	rtoken, err := util.GenerateRefreshToken(u, ev.RefreshToken_Secret, util.HoursOf(ev.RefreshToken_ExpiryHours))
 	if err != nil {
 		return
 	}
 
-	data = &common.UserInfo{
-		Id:        strconv.FormatUint(uint64(u.Id), 10),
-		CreatedAt: u.CreatedAt.String(),
-		UpdatedAt: u.UpdatedAt.String(),
-		DeletedAt: serv.timePtrToString(u.DeletedAt),
-		Username:  u.Username,
-		AvatarUrl: u.AvatarUrl,
-	}
+	data = domain2Dto(u)
 	auth = &common.AuthenticationInfo{
 		AccessToken:  atoken,
 		RefreshToken: rtoken,
@@ -89,11 +82,36 @@ func (serv *UserService) Login(ctx context.Context, req *user.LoginReq) (data *c
 	return
 }
 
-func (serv *UserService) hoursOf(n int) time.Duration {
-	return time.Hour * time.Duration(n)
+func (serv *UserService) GetInfo(ctx context.Context, query *user.InfoQuery) (data *common.UserInfo, err error) {
+	// convert string id to uint
+	uid, err := strconv.ParseUint(query.UserId, 10, 32)
+	if err != nil {
+		err = errors.New("id格式错误") // TODO: i18n
+	}
+
+	// find user in db
+	u, err := serv.repo.GetById(uint(uid))
+	if err != nil {
+		return
+	}
+
+	data = domain2Dto(u)
+	err = nil
+	return
 }
 
-func (serv *UserService) timePtrToString(t *time.Time) string {
+func domain2Dto(u *domain.User) *common.UserInfo {
+	return &common.UserInfo{
+		Id:        strconv.FormatUint(uint64(u.Id), 10),
+		CreatedAt: u.CreatedAt.String(),
+		UpdatedAt: u.UpdatedAt.String(),
+		DeletedAt: timePtrToString(u.DeletedAt),
+		Username:  u.Username,
+		AvatarUrl: u.AvatarUrl,
+	}
+}
+
+func timePtrToString(t *time.Time) string {
 	if t != nil {
 		return t.String()
 	}

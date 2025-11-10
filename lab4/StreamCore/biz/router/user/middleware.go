@@ -3,6 +3,8 @@
 package user
 
 import (
+	"StreamCore/biz/middleware"
+
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
@@ -17,8 +19,7 @@ func _userMw() []app.HandlerFunc {
 }
 
 func _getinfoMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{middleware.JWTAuthFunc()}
 }
 
 func _loginMw() []app.HandlerFunc {
@@ -37,6 +38,5 @@ func _avatarMw() []app.HandlerFunc {
 }
 
 func _uploadavatarMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{middleware.JWTAuthFunc()}
 }
