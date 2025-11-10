@@ -4,6 +4,9 @@ package user
 
 import (
 	user "StreamCore/biz/handler/user"
+	"StreamCore/biz/repo"
+	"StreamCore/biz/service"
+
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
@@ -15,16 +18,17 @@ import (
 
 // Register register routes based on the IDL 'api.${HTTP Method}' annotation.
 func Register(r *server.Hertz) {
+	uc := user.NewUserController(service.NewUserService(repo.NewUserRepo()))
 
 	root := r.Group("/", rootMw()...)
 	{
 		_user := root.Group("/user", _userMw()...)
-		_user.GET("/info", append(_getinfoMw(), user.GetInfo)...)
-		_user.POST("/login", append(_loginMw(), user.Login)...)
-		_user.POST("/register", append(_registerMw(), user.Register)...)
+		_user.GET("/info", append(_getinfoMw(), uc.GetInfo)...)
+		_user.POST("/login", append(_loginMw(), uc.Login)...)
+		_user.POST("/register", append(_registerMw(), uc.Register)...)
 		{
 			_avatar := _user.Group("/avatar", _avatarMw()...)
-			_avatar.PUT("/upload", append(_uploadavatarMw(), user.UploadAvatar)...)
+			_avatar.PUT("/upload", append(_uploadavatarMw(), uc.UploadAvatar)...)
 		}
 	}
 }
