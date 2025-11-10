@@ -8,15 +8,6 @@ option go_package = "StreamCore/user";
 import "api.proto";
 import "common.proto";
 
-message UserInfo {
-  string created_at = 1[(api.body)="created_at"];
-  string updated_at = 2[(api.body)="updated_at"];
-  string deleted_at = 3[(api.body)="deleted_at"];
-  string id = 4[(api.body)="id"];
-  string username = 5[(api.body)="username"];
-  string avatar_url = 6[(api.body)="avatar_url"];
-}
-
 message RegisterReq {
   string username = 1[(api.form)="username"];
   string password = 2[(api.form)="password"];
@@ -34,7 +25,7 @@ message LoginReq {
 
 message LoginResp {
   common.RespStatus base = 1;
-  UserInfo data = 2;
+  common.UserInfo data = 2;
   common.AuthenticationInfo auth = 3;
 }
 
@@ -44,7 +35,7 @@ message InfoQuery {
 
 message InfoResp {
   common.RespStatus base = 1;
-  UserInfo data = 2;
+  common.UserInfo data = 2;
 }
 
 message AvatarReq {
@@ -53,7 +44,7 @@ message AvatarReq {
 
 message AvatarResp {
   common.RespStatus base = 1;
-  UserInfo data = 2;
+  common.UserInfo data = 2;
 }
 
 service UserService {

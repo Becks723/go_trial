@@ -49,7 +49,7 @@ func (serv *UserService) Register(ctx context.Context, req *user.RegisterReq) (e
 	return nil
 }
 
-func (serv *UserService) Login(ctx context.Context, req *user.LoginReq) (data *user.UserInfo, auth *common.AuthenticationInfo, err error) {
+func (serv *UserService) Login(ctx context.Context, req *user.LoginReq) (data *common.UserInfo, auth *common.AuthenticationInfo, err error) {
 	// find user in db
 	u, err := serv.repo.GetByUsername(req.Username)
 	if err != nil {
@@ -73,7 +73,7 @@ func (serv *UserService) Login(ctx context.Context, req *user.LoginReq) (data *u
 		return
 	}
 
-	data = &user.UserInfo{
+	data = &common.UserInfo{
 		Id:        strconv.FormatUint(uint64(u.Id), 10),
 		CreatedAt: u.CreatedAt.String(),
 		UpdatedAt: u.UpdatedAt.String(),
