@@ -12,26 +12,16 @@ import (
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 
-type UserController struct {
-	serv *service.UserService
-}
-
-func NewUserController(serv *service.UserService) *UserController {
-	return &UserController{
-		serv: serv,
-	}
-}
-
 // Register .
 // @router /user/register [POST]
-func (uc *UserController) Register(ctx context.Context, c *app.RequestContext) {
+func Register(ctx context.Context, c *app.RequestContext) {
 	var req user.RegisterReq
 	if err := c.BindAndValidate(&req); err != nil {
 		c.JSON(consts.StatusBadRequest, ctl.ResponseError(err, consts.StatusBadRequest))
 		return
 	}
 
-	if err := uc.serv.Register(ctx, &req); err != nil {
+	if err := service.UserSvc().Register(ctx, &req); err != nil {
 		c.JSON(consts.StatusInternalServerError, ctl.ResponseError(err))
 		return
 	}
@@ -44,14 +34,14 @@ func (uc *UserController) Register(ctx context.Context, c *app.RequestContext) {
 
 // Login .
 // @router /user/login [POST]
-func (uc *UserController) Login(ctx context.Context, c *app.RequestContext) {
+func Login(ctx context.Context, c *app.RequestContext) {
 	var req user.LoginReq
 	if err := c.BindAndValidate(&req); err != nil {
 		c.JSON(consts.StatusBadRequest, ctl.ResponseError(err, consts.StatusBadRequest))
 		return
 	}
 
-	data, auth, err := uc.serv.Login(ctx, &req)
+	data, auth, err := service.UserSvc().Login(ctx, &req)
 	if err != nil {
 		c.JSON(consts.StatusInternalServerError, ctl.ResponseError(err))
 		return
@@ -67,7 +57,7 @@ func (uc *UserController) Login(ctx context.Context, c *app.RequestContext) {
 
 // GetInfo .
 // @router /user/info [GET]
-func (uc *UserController) GetInfo(ctx context.Context, c *app.RequestContext) {
+func GetInfo(ctx context.Context, c *app.RequestContext) {
 	var err error
 	var req user.InfoQuery
 	if err = c.BindAndValidate(&req); err != nil {
@@ -75,7 +65,7 @@ func (uc *UserController) GetInfo(ctx context.Context, c *app.RequestContext) {
 		return
 	}
 
-	data, err := uc.serv.GetInfo(ctx, &req)
+	data, err := service.UserSvc().GetInfo(ctx, &req)
 	if err != nil {
 		c.JSON(consts.StatusInternalServerError, ctl.ResponseError(err))
 		return
@@ -90,14 +80,14 @@ func (uc *UserController) GetInfo(ctx context.Context, c *app.RequestContext) {
 
 // UploadAvatar .
 // @router /user/avatar/upload [PUT]
-func (uc *UserController) UploadAvatar(ctx context.Context, c *app.RequestContext) {
+func UploadAvatar(ctx context.Context, c *app.RequestContext) {
 	file, err := c.FormFile("data")
 	if err != nil {
 		c.JSON(consts.StatusBadRequest, ctl.ResponseError(err, consts.StatusBadRequest))
 		return
 	}
 
-	data, err := uc.serv.UploadAvatar(contextWithUid(ctx, c), file)
+	data, err := service.UserSvc().UploadAvatar(contextWithUid(ctx, c), file)
 	if err != nil {
 		c.JSON(consts.StatusInternalServerError, ctl.ResponseError(err))
 		return
