@@ -12,6 +12,7 @@ type UserRepo interface {
 	Create(u *domain.User) error
 	GetByUsername(username string) (u *domain.User, err error)
 	GetById(id uint) (u *domain.User, err error)
+	UpdateAvatar(id uint, url string) (u *domain.User, err error)
 }
 
 type baseRepository struct {
@@ -64,6 +65,27 @@ func (repo *UserRepository) GetById(id uint) (u *domain.User, err error) {
 	}
 	u = po2Domain(&po)
 	return u, nil
+}
+
+func (repo *UserRepository) UpdateAvatar(id uint, url string) (u *domain.User, err error) {
+	po := model.UserModel{}
+	err = repo.db.
+		Where("id = ?", id).
+		First(&po).
+		Error
+	if err != nil {
+		return
+	}
+
+	po.AvatarUrl = url
+
+	err = repo.db.Save(&po).Error
+	if err != nil {
+		return
+	}
+
+	u = po2Domain(&po)
+	return
 }
 
 func po2Domain(po *model.UserModel) *domain.User {

@@ -9,7 +9,14 @@ import (
 	"StreamCore/pkg/util"
 	"context"
 	"errors"
+	"fmt"
+	"io"
+	"mime/multipart"
+	"net/http"
+	"os"
+	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -100,6 +107,38 @@ func (serv *UserService) GetInfo(ctx context.Context, query *user.InfoQuery) (da
 	return
 }
 
+func (serv *UserService) UploadAvatar(ctx context.Context, fileHeader *multipart.FileHeader) (data *common.UserInfo, err error) {
+	var (
+		localPrefix  = "./uploads"
+		accessPrefix = "/static"
+	)
+	curUid := retrieveUid(ctx)
+
+	if !isValidImage(fileHeader) {
+		err = errors.New("Bad image format.")
+		return
+	}
+
+	// save image locally
+	dst := fmt.Sprintf(localPrefix+accessPrefix+"/avatars/%d_%d.png", // TODO: match extensions
+		curUid, time.Now().Unix())
+	err = saveImage(fileHeader, dst)
+	if err != nil {
+		return
+	}
+
+	// update db
+	newUrl, _ := strings.CutPrefix(dst, localPrefix)
+	u, err := serv.repo.UpdateAvatar(curUid, newUrl)
+	if err != nil {
+		return
+	}
+
+	// make resp
+	data = domain2Dto(u)
+	return
+}
+
 func domain2Dto(u *domain.User) *common.UserInfo {
 	return &common.UserInfo{
 		Id:        strconv.FormatUint(uint64(u.Id), 10),
@@ -116,4 +155,50 @@ func timePtrToString(t *time.Time) string {
 		return t.String()
 	}
 	return ""
+}
+
+func retrieveUid(ctx context.Context) uint {
+	obj := ctx.Value("uid")
+	uid, _ := obj.(uint)
+	return uid
+}
+
+func isValidImage(fileHeader *multipart.FileHeader) bool {
+	file, err := fileHeader.Open()
+	if err != nil {
+		return false
+	}
+	defer file.Close()
+
+	buf := make([]byte, 512)
+	_, err = file.Read(buf)
+	if err != nil {
+		return false
+	}
+	mime := http.DetectContentType(buf)
+	if !strings.HasPrefix(mime, "image/") {
+		return false
+	}
+	return true
+}
+
+func saveImage(fileHeader *multipart.FileHeader, dst string) error {
+	src, err := fileHeader.Open()
+	if err != nil {
+		return err
+	}
+	defer src.Close()
+
+	err = os.MkdirAll(filepath.Dir(dst), 0750)
+	if err != nil {
+		return err
+	}
+	out, err := os.Create(dst)
+	if err != nil {
+		return err
+	}
+	defer out.Close()
+
+	_, err = io.Copy(out, src)
+	return err
 }

@@ -3,11 +3,10 @@
 package user
 
 import (
+	user "StreamCore/biz/model/user"
 	"StreamCore/biz/service"
 	"StreamCore/pkg/ctl"
 	"context"
-
-	user "StreamCore/biz/model/user"
 
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
@@ -92,16 +91,22 @@ func (uc *UserController) GetInfo(ctx context.Context, c *app.RequestContext) {
 // UploadAvatar .
 // @router /user/avatar/upload [PUT]
 func (uc *UserController) UploadAvatar(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req user.AvatarReq
-	err = c.BindAndValidate(&req)
+	file, err := c.FormFile("data")
 	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+		c.JSON(consts.StatusBadRequest, ctl.ResponseError(err, consts.StatusBadRequest))
 		return
 	}
 
-	resp := new(user.AvatarResp)
+	data, err := uc.serv.UploadAvatar(contextWithUid(ctx, c), file)
+	if err != nil {
+		c.JSON(consts.StatusInternalServerError, ctl.ResponseError(err))
+		return
+	}
 
+	resp := &user.AvatarResp{
+		Base: ctl.ResponseSuccess(),
+		Data: data,
+	}
 	c.JSON(consts.StatusOK, resp)
 }
 

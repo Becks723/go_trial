@@ -12,6 +12,7 @@ func main() {
 	repo.Init()
 
 	h := server.Default()
+	h.Static("/static", "./uploads")
 
 	register(h)
 	h.Spin()
