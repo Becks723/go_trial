@@ -7,9 +7,17 @@ import (
 	"StreamCore/biz/repo"
 	"StreamCore/pkg/util"
 	"context"
+	"errors"
+	"fmt"
+	"math/rand"
 	"mime/multipart"
+	"os/exec"
+	"path/filepath"
 	"strconv"
+	"strings"
 	"time"
+
+	"github.com/google/uuid"
 )
 
 type StreamService struct {
@@ -47,8 +55,68 @@ func (svc *StreamService) GetVideoFeed(ctx context.Context, query *stream.FeedQu
 	return
 }
 
-func (svc *StreamService) Publish(ctx context.Context, req *stream.PublishReq, fileHeader *multipart.FileHeader) (err error) {
-	return
+func (svc *StreamService) Publish(ctx context.Context, req *stream.PublishReq, videoHeader, coverHeader *multipart.FileHeader) (err error) {
+	var (
+		localPrefix  = "./uploads"
+		accessPrefix = "/static"
+	)
+	curUid, err := util.RetrieveUserId(ctx)
+	if err != nil {
+		err = errors.New("Error retrieving user info.")
+		return
+	}
+
+	if !isValidVideo(videoHeader) {
+		err = errors.New("Bad stream format.")
+		return
+	}
+
+	// save video locally
+	dir := fmt.Sprintf(localPrefix + accessPrefix + "/videos/")
+	name := uuid.New().String()
+	vdst := dir + name + ".mp4"
+	if err = saveFile(videoHeader, vdst); err != nil {
+		return
+	}
+
+	// get cover
+	var cdst string
+	if coverHeader != nil {
+		if !isValidImage(coverHeader) {
+			err = errors.New("cover: Bad image format.")
+			return
+		}
+
+		cdst = dir + name + ".mp4"
+		if err = saveFile(coverHeader, cdst); err != nil {
+			return
+		}
+	} else {
+		cdst, err = randCover(vdst, dir)
+		if err != nil {
+			err = fmt.Errorf("Error getting cover.")
+			return
+		}
+	}
+
+	// update db
+	vurl, _ := strings.CutPrefix(vdst, localPrefix)
+	curl, _ := strings.CutPrefix(cdst, localPrefix)
+	now := time.Now()
+	v := domain.Video{
+		AuthorId:    curUid,
+		VideoUrl:    vurl,
+		CoverUrl:    curl,
+		Title:       req.Title,
+		Description: req.Description,
+		PublishedAt: now,
+		EditedAt:    now,
+	}
+	if err = svc.repo.Create(&v); err != nil {
+		return
+	}
+
+	return nil
 }
 
 func (svc *StreamService) List(ctx context.Context, query *stream.ListQuery) (data *stream.ListResp_Data, err error) {
@@ -78,7 +146,7 @@ func streamDomain2Dto(v *domain.Video) *common.VideoInfo {
 		UpdatedAt:    v.UpdatedAt.String(),
 		DeletedAt:    util.TimePtr2String(v.DeletedAt),
 		Id:           util.Uint2String(v.Id),
-		UserId:       util.Uint2String(v.Author.Id),
+		UserId:       util.Uint2String(v.AuthorId),
 		VideoUrl:     v.VideoUrl,
 		CoverUrl:     v.CoverUrl,
 		Title:        v.Title,
@@ -87,4 +155,47 @@ func streamDomain2Dto(v *domain.Video) *common.VideoInfo {
 		LikeCount:    int32(v.LikeCount),
 		CommentCount: int32(v.CommentCount),
 	}
+}
+
+func randCover(videoPath, coverDir string) (coverPath string, err error) {
+	rand.New(rand.NewSource(time.Now().Unix()))
+
+	// get video duration
+	cmd := exec.Command("ffprobe",
+		"-v", "error",
+		"-show_entries", "format=duration",
+		"-of", "default=noprint_wrappers=1:nokey=1",
+		videoPath)
+	output, err := cmd.Output()
+	if err != nil {
+		err = fmt.Errorf("Error retrieving video duration: %s", err.Error())
+		return
+	}
+
+	// random a timepoint between 20% - 80%
+	var duration float64
+	fmt.Sscanf(string(output), "%f", &duration)
+	if duration <= 0 {
+		err = errors.New("Error reading video duration.")
+		return
+	}
+	sec := duration * (0.2 + 0.6*rand.Float64())
+
+	// build cover path
+	ext := filepath.Ext(videoPath)
+	coverPath = coverDir +
+		filepath.Base(videoPath[:len(videoPath)-len(ext)]) + ".jpg"
+
+	// extract frame
+	cmd = exec.Command("ffmpeg",
+		"-ss", fmt.Sprintf("%.2f", sec),
+		"-i", videoPath,
+		"-frames:v", "1",
+		"-q:v", "2",
+		coverPath)
+	if err = cmd.Run(); err != nil {
+		err = fmt.Errorf("Error writing to cover: %s", err.Error())
+		return
+	}
+	return coverPath, nil
 }

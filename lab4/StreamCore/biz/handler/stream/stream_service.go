@@ -3,12 +3,12 @@
 package stream
 
 import (
+	stream "StreamCore/biz/model/stream"
 	"StreamCore/biz/service"
 	"StreamCore/pkg/ctl"
 	"StreamCore/pkg/util"
 	"context"
 
-	stream "StreamCore/biz/model/stream"
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
@@ -38,21 +38,31 @@ func Feed(ctx context.Context, c *app.RequestContext) {
 // Publish .
 // @router /video/publish [POST]
 func Publish(ctx context.Context, c *app.RequestContext) {
-	var req stream.FeedQuery
+	var req stream.PublishReq
 	if err := c.BindAndValidate(&req); err != nil {
 		c.JSON(consts.StatusBadRequest, ctl.ResponseError(err, consts.StatusBadRequest))
 		return
 	}
 
-	data, err := service.StreamSvc().GetVideoFeed(util.ContextWithUid(ctx, c), &req)
+	videoHeader, err := c.FormFile("data")
+	if err != nil {
+		c.JSON(consts.StatusBadRequest, ctl.ResponseError(err, consts.StatusBadRequest))
+		return
+	}
+
+	coverHeader, err := c.FormFile("cover_data") // optional
+	if err != nil {
+		coverHeader = nil
+	}
+
+	err = service.StreamSvc().Publish(util.ContextWithUid(ctx, c), &req, videoHeader, coverHeader)
 	if err != nil {
 		c.JSON(consts.StatusInternalServerError, ctl.ResponseError(err))
 		return
 	}
 
-	resp := &stream.FeedResp{
+	resp := &stream.PublishResp{
 		Base: ctl.ResponseSuccess(),
-		Data: data,
 	}
 	c.JSON(consts.StatusOK, resp)
 }

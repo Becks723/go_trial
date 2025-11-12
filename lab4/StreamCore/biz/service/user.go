@@ -10,11 +10,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"io"
 	"mime/multipart"
-	"net/http"
-	"os"
-	"path/filepath"
 	"strconv"
 	"strings"
 	"time"
@@ -122,7 +118,7 @@ func (serv *UserService) UploadAvatar(ctx context.Context, fileHeader *multipart
 	// save image locally
 	dst := fmt.Sprintf(localPrefix+accessPrefix+"/avatars/%d_%d.png", // TODO: match extensions
 		curUid, time.Now().Unix())
-	err = saveImage(fileHeader, dst)
+	err = saveFile(fileHeader, dst)
 	if err != nil {
 		return
 	}
@@ -154,44 +150,4 @@ func retrieveUid(ctx context.Context) uint {
 	obj := ctx.Value("uid")
 	uid, _ := obj.(uint)
 	return uid
-}
-
-func isValidImage(fileHeader *multipart.FileHeader) bool {
-	file, err := fileHeader.Open()
-	if err != nil {
-		return false
-	}
-	defer file.Close()
-
-	buf := make([]byte, 512)
-	_, err = file.Read(buf)
-	if err != nil {
-		return false
-	}
-	mime := http.DetectContentType(buf)
-	if !strings.HasPrefix(mime, "image/") {
-		return false
-	}
-	return true
-}
-
-func saveImage(fileHeader *multipart.FileHeader, dst string) error {
-	src, err := fileHeader.Open()
-	if err != nil {
-		return err
-	}
-	defer src.Close()
-
-	err = os.MkdirAll(filepath.Dir(dst), 0750)
-	if err != nil {
-		return err
-	}
-	out, err := os.Create(dst)
-	if err != nil {
-		return err
-	}
-	defer out.Close()
-
-	_, err = io.Copy(out, src)
-	return err
 }

@@ -8,6 +8,7 @@ type Video struct {
 	UpdatedAt    time.Time
 	DeletedAt    *time.Time
 	Author       *User
+	AuthorId     uint
 	VideoUrl     string
 	CoverUrl     string
 	Title        string

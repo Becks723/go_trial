@@ -3,6 +3,8 @@
 package stream
 
 import (
+	"StreamCore/biz/middleware"
+
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
@@ -22,21 +24,17 @@ func _feedMw() []app.HandlerFunc {
 }
 
 func _listMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{middleware.JWTAuthFunc()}
 }
 
 func _popularMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{middleware.JWTAuthFunc()}
 }
 
 func _publishMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{middleware.JWTAuthFunc()}
 }
 
 func _searchMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{middleware.JWTAuthFunc()}
 }
