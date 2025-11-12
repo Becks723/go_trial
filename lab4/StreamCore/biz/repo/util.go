@@ -1,6 +1,7 @@
 package repo
 
 import (
+	"math"
 	"time"
 
 	"gorm.io/gorm"
@@ -22,4 +23,12 @@ func ptrToDeletedAt(t *time.Time) gorm.DeletedAt {
 		da.Valid = false
 	}
 	return da
+}
+
+func isPageParamsValid(total int64, limit, page int) bool {
+	if limit <= 0 {
+		return false
+	}
+	pc := int(math.Ceil(float64(total) / float64(limit))) // page count
+	return 0 <= page && page < pc
 }

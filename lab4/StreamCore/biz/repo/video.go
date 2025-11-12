@@ -11,6 +11,7 @@ import (
 type VideoRepo interface {
 	Create(v *domain.Video) error
 	Fetch(after *time.Time) ([]*domain.Video, error)
+	FetchByUid(uid uint, limit, page int) ([]*domain.Video, int, error)
 }
 
 type VideoRepository struct {
@@ -39,6 +40,32 @@ func (repo *VideoRepository) Fetch(after *time.Time) (videos []*domain.Video, er
 		err = repo.db.Where("published_at > ?", after).Find(&records).Error
 	}
 	if err != nil {
+		return
+	}
+
+	for _, po := range records {
+		videos = append(videos, vidPo2Domain(po))
+	}
+	return
+}
+
+func (repo *VideoRepository) FetchByUid(uid uint, limit, page int) (videos []*domain.Video, total int, err error) {
+	var records []*model.VideoModel
+	var cnt int64
+	tx := repo.db.
+		Model(&model.VideoModel{}).
+		Where("author_id = ?", uid).
+		Count(&cnt)
+	if err = tx.Error; err != nil {
+		return
+	}
+	total = int(cnt)
+
+	if isPageParamsValid(cnt, limit, page) {
+		tx = tx.Limit(limit).
+			Offset(limit * page)
+	}
+	if err = tx.Find(&records).Error; err != nil {
 		return
 	}
 

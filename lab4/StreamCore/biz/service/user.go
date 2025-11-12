@@ -11,7 +11,6 @@ import (
 	"errors"
 	"fmt"
 	"mime/multipart"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -87,9 +86,10 @@ func (serv *UserService) Login(ctx context.Context, req *user.LoginReq) (data *c
 
 func (serv *UserService) GetInfo(ctx context.Context, query *user.InfoQuery) (data *common.UserInfo, err error) {
 	// convert string id to uint
-	uid, err := strconv.ParseUint(query.UserId, 10, 32)
+	uid, err := parseUint(query.UserId)
 	if err != nil {
-		err = errors.New("id格式错误") // TODO: i18n
+		err = errors.New("Bad uid format.")
+		return
 	}
 
 	// find user in db

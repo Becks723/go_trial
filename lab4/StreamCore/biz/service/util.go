@@ -6,8 +6,17 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"strconv"
 	"strings"
 )
+
+func parseUint(s string) (uint, error) {
+	uid, err := strconv.ParseUint(s, 10, 32)
+	if err != nil {
+		return 0, err
+	}
+	return uint(uid), nil
+}
 
 func isValidImage(fileHeader *multipart.FileHeader) bool {
 	file, err := fileHeader.Open()

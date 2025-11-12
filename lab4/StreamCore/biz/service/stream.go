@@ -120,6 +120,30 @@ func (svc *StreamService) Publish(ctx context.Context, req *stream.PublishReq, v
 }
 
 func (svc *StreamService) List(ctx context.Context, query *stream.ListQuery) (data *stream.ListResp_Data, err error) {
+	uid, err := parseUint(query.UserId)
+	if err != nil {
+		err = errors.New("Bad uid format.")
+		return
+	}
+
+	userRepo := repo.NewUserRepo()
+	_, err = userRepo.GetById(uid)
+	if err != nil {
+		return
+	}
+
+	limit := int(query.PageSize)
+	page := int(query.PageNum)
+	videos, total, err := svc.repo.FetchByUid(uid, limit, page)
+	if err != nil {
+		return
+	}
+
+	data = new(stream.ListResp_Data)
+	data.Total = int32(total)
+	for _, v := range videos {
+		data.Items = append(data.Items, streamDomain2Dto(v))
+	}
 	return
 }
 
