@@ -3,6 +3,9 @@
 package stream
 
 import (
+	"StreamCore/biz/service"
+	"StreamCore/pkg/ctl"
+	"StreamCore/pkg/util"
 	"context"
 
 	stream "StreamCore/biz/model/stream"
@@ -13,79 +16,109 @@ import (
 // Feed .
 // @router /video/feed [GET]
 func Feed(ctx context.Context, c *app.RequestContext) {
-	var err error
 	var req stream.FeedQuery
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+	if err := c.BindAndValidate(&req); err != nil {
+		c.JSON(consts.StatusBadRequest, ctl.ResponseError(err, consts.StatusBadRequest))
 		return
 	}
 
-	resp := new(stream.FeedResp)
+	data, err := service.StreamSvc().GetVideoFeed(ctx, &req)
+	if err != nil {
+		c.JSON(consts.StatusInternalServerError, ctl.ResponseError(err))
+		return
+	}
 
+	resp := &stream.FeedResp{
+		Base: ctl.ResponseSuccess(),
+		Data: data,
+	}
 	c.JSON(consts.StatusOK, resp)
 }
 
 // Publish .
 // @router /video/publish [POST]
 func Publish(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req stream.PublishReq
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+	var req stream.FeedQuery
+	if err := c.BindAndValidate(&req); err != nil {
+		c.JSON(consts.StatusBadRequest, ctl.ResponseError(err, consts.StatusBadRequest))
 		return
 	}
 
-	resp := new(stream.PublishResp)
+	data, err := service.StreamSvc().GetVideoFeed(util.ContextWithUid(ctx, c), &req)
+	if err != nil {
+		c.JSON(consts.StatusInternalServerError, ctl.ResponseError(err))
+		return
+	}
 
+	resp := &stream.FeedResp{
+		Base: ctl.ResponseSuccess(),
+		Data: data,
+	}
 	c.JSON(consts.StatusOK, resp)
 }
 
 // List .
 // @router /video/list [GET]
 func List(ctx context.Context, c *app.RequestContext) {
-	var err error
 	var req stream.ListQuery
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+	if err := c.BindAndValidate(&req); err != nil {
+		c.JSON(consts.StatusBadRequest, ctl.ResponseError(err, consts.StatusBadRequest))
 		return
 	}
 
-	resp := new(stream.ListResp)
+	data, err := service.StreamSvc().List(util.ContextWithUid(ctx, c), &req)
+	if err != nil {
+		c.JSON(consts.StatusInternalServerError, ctl.ResponseError(err))
+		return
+	}
 
+	resp := &stream.ListResp{
+		Base: ctl.ResponseSuccess(),
+		Data: data,
+	}
 	c.JSON(consts.StatusOK, resp)
 }
 
 // Popular .
 // @router /video/popular [GET]
 func Popular(ctx context.Context, c *app.RequestContext) {
-	var err error
 	var req stream.PopularQuery
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+	if err := c.BindAndValidate(&req); err != nil {
+		c.JSON(consts.StatusBadRequest, ctl.ResponseError(err, consts.StatusBadRequest))
 		return
 	}
 
-	resp := new(stream.PopularResp)
+	data, err := service.StreamSvc().Popular(util.ContextWithUid(ctx, c), &req)
+	if err != nil {
+		c.JSON(consts.StatusInternalServerError, ctl.ResponseError(err))
+		return
+	}
 
+	resp := &stream.PopularResp{
+		Base: ctl.ResponseSuccess(),
+		Data: data,
+	}
 	c.JSON(consts.StatusOK, resp)
 }
 
 // Search .
 // @router /video/search [POST]
 func Search(ctx context.Context, c *app.RequestContext) {
-	var err error
 	var req stream.SearchReq
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+	if err := c.BindAndValidate(&req); err != nil {
+		c.JSON(consts.StatusBadRequest, ctl.ResponseError(err, consts.StatusBadRequest))
 		return
 	}
 
-	resp := new(stream.SearchResp)
+	data, err := service.StreamSvc().Search(util.ContextWithUid(ctx, c), &req)
+	if err != nil {
+		c.JSON(consts.StatusInternalServerError, ctl.ResponseError(err))
+		return
+	}
 
+	resp := &stream.SearchResp{
+		Base: ctl.ResponseSuccess(),
+		Data: data,
+	}
 	c.JSON(consts.StatusOK, resp)
 }

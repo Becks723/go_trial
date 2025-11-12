@@ -3,7 +3,6 @@ package repo
 import (
 	"StreamCore/biz/domain"
 	"StreamCore/biz/repo/model"
-	"time"
 
 	"gorm.io/gorm"
 )
@@ -30,11 +29,7 @@ func NewUserRepo() *UserRepository {
 }
 
 func (repo *UserRepository) Create(u *domain.User) error {
-	po := model.UserModel{
-		Username:  u.Username,
-		Password:  u.Password,
-		AvatarUrl: u.AvatarUrl,
-	}
+	po := userDomain2Po(u)
 	return repo.db.
 		Model(&model.UserModel{}).
 		Create(&po).
@@ -50,7 +45,7 @@ func (repo *UserRepository) GetByUsername(username string) (u *domain.User, err 
 	if err != nil {
 		return nil, err
 	}
-	u = po2Domain(&po)
+	u = userPo2Domain(&po)
 	return u, nil
 }
 
@@ -63,7 +58,7 @@ func (repo *UserRepository) GetById(id uint) (u *domain.User, err error) {
 	if err != nil {
 		return nil, err
 	}
-	u = po2Domain(&po)
+	u = userPo2Domain(&po)
 	return u, nil
 }
 
@@ -84,11 +79,25 @@ func (repo *UserRepository) UpdateAvatar(id uint, url string) (u *domain.User, e
 		return
 	}
 
-	u = po2Domain(&po)
+	u = userPo2Domain(&po)
 	return
 }
 
-func po2Domain(po *model.UserModel) *domain.User {
+func userDomain2Po(u *domain.User) *model.UserModel {
+	return &model.UserModel{
+		Model: gorm.Model{
+			ID:        u.Id,
+			CreatedAt: u.CreatedAt,
+			UpdatedAt: u.UpdatedAt,
+			DeletedAt: ptrToDeletedAt(u.DeletedAt),
+		},
+		Username:  u.Username,
+		Password:  u.Password,
+		AvatarUrl: u.AvatarUrl,
+	}
+}
+
+func userPo2Domain(po *model.UserModel) *domain.User {
 	return &domain.User{
 		Id:        po.ID,
 		CreatedAt: po.CreatedAt,
@@ -98,11 +107,4 @@ func po2Domain(po *model.UserModel) *domain.User {
 		Password:  po.Password,
 		AvatarUrl: po.AvatarUrl,
 	}
-}
-
-func deletedAtToPtr(t gorm.DeletedAt) *time.Time {
-	if t.Valid {
-		return &t.Time
-	}
-	return nil
 }

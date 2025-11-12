@@ -141,20 +141,13 @@ func (serv *UserService) UploadAvatar(ctx context.Context, fileHeader *multipart
 
 func domain2Dto(u *domain.User) *common.UserInfo {
 	return &common.UserInfo{
-		Id:        strconv.FormatUint(uint64(u.Id), 10),
+		Id:        util.Uint2String(u.Id),
 		CreatedAt: u.CreatedAt.String(),
 		UpdatedAt: u.UpdatedAt.String(),
-		DeletedAt: timePtrToString(u.DeletedAt),
+		DeletedAt: util.TimePtr2String(u.DeletedAt),
 		Username:  u.Username,
 		AvatarUrl: u.AvatarUrl,
 	}
-}
-
-func timePtrToString(t *time.Time) string {
-	if t != nil {
-		return t.String()
-	}
-	return ""
 }
 
 func retrieveUid(ctx context.Context) uint {

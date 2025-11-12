@@ -6,9 +6,11 @@ import (
 )
 
 var (
-	userSvc *UserService
+	userSvc   *UserService
+	streamSvc *StreamService
 
-	userOnce sync.Once
+	userOnce   sync.Once
+	streamOnce sync.Once
 )
 
 // UserService singleton
@@ -17,4 +19,12 @@ func UserSvc() *UserService {
 		userSvc = NewUserService(repo.NewUserRepo())
 	})
 	return userSvc
+}
+
+// StreamService singleton
+func StreamSvc() *StreamService {
+	streamOnce.Do(func() {
+		streamSvc = NewStreamService(repo.NewVideoRepo())
+	})
+	return streamSvc
 }
