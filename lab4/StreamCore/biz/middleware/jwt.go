@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"StreamCore/biz/domain"
 	"StreamCore/biz/repo"
 	"StreamCore/pkg/ctl"
 	"StreamCore/pkg/env"
@@ -35,7 +36,7 @@ func JWTAuthFunc() app.HandlerFunc {
 		if err != nil ||
 			time.Now().Unix() > claims.ExpiresAt.Unix() {
 			// refresh access
-			newAccess, newRefresh, err := util.RefreshToken(refresh, env.RefreshToken_Secret, repo.NewUserRepo())
+			newAccess, newRefresh, err := refreshToken(refresh, env.RefreshToken_Secret, repo.NewUserRepo())
 			if err != nil {
 				c.JSON(consts.StatusUnauthorized, ctl.ResponseError(err, consts.StatusUnauthorized))
 				c.Abort()
@@ -49,4 +50,36 @@ func JWTAuthFunc() app.HandlerFunc {
 		c.Set("uid", claims.UserId)
 		c.Next(ctx)
 	}
+}
+
+func refreshToken(refresh string, secret string, ur repo.UserRepo) (newAccess, newRefresh string, err error) {
+	// resolve refresh token
+	claims, err := util.ParseToken(refresh, secret)
+	if err != nil {
+		return "", "", errors.New("Error resolving refresh token.")
+	}
+
+	// refresh expired
+	if time.Now().Unix() > claims.ExpiresAt.Unix() {
+		return "", "", errors.New("Refresh token expired.")
+	}
+
+	// check if user still exists
+	var u *domain.User
+	if u, err = ur.GetById(claims.UserId); err != nil {
+		return "", "", errors.New("Refresh token: user not found.")
+	}
+
+	env := env.Instance()
+	// new access token
+	newAccess, err = util.GenerateAccessToken(u, env.AccessToken_Secret, util.HoursOf(env.AccessToken_ExpiryHours))
+	if err != nil {
+		return "", "", err
+	}
+	// new refresh token (optional)
+	newRefresh, err = util.GenerateRefreshToken(u, env.RefreshToken_Secret, util.HoursOf(env.RefreshToken_ExpiryHours))
+	if err != nil {
+		return "", "", err
+	}
+	return
 }

@@ -148,6 +148,15 @@ func (svc *StreamService) List(ctx context.Context, query *stream.ListQuery) (da
 }
 
 func (svc *StreamService) Popular(ctx context.Context, query *stream.PopularQuery) (data *stream.PopularResp_Data, err error) {
+	videos, err := svc.repo.FetchByVisits(ctx, int(query.PageSize), int(query.PageNum), false)
+	if err != nil {
+		return
+	}
+
+	data = new(stream.PopularResp_Data)
+	for _, v := range videos {
+		data.Items = append(data.Items, streamDomain2Dto(v))
+	}
 	return
 }
 

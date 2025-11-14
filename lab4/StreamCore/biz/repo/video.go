@@ -3,8 +3,13 @@ package repo
 import (
 	"StreamCore/biz/domain"
 	"StreamCore/biz/repo/model"
+	redisClient "StreamCore/biz/repo/redis"
+	"StreamCore/pkg/util"
+	"context"
+	"strconv"
 	"time"
 
+	"github.com/redis/go-redis/v9"
 	"gorm.io/gorm"
 )
 
@@ -12,6 +17,8 @@ type VideoRepo interface {
 	Create(v *domain.Video) error
 	Fetch(after *time.Time) ([]*domain.Video, error)
 	FetchByUid(uid uint, limit, page int) ([]*domain.Video, int, error)
+	IncrVisit(ctx context.Context, vid uint) error
+	FetchByVisits(ctx context.Context, limit, page int, reverse bool) ([]*domain.Video, error)
 }
 
 type VideoRepository struct {
@@ -75,6 +82,54 @@ func (repo *VideoRepository) FetchByUid(uid uint, limit, page int) (videos []*do
 	return
 }
 
+func (repo *VideoRepository) GetById(vid uint) (v *domain.Video, err error) {
+	err = repo.db.
+		Model(&model.VideoModel{}).
+		Where("id = ?", vid).
+		First(&v).
+		Error
+	return
+}
+
+func (repo *VideoRepository) IncrVisit(ctx context.Context, vid uint) error {
+	member := strconv.FormatUint(uint64(vid), 10)
+	return redisClient.Rdb.ZIncrBy(ctx, "lb", 1, member).Err()
+}
+
+func (repo *VideoRepository) FetchByVisits(ctx context.Context, limit, page int, reverse bool) (videos []*domain.Video, err error) {
+	if err = repo.ensureVideoRank(ctx); err != nil {
+		return
+	}
+
+	res, err := redisClient.Rdb.ZRangeArgs(ctx, redis.ZRangeArgs{
+		Key:   redisClient.VideoRankKey,
+		Start: 0,
+		Stop:  -1,
+		Rev:   reverse,
+	}).Result()
+	if err != nil {
+		return
+	}
+
+	if isPageParamsValid(int64(len(res)), limit, page) {
+		res, _ = redisClient.Rdb.ZRangeArgs(ctx, redis.ZRangeArgs{
+			Key:   redisClient.VideoRankKey,
+			Start: limit * page,
+			Stop:  limit*(page+1) - 1,
+			Rev:   reverse,
+		}).Result()
+	}
+	for _, s := range res {
+		vid := util.String2Uint(s)
+		var v *domain.Video
+		if v, err = repo.GetById(vid); err != nil {
+			return
+		}
+		videos = append(videos, v)
+	}
+	return
+}
+
 func vidDomain2Po(v *domain.Video) *model.VideoModel {
 	return &model.VideoModel{
 		Model: gorm.Model{
@@ -113,4 +168,28 @@ func vidPo2Domain(po *model.VideoModel) *domain.Video {
 		PublishedAt:  po.PublishedAt,
 		EditedAt:     po.EditedAt,
 	}
+}
+
+// ensureVideoRank init redis videoRank from mysql
+func (repo *VideoRepository) ensureVideoRank(ctx context.Context) (err error) {
+	exists, _ := redisClient.Rdb.Exists(ctx, redisClient.VideoRankKey).Result()
+	if exists != 0 {
+		return
+	}
+
+	var records []*model.VideoModel
+	err = repo.db.Model(&model.VideoModel{}).Find(&records).Error
+	if err != nil {
+		return
+	}
+
+	var members []redis.Z
+	for _, po := range records {
+		members = append(members, redis.Z{
+			Member: po.ID,
+			Score:  float64(po.VisitCount),
+		})
+	}
+	err = redisClient.Rdb.ZAdd(ctx, redisClient.VideoRankKey, members...).Err()
+	return
 }
