@@ -8,9 +8,11 @@ import (
 var (
 	userSvc   *UserService
 	streamSvc *StreamService
+	lcSvc     *LikeCommentService
 
 	userOnce   sync.Once
 	streamOnce sync.Once
+	lcOnce     sync.Once
 )
 
 // UserService singleton
@@ -27,4 +29,12 @@ func StreamSvc() *StreamService {
 		streamSvc = NewStreamService(repo.NewVideoRepo())
 	})
 	return streamSvc
+}
+
+// LikeCommentService singleton
+func LcSvc() *LikeCommentService {
+	lcOnce.Do(func() {
+		lcSvc = NewLikeCommentService(repo.NewLikeCommentRepo())
+	})
+	return lcSvc
 }

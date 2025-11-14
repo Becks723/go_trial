@@ -1,0 +1,111 @@
+package repo
+
+import (
+	"StreamCore/biz/repo/model"
+	redisClient "StreamCore/biz/repo/redis"
+	"StreamCore/biz/repo/wb"
+	"context"
+	"fmt"
+	"sync"
+	"time"
+
+	"gorm.io/gorm/clause"
+)
+
+type LikeCommentRepo interface {
+	LikeVideo(ctx context.Context, uid, vid uint, status int) error
+	LikeComment(ctx context.Context, uid, cid uint, status int) error
+}
+
+type LcRepository struct {
+	baseRepository
+}
+
+func NewLikeCommentRepo() LikeCommentRepo {
+	return NewLcRepository()
+}
+
+func NewLcRepository() *LcRepository {
+	return &LcRepository{
+		baseRepository{db: db},
+	}
+}
+
+func (repo *LcRepository) LikeVideo(ctx context.Context, uid, vid uint, status int) (err error) {
+	// write fast to cache
+	if status == 1 {
+		err = redisClient.Rdb.SAdd(ctx, redisClient.VideoLikeKey(vid), uid).Err()
+	} else if status == 2 {
+		err = redisClient.Rdb.SRem(ctx, redisClient.VideoLikeKey(vid), uid).Err()
+	} else {
+		err = fmt.Errorf("Unknown status value: %d", status)
+	}
+	if err != nil {
+		return
+	}
+
+	// async write to db
+	wbc := likeWbc() // write-behind caching
+	err = wbc.Enqueue(ctx, &model.LikeModel{
+		Userid:     uid,
+		TargetId:   vid,
+		TargetType: 1,
+		Status:     status,
+		Time:       time.Now(),
+	})
+	return
+}
+
+func (repo *LcRepository) LikeComment(ctx context.Context, uid, cid uint, status int) (err error) {
+	if status == 1 {
+		err = redisClient.Rdb.SAdd(ctx, redisClient.CommentLikeKey(cid), uid).Err()
+	} else if status == 2 {
+		err = redisClient.Rdb.SRem(ctx, redisClient.CommentLikeKey(cid), uid).Err()
+	} else {
+		err = fmt.Errorf("Unknown status value: %d", status)
+	}
+	return
+}
+
+func (repo *LcRepository) BatchUpdateLikes(ctx context.Context, batch []*model.LikeModel) error { // batch should not be slice of interface, or gorm won't recognize it
+	return repo.db.Model(&model.LikeModel{}).Clauses(clause.OnConflict{
+		Columns:   []clause.Column{{Name: "id"}},
+		UpdateAll: true,
+	}).Create(&batch).
+		Error
+}
+
+var lOnce, cOnce sync.Once
+var lwbc, cwbc *wb.Strategy
+
+func likeWbc() *wb.Strategy {
+	lOnce.Do(func() {
+		lwbc = wb.NewStrategy(&wb.Config{
+			Repo:      &rbRepoCoordinator{},
+			QueueSize: 50,
+			BatchSize: 25,
+			Interval:  10 * time.Second,
+		})
+	})
+	return lwbc
+}
+
+type rbRepoCoordinator struct {
+}
+
+func (c *rbRepoCoordinator) BatchUpdate(ctx context.Context, batch []interface{}) error {
+	if len(batch) == 0 {
+		return nil
+	}
+	switch batch[0].(type) {
+	case *model.LikeModel:
+		likes := make([]*model.LikeModel, len(batch))
+		for i, v := range batch {
+			likes[i] = v.(*model.LikeModel)
+		}
+		return NewLcRepository().BatchUpdateLikes(ctx, likes)
+
+	default:
+		return nil
+	}
+}

@@ -3,6 +3,8 @@
 package comment
 
 import (
+	"StreamCore/biz/middleware"
+
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
@@ -17,16 +19,13 @@ func _commentMw() []app.HandlerFunc {
 }
 
 func _deleteMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{middleware.JWTAuthFunc()}
 }
 
 func _listMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{middleware.JWTAuthFunc()}
 }
 
 func _publishMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{middleware.JWTAuthFunc()}
 }

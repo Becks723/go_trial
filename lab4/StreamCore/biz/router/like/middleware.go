@@ -3,6 +3,8 @@
 package like
 
 import (
+	"StreamCore/biz/middleware"
+
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
@@ -17,11 +19,9 @@ func _likeMw() []app.HandlerFunc {
 }
 
 func _like0Mw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{middleware.JWTAuthFunc()}
 }
 
 func _listlikeMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{middleware.JWTAuthFunc()}
 }

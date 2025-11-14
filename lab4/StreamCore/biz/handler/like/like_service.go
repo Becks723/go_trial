@@ -3,9 +3,13 @@
 package like
 
 import (
+	"StreamCore/biz/service"
+	"StreamCore/pkg/ctl"
+	"StreamCore/pkg/util"
 	"context"
 
 	like "StreamCore/biz/model/like"
+
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
@@ -13,31 +17,42 @@ import (
 // Like .
 // @router /like/action [POST]
 func Like(ctx context.Context, c *app.RequestContext) {
-	var err error
 	var req like.ActionReq
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+	if err := c.BindAndValidate(&req); err != nil {
+		c.JSON(consts.StatusBadRequest, ctl.ResponseError(err, consts.StatusBadRequest))
 		return
 	}
 
-	resp := new(like.ActionResp)
+	err := service.LcSvc().LikeAction(util.ContextWithUid(ctx, c), &req)
+	if err != nil {
+		c.JSON(consts.StatusInternalServerError, ctl.ResponseError(err))
+		return
+	}
 
+	resp := &like.ActionResp{
+		Base: ctl.ResponseSuccess(),
+	}
 	c.JSON(consts.StatusOK, resp)
 }
 
 // ListLike .
 // @router /like/list [GET]
 func ListLike(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req like.ListQuery
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+	var query like.ListQuery
+	if err := c.BindAndValidate(&query); err != nil {
+		c.JSON(consts.StatusBadRequest, ctl.ResponseError(err, consts.StatusBadRequest))
 		return
 	}
 
-	resp := new(like.ListResp)
+	data, err := service.LcSvc().LikeList(util.ContextWithUid(ctx, c), &query)
+	if err != nil {
+		c.JSON(consts.StatusInternalServerError, ctl.ResponseError(err))
+		return
+	}
 
+	resp := &like.ListResp{
+		Base: ctl.ResponseSuccess(),
+		Data: data,
+	}
 	c.JSON(consts.StatusOK, resp)
 }
