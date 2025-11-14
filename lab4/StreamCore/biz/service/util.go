@@ -8,6 +8,7 @@ import (
 	"path/filepath"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func parseUint(s string) (uint, error) {
@@ -16,6 +17,15 @@ func parseUint(s string) (uint, error) {
 		return 0, err
 	}
 	return uint(uid), nil
+}
+
+func parseTIme(timestamp string) (t time.Time, err error) {
+	unix, err := strconv.ParseUint(timestamp, 10, 64)
+	if err != nil {
+		return
+	}
+	t = time.UnixMilli(int64(unix))
+	return
 }
 
 func isValidImage(fileHeader *multipart.FileHeader) bool {

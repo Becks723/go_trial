@@ -62,8 +62,8 @@ message SearchReq {
   string keywords = 1[(api.form)="keywords"];
   int32 page_num = 2[(api.form)="page_num"];
   int32 page_size = 3[(api.form)="page_size"];
-  int32 from_date = 4[(api.form)="from_date"];
-  int32 to_date = 5[(api.form)="to_date"];
+  string from_date = 4[(api.form)="from_date"];
+  string to_date = 5[(api.form)="to_date"];
   string username = 6[(api.form)="username"];
 }
 

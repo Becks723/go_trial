@@ -13,7 +13,6 @@ import (
 	"mime/multipart"
 	"os/exec"
 	"path/filepath"
-	"strconv"
 	"strings"
 	"time"
 
@@ -161,15 +160,32 @@ func (svc *StreamService) Popular(ctx context.Context, query *stream.PopularQuer
 }
 
 func (svc *StreamService) Search(ctx context.Context, query *stream.SearchReq) (data *stream.SearchResp_Data, err error) {
-	return
-}
+	// resolve from/toDate
+	var from, to *time.Time
+	var tmp time.Time
+	if query.FromDate != "" {
+		tmp, err = parseTIme(query.FromDate)
+		if err == nil {
+			from = &tmp
+		}
+	}
+	if query.ToDate != "" {
+		tmp, err = parseTIme(query.ToDate)
+		if err == nil {
+			to = &tmp
+		}
+	}
 
-func parseTIme(timestamp string) (t time.Time, err error) {
-	unix, err := strconv.ParseUint(timestamp, 10, 64)
+	// core search
+	videos, total, err := svc.repo.Search(query.Keywords, int(query.PageSize), int(query.PageNum), from, to, query.Username)
 	if err != nil {
 		return
 	}
-	t = time.UnixMilli(int64(unix))
+	data = new(stream.SearchResp_Data)
+	data.Total = int32(total)
+	for _, v := range videos {
+		data.Items = append(data.Items, streamDomain2Dto(v))
+	}
 	return
 }
 
