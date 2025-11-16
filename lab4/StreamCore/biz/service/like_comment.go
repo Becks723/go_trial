@@ -35,6 +35,16 @@ func (svc *LikeCommentService) LikeAction(ctx context.Context, req *like.ActionR
 }
 
 func (svc *LikeCommentService) LikeList(ctx context.Context, query *like.ListQuery) (data *like.ListResp_Data, err error) {
+	uid := util.String2Uint(query.UserId)
+	videos, err := svc.repo.ListVideoLikes(ctx, uid, int(query.PageSize), int(query.PageNum))
+	if err != nil {
+		return
+	}
+
+	data = new(like.ListResp_Data)
+	for _, v := range videos {
+		data.Items = append(data.Items, streamDomain2Dto(v))
+	}
 	return
 }
 

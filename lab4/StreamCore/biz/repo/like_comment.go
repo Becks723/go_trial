@@ -1,9 +1,11 @@
 package repo
 
 import (
+	"StreamCore/biz/domain"
 	"StreamCore/biz/repo/model"
 	redisClient "StreamCore/biz/repo/redis"
 	"StreamCore/biz/repo/wb"
+	"StreamCore/pkg/util"
 	"context"
 	"fmt"
 	"sync"
@@ -14,6 +16,7 @@ import (
 
 type LikeCommentRepo interface {
 	LikeVideo(ctx context.Context, uid, vid uint, status int) error
+	ListVideoLikes(ctx context.Context, uid uint, limit, page int) ([]*domain.Video, error)
 	LikeComment(ctx context.Context, uid, cid uint, status int) error
 }
 
@@ -35,8 +38,16 @@ func (repo *LcRepository) LikeVideo(ctx context.Context, uid, vid uint, status i
 	// write fast to cache
 	if status == 1 {
 		err = redisClient.Rdb.SAdd(ctx, redisClient.VideoLikeKey(vid), uid).Err()
+		if err != nil {
+			return
+		}
+		err = redisClient.Rdb.SAdd(ctx, redisClient.UserLikeVidKey(uid), vid).Err()
 	} else if status == 2 {
 		err = redisClient.Rdb.SRem(ctx, redisClient.VideoLikeKey(vid), uid).Err()
+		if err != nil {
+			return
+		}
+		err = redisClient.Rdb.SRem(ctx, redisClient.UserLikeVidKey(uid), vid).Err()
 	} else {
 		err = fmt.Errorf("Unknown status value: %d", status)
 	}
@@ -53,6 +64,29 @@ func (repo *LcRepository) LikeVideo(ctx context.Context, uid, vid uint, status i
 		Status:     status,
 		Time:       time.Now(),
 	})
+	return
+}
+
+func (repo *LcRepository) ListVideoLikes(ctx context.Context, uid uint, limit, page int) (videos []*domain.Video, err error) {
+	raw, err := redisClient.Rdb.SMembers(ctx, redisClient.UserLikeVidKey(uid)).Result()
+	if err != nil {
+		return
+	}
+
+	// cursor
+	if isPageParamsValid(int64(len(raw)), limit, page) {
+		raw = raw[limit*page : limit*(page+1)]
+	}
+
+	vidRepo := NewVideoRepo()
+	for _, s := range raw {
+		vid := util.String2Uint(s)
+		var v *domain.Video
+		if v, err = vidRepo.GetById(vid); err != nil {
+			return
+		}
+		videos = append(videos, v)
+	}
 	return
 }
 
