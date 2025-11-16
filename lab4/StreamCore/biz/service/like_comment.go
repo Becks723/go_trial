@@ -1,6 +1,7 @@
 package service
 
 import (
+	"StreamCore/biz/domain"
 	"StreamCore/biz/model/comment"
 	"StreamCore/biz/model/like"
 	"StreamCore/biz/repo"
@@ -49,6 +50,39 @@ func (svc *LikeCommentService) LikeList(ctx context.Context, query *like.ListQue
 }
 
 func (svc *LikeCommentService) CommentPublish(ctx context.Context, req *comment.PublishReq) (err error) {
+	curUid, err := util.RetrieveUserId(ctx)
+	if err != nil {
+		return
+	}
+
+	var vid, parentId *uint
+	var tmp uint
+	if req.VideoId != "" {
+		tmp = util.String2Uint(req.VideoId)
+		vid = &tmp
+		// assert video exists
+		if _, err = repo.NewVideoRepo().GetById(*vid); err != nil {
+			return
+		}
+	} else if req.CommentId != "" {
+		tmp = util.String2Uint(req.CommentId)
+		parentId = &tmp
+		// assert parent exists
+		if _, err = repo.NewLikeCommentRepo().GetCommentById(*parentId); err != nil {
+			return
+		}
+	}
+
+	// db create
+	c := &domain.Comment{
+		AuthorId: curUid,
+		VideoId:  vid,
+		ParentId: parentId,
+		Content:  req.Content,
+	}
+	if err = svc.repo.CreateComment(ctx, c); err != nil {
+		return
+	}
 	return
 }
 

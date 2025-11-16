@@ -31,7 +31,7 @@ func Init() {
 	db = db_
 
 	// auto migrate
-	err = db_.AutoMigrate(&model.UserModel{}, &model.VideoModel{}, &model.LikeModel{})
+	err = db_.AutoMigrate(&model.UserModel{}, &model.VideoModel{}, &model.LikeModel{}, &model.CommentModel{})
 	if err != nil {
 		log.Fatal("error migrating: ", err.Error())
 	}

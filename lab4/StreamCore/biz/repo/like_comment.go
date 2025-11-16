@@ -11,6 +11,7 @@ import (
 	"sync"
 	"time"
 
+	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
@@ -18,6 +19,8 @@ type LikeCommentRepo interface {
 	LikeVideo(ctx context.Context, uid, vid uint, status int) error
 	ListVideoLikes(ctx context.Context, uid uint, limit, page int) ([]*domain.Video, error)
 	LikeComment(ctx context.Context, uid, cid uint, status int) error
+	CreateComment(ctx context.Context, c *domain.Comment) error
+	GetCommentById(cid uint) (*domain.Comment, error)
 }
 
 type LcRepository struct {
@@ -101,12 +104,61 @@ func (repo *LcRepository) LikeComment(ctx context.Context, uid, cid uint, status
 	return
 }
 
+func (repo *LcRepository) CreateComment(ctx context.Context, c *domain.Comment) (err error) {
+	po := comDomain2Po(c)
+	return repo.db.
+		Model(&model.CommentModel{}).
+		Create(&po).
+		Error
+}
+
+func (repo *LcRepository) GetCommentById(cid uint) (c *domain.Comment, err error) {
+	err = repo.db.
+		Model(&model.CommentModel{}).
+		Where("id = ?", cid).
+		First(&c).
+		Error
+	return
+}
+
 func (repo *LcRepository) BatchUpdateLikes(ctx context.Context, batch []*model.LikeModel) error { // batch should not be slice of interface, or gorm won't recognize it
 	return repo.db.Model(&model.LikeModel{}).Clauses(clause.OnConflict{
 		Columns:   []clause.Column{{Name: "id"}},
 		UpdateAll: true,
 	}).Create(&batch).
 		Error
+}
+
+func comDomain2Po(c *domain.Comment) *model.CommentModel {
+	return &model.CommentModel{
+		Model: gorm.Model{
+			ID:        c.Id,
+			CreatedAt: c.CreatedAt,
+			UpdatedAt: c.UpdatedAt,
+			DeletedAt: ptrToDeletedAt(c.DeletedAt),
+		},
+		AuthorId:   c.AuthorId,
+		VideoId:    c.VideoId,
+		Content:    c.Content,
+		ParentId:   c.ParentId,
+		LikeCount:  c.LikeCount,
+		ChildCount: c.ChildCount,
+	}
+}
+
+func comPo2Domain(po *model.CommentModel) *domain.Comment {
+	return &domain.Comment{
+		Id:         po.ID,
+		CreatedAt:  po.CreatedAt,
+		UpdatedAt:  po.UpdatedAt,
+		DeletedAt:  deletedAtToPtr(po.DeletedAt),
+		AuthorId:   po.AuthorId,
+		VideoId:    po.VideoId,
+		Content:    po.Content,
+		ParentId:   po.ParentId,
+		LikeCount:  po.LikeCount,
+		ChildCount: po.ChildCount,
+	}
 }
 
 var lOnce, cOnce sync.Once

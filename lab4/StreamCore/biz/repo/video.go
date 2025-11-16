@@ -15,6 +15,7 @@ import (
 
 type VideoRepo interface {
 	Create(v *domain.Video) error
+	GetById(vid uint) (*domain.Video, error)
 	Fetch(after *time.Time) ([]*domain.Video, error)
 	FetchByUid(uid uint, limit, page int) ([]*domain.Video, int, error)
 	IncrVisit(ctx context.Context, vid uint) error
@@ -26,7 +27,7 @@ type VideoRepository struct {
 	baseRepository
 }
 
-func NewVideoRepo() *VideoRepository {
+func NewVideoRepo() VideoRepo {
 	return &VideoRepository{
 		baseRepository{db: db},
 	}

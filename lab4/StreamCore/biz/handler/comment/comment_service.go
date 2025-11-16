@@ -3,6 +3,9 @@
 package comment
 
 import (
+	"StreamCore/biz/service"
+	"StreamCore/pkg/ctl"
+	"StreamCore/pkg/util"
 	"context"
 
 	comment "StreamCore/biz/model/comment"
@@ -13,47 +16,63 @@ import (
 // Publish .
 // @router /comment/publish [POST]
 func Publish(ctx context.Context, c *app.RequestContext) {
-	var err error
 	var req comment.PublishReq
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+	if err := c.BindAndValidate(&req); err != nil {
+		c.JSON(consts.StatusBadRequest, ctl.ResponseError(err, consts.StatusBadRequest))
 		return
 	}
 
-	resp := new(comment.PublishResp)
+	err := service.LcSvc().CommentPublish(util.ContextWithUid(ctx, c), &req)
+	if err != nil {
+		c.JSON(consts.StatusInternalServerError, ctl.ResponseError(err))
+		return
+	}
 
+	resp := &comment.PublishResp{
+		Base: ctl.ResponseSuccess(),
+	}
 	c.JSON(consts.StatusOK, resp)
 }
 
 // List .
 // @router /comment/list [GET]
 func List(ctx context.Context, c *app.RequestContext) {
-	var err error
 	var req comment.ListQuery
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+	if err := c.BindAndValidate(&req); err != nil {
+		c.JSON(consts.StatusBadRequest, ctl.ResponseError(err, consts.StatusBadRequest))
 		return
 	}
 
-	resp := new(comment.ListResp)
+	data, err := service.LcSvc().CommentList(util.ContextWithUid(ctx, c), &req)
+	if err != nil {
+		c.JSON(consts.StatusInternalServerError, ctl.ResponseError(err))
+		return
+	}
 
+	resp := &comment.ListResp{
+		Base: ctl.ResponseSuccess(),
+		Data: data,
+	}
 	c.JSON(consts.StatusOK, resp)
 }
 
 // Delete .
 // @router /comment/delete [DELETE]
 func Delete(ctx context.Context, c *app.RequestContext) {
-	var err error
 	var req comment.DeleteReq
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+	if err := c.BindAndValidate(&req); err != nil {
+		c.JSON(consts.StatusBadRequest, ctl.ResponseError(err, consts.StatusBadRequest))
 		return
 	}
 
-	resp := new(comment.DeleteResp)
+	err := service.LcSvc().CommentDelete(util.ContextWithUid(ctx, c), &req)
+	if err != nil {
+		c.JSON(consts.StatusInternalServerError, ctl.ResponseError(err))
+		return
+	}
 
+	resp := &comment.DeleteResp{
+		Base: ctl.ResponseSuccess(),
+	}
 	c.JSON(consts.StatusOK, resp)
 }
