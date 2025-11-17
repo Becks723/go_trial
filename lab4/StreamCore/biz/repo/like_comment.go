@@ -23,6 +23,7 @@ type LikeCommentRepo interface {
 	GetCommentById(cid uint) (*domain.Comment, error)
 	ListRootComments(vid uint, limit, page int) ([]*domain.Comment, error)
 	ListSubComments(cid uint, limit, page int) ([]*domain.Comment, error)
+	DeleteCommentById(cid, authorId uint) error
 }
 
 type LcRepository struct {
@@ -162,6 +163,22 @@ func (repo *LcRepository) ListSubComments(cid uint, limit, page int) (comments [
 	for _, po := range records {
 		comments = append(comments, comPo2Domain(po))
 	}
+	return
+}
+
+func (repo *LcRepository) DeleteCommentById(cid, authorId uint) (err error) {
+	err = repo.db.
+		Where("id = ? AND author_id = ?", cid, authorId).
+		Delete(&model.CommentModel{}).
+		Error
+	if err != nil {
+		return
+	}
+	// delete all subs
+	err = repo.db.
+		Where("parent_id = ?", cid).
+		Delete(&model.CommentModel{}).
+		Error
 	return
 }
 

@@ -113,6 +113,16 @@ func (svc *LikeCommentService) CommentList(ctx context.Context, query *comment.L
 }
 
 func (svc *LikeCommentService) CommentDelete(ctx context.Context, req *comment.DeleteReq) (err error) {
+	curUid, err := util.RetrieveUserId(ctx)
+	if err != nil {
+		return
+	}
+
+	cid := util.String2Uint(req.CommentId)
+	err = svc.repo.DeleteCommentById(cid, curUid)
+	if err != nil {
+		return
+	}
 	return
 }
 
