@@ -86,7 +86,7 @@ func (svc *StreamService) Publish(ctx context.Context, req *stream.PublishReq, v
 			return
 		}
 
-		cdst = dir + name + ".mp4"
+		cdst = dir + name + ".jpg"
 		if err = saveFile(coverHeader, cdst); err != nil {
 			return
 		}
