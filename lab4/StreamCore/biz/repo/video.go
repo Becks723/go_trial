@@ -85,11 +85,16 @@ func (repo *VideoRepository) FetchByUid(uid uint, limit, page int) (videos []*do
 }
 
 func (repo *VideoRepository) GetById(vid uint) (v *domain.Video, err error) {
+	var po *model.VideoModel
 	err = repo.db.
 		Model(&model.VideoModel{}).
 		Where("id = ?", vid).
-		First(&v).
+		First(&po).
 		Error
+	if err != nil {
+		return
+	}
+	v = vidPo2Domain(po)
 	return
 }
 
