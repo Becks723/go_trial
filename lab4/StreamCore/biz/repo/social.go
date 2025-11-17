@@ -1,6 +1,7 @@
 package repo
 
 import (
+	"StreamCore/biz/domain"
 	"StreamCore/biz/repo/model"
 	redisClient "StreamCore/biz/repo/redis"
 	"context"
@@ -10,6 +11,7 @@ import (
 type SocialRepo interface {
 	Create(ctx context.Context, follower, followee uint) error
 	Delete(ctx context.Context, follower, followee uint) error
+	QueryFollows(ctx context.Context, uid uint, limit, page int) ([]*domain.Follow, int, error)
 }
 
 func NewSocialRepo() SocialRepo {
@@ -58,10 +60,35 @@ func (repo *SocialRepository) Delete(ctx context.Context, follower, followee uin
 	return
 }
 
+func (repo *SocialRepository) QueryFollows(ctx context.Context, uid uint, limit, page int) (follows []*domain.Follow, total int, err error) {
+	var records []*model.FollowModel
+	var cnt int64
+	tx := repo.db.Where("follower_id = ?", uid).
+		Count(&cnt)
+	if isPageParamsValid(cnt, limit, page) {
+		tx = tx.Limit(limit).
+			Offset(limit * page)
+	}
+	tx.Find(&records)
+
+	for _, po := range records {
+		follows = append(follows, followDomain(po))
+	}
+	total = int(cnt)
+	return
+}
+
 func (repo *SocialRepository) exists(follower, followee uint) bool {
 	err := repo.db.
 		Where("follower_id = ? AND followee_id = ?", follower, followee).
 		First(&model.FollowModel{}).
 		Error
 	return err == nil
+}
+
+func followDomain(po *model.FollowModel) *domain.Follow {
+	return &domain.Follow{
+		TargetUid: po.FolloweeId,
+		StartedAt: po.StartedAt,
+	}
 }

@@ -1,6 +1,7 @@
 package service
 
 import (
+	"StreamCore/biz/model/common"
 	"StreamCore/biz/model/social"
 	"StreamCore/biz/repo"
 	"StreamCore/pkg/util"
@@ -37,6 +38,18 @@ func (svc *SocialService) Follow(ctx context.Context, req *social.FollowReq) (er
 }
 
 func (svc *SocialService) ListFollows(ctx context.Context, query *social.ListFollowsQuery) (data *social.SocialList, err error) {
+	uid := util.String2Uint(query.UserId)
+
+	follows, total, err := svc.repo.QueryFollows(ctx, uid, int(query.PageSize), int(query.PageNum))
+	if err != nil {
+		return
+	}
+
+	data = new(social.SocialList)
+	data.Total = int32(total)
+	for _, f := range follows {
+		data.Items = append(data.Items, getSocialInfo(f.TargetUid))
+	}
 	return
 }
 
@@ -46,4 +59,16 @@ func (svc *SocialService) ListFollowers(ctx context.Context, query *social.ListF
 
 func (svc *SocialService) ListFriends(ctx context.Context, query *social.ListFriendsQuery) (data *social.SocialList, err error) {
 	return
+}
+
+func getSocialInfo(uid uint) *common.SocialUserInfo {
+	u, err := repo.NewUserRepo().GetById(uid)
+	if err != nil {
+		return nil
+	}
+	return &common.SocialUserInfo{
+		Id:        util.Uint2String(uid),
+		Username:  u.Username,
+		AvatarUrl: u.AvatarUrl,
+	}
 }
