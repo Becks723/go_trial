@@ -70,6 +70,21 @@ func (svc *SocialService) ListFollowers(ctx context.Context, query *social.ListF
 }
 
 func (svc *SocialService) ListFriends(ctx context.Context, query *social.ListFriendsQuery) (data *social.SocialList, err error) {
+	curUid, err := util.RetrieveUserId(ctx)
+	if err != nil {
+		return
+	}
+
+	mf, total, err := svc.repo.QueryMutualFollows(ctx, curUid, int(query.PageSize), int(query.PageNum))
+	if err != nil {
+		return
+	}
+
+	data = new(social.SocialList)
+	data.Total = int32(total)
+	for _, f := range mf {
+		data.Items = append(data.Items, getSocialInfo(f.TargetUid))
+	}
 	return
 }
 
