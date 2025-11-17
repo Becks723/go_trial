@@ -3,6 +3,8 @@
 package social
 
 import (
+	"StreamCore/biz/middleware"
+
 	"github.com/cloudwego/hertz/pkg/app"
 )
 
@@ -17,8 +19,7 @@ func _followerMw() []app.HandlerFunc {
 }
 
 func _listfollowersMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{middleware.JWTAuthFunc()}
 }
 
 func _followingMw() []app.HandlerFunc {
@@ -27,8 +28,7 @@ func _followingMw() []app.HandlerFunc {
 }
 
 func _listfollowsMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{middleware.JWTAuthFunc()}
 }
 
 func _friendsMw() []app.HandlerFunc {
@@ -37,8 +37,7 @@ func _friendsMw() []app.HandlerFunc {
 }
 
 func _listfriendsMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{middleware.JWTAuthFunc()}
 }
 
 func _relationMw() []app.HandlerFunc {
@@ -47,6 +46,5 @@ func _relationMw() []app.HandlerFunc {
 }
 
 func _followMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{middleware.JWTAuthFunc()}
 }

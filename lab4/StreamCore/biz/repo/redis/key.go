@@ -17,3 +17,11 @@ func CommentLikeKey(cid uint) string {
 func UserLikeVidKey(uid uint) string {
 	return fmt.Sprintf("user_like_vid:%d", uid)
 }
+
+func FollowsCountKey(uid uint) string {
+	return fmt.Sprintf("follows_count:%d", uid)
+}
+
+func FollowersCountKey(uid uint) string {
+	return fmt.Sprintf("followers_count:%d", uid)
+}

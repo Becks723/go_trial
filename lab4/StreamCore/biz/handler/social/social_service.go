@@ -3,9 +3,13 @@
 package social
 
 import (
+	"StreamCore/biz/service"
+	"StreamCore/pkg/ctl"
+	"StreamCore/pkg/util"
 	"context"
 
 	social "StreamCore/biz/model/social"
+
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
@@ -13,63 +17,86 @@ import (
 // Follow .
 // @router /relation/action [POST]
 func Follow(ctx context.Context, c *app.RequestContext) {
-	var err error
 	var req social.FollowReq
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+	if err := c.BindAndValidate(&req); err != nil {
+		c.JSON(consts.StatusBadRequest, ctl.ResponseError(err, consts.StatusBadRequest))
 		return
 	}
 
-	resp := new(social.FollowResp)
+	err := service.SocialSvc().Follow(util.ContextWithUid(ctx, c), &req)
+	if err != nil {
+		c.JSON(consts.StatusInternalServerError, ctl.ResponseError(err))
+		return
+	}
 
+	resp := &social.FollowResp{
+		Base: ctl.ResponseSuccess(),
+	}
 	c.JSON(consts.StatusOK, resp)
 }
 
 // ListFollows .
 // @router /following/list [GET]
 func ListFollows(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req social.ListFollowsQuery
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+	var query social.ListFollowsQuery
+	if err := c.BindAndValidate(&query); err != nil {
+		c.JSON(consts.StatusBadRequest, ctl.ResponseError(err, consts.StatusBadRequest))
 		return
 	}
 
-	resp := new(social.ListFollowsResp)
+	data, err := service.SocialSvc().ListFollows(util.ContextWithUid(ctx, c), &query)
+	if err != nil {
+		c.JSON(consts.StatusInternalServerError, ctl.ResponseError(err))
+		return
+	}
 
+	resp := &social.ListFollowsResp{
+		Base: ctl.ResponseSuccess(),
+		Data: data,
+	}
 	c.JSON(consts.StatusOK, resp)
 }
 
 // ListFollowers .
 // @router /follower/list [GET]
 func ListFollowers(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req social.ListFollowersQuery
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+	var query social.ListFollowersQuery
+	if err := c.BindAndValidate(&query); err != nil {
+		c.JSON(consts.StatusBadRequest, ctl.ResponseError(err, consts.StatusBadRequest))
 		return
 	}
 
-	resp := new(social.ListFollowersResp)
+	data, err := service.SocialSvc().ListFollowers(util.ContextWithUid(ctx, c), &query)
+	if err != nil {
+		c.JSON(consts.StatusInternalServerError, ctl.ResponseError(err))
+		return
+	}
 
+	resp := &social.ListFollowersResp{
+		Base: ctl.ResponseSuccess(),
+		Data: data,
+	}
 	c.JSON(consts.StatusOK, resp)
 }
 
 // ListFriends .
 // @router /friends/list [GET]
 func ListFriends(ctx context.Context, c *app.RequestContext) {
-	var err error
-	var req social.ListFriendsQuery
-	err = c.BindAndValidate(&req)
-	if err != nil {
-		c.String(consts.StatusBadRequest, err.Error())
+	var query social.ListFriendsQuery
+	if err := c.BindAndValidate(&query); err != nil {
+		c.JSON(consts.StatusBadRequest, ctl.ResponseError(err, consts.StatusBadRequest))
 		return
 	}
 
-	resp := new(social.ListFriendsResp)
+	data, err := service.SocialSvc().ListFriends(util.ContextWithUid(ctx, c), &query)
+	if err != nil {
+		c.JSON(consts.StatusInternalServerError, ctl.ResponseError(err))
+		return
+	}
 
+	resp := &social.ListFriendsResp{
+		Base: ctl.ResponseSuccess(),
+		Data: data,
+	}
 	c.JSON(consts.StatusOK, resp)
 }

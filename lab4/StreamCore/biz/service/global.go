@@ -9,10 +9,12 @@ var (
 	userSvc   *UserService
 	streamSvc *StreamService
 	lcSvc     *LikeCommentService
+	socialSvc *SocialService
 
 	userOnce   sync.Once
 	streamOnce sync.Once
 	lcOnce     sync.Once
+	socialOnce sync.Once
 )
 
 // UserService singleton
@@ -37,4 +39,12 @@ func LcSvc() *LikeCommentService {
 		lcSvc = NewLikeCommentService(repo.NewLikeCommentRepo())
 	})
 	return lcSvc
+}
+
+// SocialService singleton
+func SocialSvc() *SocialService {
+	socialOnce.Do(func() {
+		socialSvc = NewSocialService(repo.NewSocialRepo())
+	})
+	return socialSvc
 }
