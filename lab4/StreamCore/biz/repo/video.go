@@ -100,7 +100,7 @@ func (repo *VideoRepository) GetById(vid uint) (v *domain.Video, err error) {
 
 func (repo *VideoRepository) IncrVisit(ctx context.Context, vid uint) error {
 	member := strconv.FormatUint(uint64(vid), 10)
-	return redisClient.Rdb.ZIncrBy(ctx, "lb", 1, member).Err()
+	return redisClient.Rdb.ZIncrBy(ctx, redisClient.VideoRankKey, 1, member).Err()
 }
 
 func (repo *VideoRepository) FetchByVisits(ctx context.Context, limit, page int, reverse bool) (videos []*domain.Video, err error) {
