@@ -54,6 +54,18 @@ func (svc *SocialService) ListFollows(ctx context.Context, query *social.ListFol
 }
 
 func (svc *SocialService) ListFollowers(ctx context.Context, query *social.ListFollowersQuery) (data *social.SocialList, err error) {
+	uid := util.String2Uint(query.UserId)
+
+	followers, total, err := svc.repo.QueryFollowers(ctx, uid, int(query.PageSize), int(query.PageNum))
+	if err != nil {
+		return
+	}
+
+	data = new(social.SocialList)
+	data.Total = int32(total)
+	for _, f := range followers {
+		data.Items = append(data.Items, getSocialInfo(f.TargetUid))
+	}
 	return
 }
 
