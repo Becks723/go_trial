@@ -57,22 +57,15 @@ func (svc *LikeCommentService) CommentPublish(ctx context.Context, req *comment.
 		return
 	}
 
-	var vid, parentId *uint
-	var tmp uint
+	var vid uint
+	var parentId *uint
 	if req.VideoId != "" {
-		tmp = util.String2Uint(req.VideoId)
-		vid = &tmp
-		// assert video exists
-		if _, err = repo.NewVideoRepo().GetById(*vid); err != nil {
-			return
-		}
+		vid = util.String2Uint(req.VideoId)
 	} else if req.CommentId != "" {
-		tmp = util.String2Uint(req.CommentId)
+		tmp := util.String2Uint(req.CommentId)
 		parentId = &tmp
-		// assert parent exists
-		if _, err = repo.NewLikeCommentRepo().GetCommentById(*parentId); err != nil {
-			return
-		}
+	} else {
+		err = fmt.Errorf("Either video_id or comment_id needs to be specified.")
 	}
 
 	// db create
@@ -133,7 +126,7 @@ func comDomain2Dto(c *domain.Comment) *common.CommentInfo {
 		DeletedAt:  util.TimePtr2String(c.DeletedAt),
 		Id:         util.Uint2String(c.Id),
 		UserId:     util.Uint2String(c.AuthorId),
-		VideoId:    util.Uint2StringOrEmpty(c.VideoId),
+		VideoId:    util.Uint2String(c.VideoId),
 		ParentId:   util.Uint2StringOrEmpty(c.ParentId),
 		Content:    c.Content,
 		LikeCount:  int32(c.LikeCount),

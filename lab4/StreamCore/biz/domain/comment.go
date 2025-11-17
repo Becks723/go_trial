@@ -8,7 +8,7 @@ type Comment struct {
 	UpdatedAt  time.Time
 	DeletedAt  *time.Time
 	AuthorId   uint
-	VideoId    *uint
+	VideoId    uint
 	ParentId   *uint
 	Content    string
 	LikeCount  int
