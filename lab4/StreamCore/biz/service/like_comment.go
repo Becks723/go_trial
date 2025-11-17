@@ -3,10 +3,12 @@ package service
 import (
 	"StreamCore/biz/domain"
 	"StreamCore/biz/model/comment"
+	"StreamCore/biz/model/common"
 	"StreamCore/biz/model/like"
 	"StreamCore/biz/repo"
 	"StreamCore/pkg/util"
 	"context"
+	"fmt"
 )
 
 type LikeCommentService struct {
@@ -87,9 +89,44 @@ func (svc *LikeCommentService) CommentPublish(ctx context.Context, req *comment.
 }
 
 func (svc *LikeCommentService) CommentList(ctx context.Context, query *comment.ListQuery) (data *comment.ListResp_Data, err error) {
+	var comments []*domain.Comment
+	limit, page := int(query.PageSize), int(query.PageNum)
+
+	if query.VideoId != "" {
+		vid := util.String2Uint(query.VideoId)
+		comments, err = svc.repo.ListRootComments(vid, limit, page)
+	} else if query.CommentId != "" {
+		cid := util.String2Uint(query.CommentId)
+		comments, err = svc.repo.ListSubComments(cid, limit, page)
+	} else {
+		err = fmt.Errorf("Either video_id or comment_id needs to be specified.")
+	}
+	if err != nil {
+		return
+	}
+
+	data = new(comment.ListResp_Data)
+	for _, c := range comments {
+		data.Items = append(data.Items, comDomain2Dto(c))
+	}
 	return
 }
 
 func (svc *LikeCommentService) CommentDelete(ctx context.Context, req *comment.DeleteReq) (err error) {
 	return
+}
+
+func comDomain2Dto(c *domain.Comment) *common.CommentInfo {
+	return &common.CommentInfo{
+		CreatedAt:  c.CreatedAt.String(),
+		UpdatedAt:  c.UpdatedAt.String(),
+		DeletedAt:  util.TimePtr2String(c.DeletedAt),
+		Id:         util.Uint2String(c.Id),
+		UserId:     util.Uint2String(c.AuthorId),
+		VideoId:    util.Uint2StringOrEmpty(c.VideoId),
+		ParentId:   util.Uint2StringOrEmpty(c.ParentId),
+		Content:    c.Content,
+		LikeCount:  int32(c.LikeCount),
+		ChildCount: int32(c.ChildCount),
+	}
 }

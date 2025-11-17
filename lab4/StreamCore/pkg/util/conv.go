@@ -20,3 +20,10 @@ func String2Uint(s string) uint {
 	u, _ := strconv.ParseUint(s, 10, 32)
 	return uint(u)
 }
+
+func Uint2StringOrEmpty(n *uint) string {
+	if n == nil {
+		return ""
+	}
+	return strconv.FormatUint(uint64(*n), 10)
+}

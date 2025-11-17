@@ -21,6 +21,8 @@ type LikeCommentRepo interface {
 	LikeComment(ctx context.Context, uid, cid uint, status int) error
 	CreateComment(ctx context.Context, c *domain.Comment) error
 	GetCommentById(cid uint) (*domain.Comment, error)
+	ListRootComments(vid uint, limit, page int) ([]*domain.Comment, error)
+	ListSubComments(cid uint, limit, page int) ([]*domain.Comment, error)
 }
 
 type LcRepository struct {
@@ -118,6 +120,48 @@ func (repo *LcRepository) GetCommentById(cid uint) (c *domain.Comment, err error
 		Where("id = ?", cid).
 		First(&c).
 		Error
+	return
+}
+
+func (repo *LcRepository) ListRootComments(vid uint, limit, page int) (comments []*domain.Comment, err error) {
+	var records []*model.CommentModel
+	var cnt int64
+	tx := repo.db.
+		Model(&model.CommentModel{}).
+		Where("video_id = ? AND parent_id IS NULL", vid).
+		Count(&cnt)
+
+	if isPageParamsValid(cnt, limit, page) {
+		tx = tx.Limit(limit).
+			Offset(limit * page)
+	}
+	if err = tx.Find(&records).Error; err != nil {
+		return
+	}
+	for _, po := range records {
+		comments = append(comments, comPo2Domain(po))
+	}
+	return
+}
+
+func (repo *LcRepository) ListSubComments(cid uint, limit, page int) (comments []*domain.Comment, err error) {
+	var records []*model.CommentModel
+	var cnt int64
+	tx := repo.db.
+		Model(&model.CommentModel{}).
+		Where("parent_id = ?", cid).
+		Count(&cnt)
+
+	if isPageParamsValid(cnt, limit, page) {
+		tx = tx.Limit(limit).
+			Offset(limit * page)
+	}
+	if err = tx.Find(&records).Error; err != nil {
+		return
+	}
+	for _, po := range records {
+		comments = append(comments, comPo2Domain(po))
+	}
 	return
 }
 

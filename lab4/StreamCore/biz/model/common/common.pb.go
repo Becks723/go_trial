@@ -362,14 +362,14 @@ type CommentInfo struct {
 
 	CreatedAt  string `protobuf:"bytes,1,opt,name=created_at,json=createdAt,proto3" form:"created_at" json:"created_at,omitempty"`
 	UpdatedAt  string `protobuf:"bytes,2,opt,name=updated_at,json=updatedAt,proto3" form:"updated_at" json:"updated_at,omitempty"`
-	DeletedAt  string `protobuf:"bytes,3,opt,name=deleted_at,json=deletedAt,proto3" form:"deleted_at" json:"deleted_at,omitempty"`
+	DeletedAt  string `protobuf:"bytes,3,opt,name=deleted_at,json=deletedAt,proto3" form:"deleted_at" json:"deleted_at"`
 	Id         string `protobuf:"bytes,4,opt,name=id,proto3" form:"id" json:"id,omitempty"`
 	UserId     string `protobuf:"bytes,5,opt,name=user_id,json=userId,proto3" form:"user_id" json:"user_id,omitempty"`
-	VideoId    string `protobuf:"bytes,6,opt,name=video_id,json=videoId,proto3" form:"video_id" json:"video_id,omitempty"`
-	ParentId   string `protobuf:"bytes,7,opt,name=parent_id,json=parentId,proto3" form:"parent_id" json:"parent_id,omitempty"`
-	LikeCount  int32  `protobuf:"varint,8,opt,name=like_count,json=likeCount,proto3" form:"like_count" json:"like_count,omitempty"`
-	ChildCount int32  `protobuf:"varint,9,opt,name=child_count,json=childCount,proto3" form:"child_count" json:"child_count,omitempty"`
-	Content    string `protobuf:"bytes,10,opt,name=content,proto3" form:"content" json:"content,omitempty"`
+	VideoId    string `protobuf:"bytes,6,opt,name=video_id,json=videoId,proto3" form:"video_id" json:"video_id"`
+	ParentId   string `protobuf:"bytes,7,opt,name=parent_id,json=parentId,proto3" form:"parent_id" json:"parent_id"`
+	LikeCount  int32  `protobuf:"varint,8,opt,name=like_count,json=likeCount,proto3" form:"like_count" json:"like_count"`
+	ChildCount int32  `protobuf:"varint,9,opt,name=child_count,json=childCount,proto3" form:"child_count" json:"child_count"`
+	Content    string `protobuf:"bytes,10,opt,name=content,proto3" form:"content" json:"content"`
 }
 
 func (x *CommentInfo) Reset() {
