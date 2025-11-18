@@ -72,6 +72,7 @@ func (s *Strategy) Stop() {
 }
 
 func (s *Strategy) dbBgWorker() {
+	defer s.wg.Done()
 	batch := make([]interface{}, 0, s.batchSize)
 	ticker := time.NewTicker(s.interval)
 	defer ticker.Stop()
