@@ -33,12 +33,13 @@ type visitCache struct {
 }
 
 func (vc *visitCache) GetCachedValue(ctx context.Context) interface{} {
-	s, _ := redisClient.Rdb.Get(ctx, redisClient.VideoVisitCountKey(vc.vid)).Result()
-	visits, _ := strconv.ParseInt(s, 10, 32)
+	// This implementation takes score (i.e. video visits) from redis zset.
+	member := strconv.FormatUint(uint64(vc.vid), 10)
+	score, _ := redisClient.Rdb.ZScore(ctx, redisClient.VideoRankKey, member).Result()
 	return &model.VideoModel{
 		Model: gorm.Model{
 			ID: vc.vid,
 		},
-		VisitCount: int(visits),
+		VisitCount: int(score),
 	}
 }
