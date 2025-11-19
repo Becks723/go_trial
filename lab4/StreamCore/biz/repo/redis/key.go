@@ -6,6 +6,10 @@ const (
 	VideoRankKey = "zVideoRank"
 )
 
+func VideoVisitCountKey(vid uint) string {
+	return fmt.Sprintf("video_visit_count:%d", vid)
+}
+
 func VideoLikeKey(vid uint) string {
 	return fmt.Sprintf("video_like:%d", vid)
 }

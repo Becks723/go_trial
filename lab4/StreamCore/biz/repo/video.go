@@ -23,11 +23,15 @@ type VideoRepo interface {
 	Search(keywords string, limit, page int, from, to *time.Time, username string) ([]*domain.Video, int, error)
 }
 
+func NewVideoRepo() VideoRepo {
+	return NewVideoRepository()
+}
+
 type VideoRepository struct {
 	baseRepository
 }
 
-func NewVideoRepo() VideoRepo {
+func NewVideoRepository() *VideoRepository {
 	return &VideoRepository{
 		baseRepository{db: db},
 	}
@@ -100,7 +104,20 @@ func (repo *VideoRepository) GetById(vid uint) (v *domain.Video, err error) {
 
 func (repo *VideoRepository) IncrVisit(ctx context.Context, vid uint) error {
 	member := strconv.FormatUint(uint64(vid), 10)
-	return redisClient.Rdb.ZIncrBy(ctx, redisClient.VideoRankKey, 1, member).Err()
+	// incr lb score
+	_, err := redisClient.Rdb.ZIncrBy(ctx, redisClient.VideoRankKey, 1, member).Result()
+	if err != nil {
+		return err
+	}
+	// incr cache count
+	_, err = redisClient.Rdb.Incr(ctx, redisClient.VideoVisitCountKey(vid)).Result()
+	if err != nil {
+		return err
+	}
+	// signal async db update
+	visitWbc().SetTask(vid, &visitCache{vid: vid})
+
+	return nil
 }
 
 func (repo *VideoRepository) FetchByVisits(ctx context.Context, limit, page int, reverse bool) (videos []*domain.Video, err error) {
@@ -173,6 +190,24 @@ func (repo *VideoRepository) Search(keywords string, limit, page int, from, to *
 	}
 	total = int(cnt)
 	return
+}
+
+func (repo *VideoRepository) BatchUpdate(ctx context.Context, batch []interface{}) error {
+	if len(batch) == 0 {
+		return nil
+	}
+
+	for _, raw := range batch {
+		po := raw.(*model.VideoModel)
+		err := repo.db.Model(&model.VideoModel{}).
+			Where("id = ?", po.ID).
+			Updates(po).
+			Error
+		if err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func vidDomain2Po(v *domain.Video) *model.VideoModel {
