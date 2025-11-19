@@ -4,11 +4,9 @@ import (
 	"StreamCore/biz/domain"
 	"StreamCore/biz/repo/model"
 	redisClient "StreamCore/biz/repo/redis"
-	"StreamCore/biz/repo/wb"
 	"StreamCore/pkg/util"
 	"context"
 	"fmt"
-	"sync"
 	"time"
 
 	"gorm.io/gorm"
@@ -228,40 +226,5 @@ func comPo2Domain(po *model.CommentModel) *domain.Comment {
 		ParentId:   po.ParentId,
 		LikeCount:  po.LikeCount,
 		ChildCount: po.ChildCount,
-	}
-}
-
-var lOnce, cOnce sync.Once
-var lwbc, cwbc *wb.Strategy
-
-func likeWbc() *wb.Strategy {
-	lOnce.Do(func() {
-		lwbc = wb.NewStrategy(&wb.Config{
-			Repo:      &rbRepoCoordinator{},
-			QueueSize: 50,
-			BatchSize: 25,
-			Interval:  10 * time.Second,
-		})
-	})
-	return lwbc
-}
-
-type rbRepoCoordinator struct {
-}
-
-func (c *rbRepoCoordinator) BatchUpdate(ctx context.Context, batch []interface{}) error {
-	if len(batch) == 0 {
-		return nil
-	}
-	switch batch[0].(type) {
-	case *model.LikeModel:
-		likes := make([]*model.LikeModel, len(batch))
-		for i, v := range batch {
-			likes[i] = v.(*model.LikeModel)
-		}
-		return NewLcRepository().BatchUpdateLikes(ctx, likes)
-
-	default:
-		return nil
 	}
 }

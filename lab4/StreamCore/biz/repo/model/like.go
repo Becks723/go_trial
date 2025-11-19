@@ -1,6 +1,7 @@
 package model
 
 import (
+	"context"
 	"fmt"
 	"time"
 )
@@ -18,6 +19,6 @@ func (l *LikeModel) WbId() string {
 	return fmt.Sprintf("like%d_%d", l.Userid, l.TargetId)
 }
 
-func (l *LikeModel) ToWbModel() interface{} {
+func (l *LikeModel) ToWbModel(ctx context.Context) interface{} {
 	return l
 }

@@ -12,8 +12,8 @@ type wbRepo interface {
 }
 
 type domain interface {
-	WbId() string           // an id for wb logging
-	ToWbModel() interface{} // convert to model for db
+	WbId() string                              // an id for wb logging
+	ToWbModel(ctx context.Context) interface{} // convert to model for db
 }
 
 // Write-behind Caching strategy
@@ -84,7 +84,7 @@ func (s *Strategy) dbBgWorker() {
 				s.flushBatchToDB(context.Background(), batch)
 				return
 			}
-			batch = append(batch, d.ToWbModel())
+			batch = append(batch, d.ToWbModel(s.cancelCtx))
 			if len(batch) >= s.batchSize { // flush if batch is full
 				s.flushBatchToDB(s.cancelCtx, batch)
 				batch = batch[:0]
@@ -105,7 +105,7 @@ func (s *Strategy) dbBgWorker() {
 						draining = false
 						break
 					}
-					batch = append(batch, d.ToWbModel())
+					batch = append(batch, d.ToWbModel(s.cancelCtx))
 					if len(batch) > s.batchSize {
 						s.flushBatchToDB(context.Background(), batch)
 						batch = batch[:0]
