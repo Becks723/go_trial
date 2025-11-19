@@ -132,3 +132,26 @@ func Search(ctx context.Context, c *app.RequestContext) {
 	}
 	c.JSON(consts.StatusOK, resp)
 }
+
+// Visit .
+// @router /video/:vid [GET]
+func Visit(ctx context.Context, c *app.RequestContext) {
+	var req stream.VisitQuery
+	if err := c.BindAndValidate(&req); err != nil {
+		c.JSON(consts.StatusBadRequest, ctl.ResponseError(err, consts.StatusBadRequest))
+		return
+	}
+	req.VideoId = c.Param("vid")
+
+	data, err := service.StreamSvc().Visit(ctx, &req)
+	if err != nil {
+		c.JSON(consts.StatusInternalServerError, ctl.ResponseError(err))
+		return
+	}
+
+	resp := &stream.VisitResp{
+		Base: ctl.ResponseSuccess(),
+		Data: data,
+	}
+	c.JSON(consts.StatusOK, resp)
+}

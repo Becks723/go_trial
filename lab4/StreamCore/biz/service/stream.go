@@ -119,7 +119,7 @@ func (svc *StreamService) Publish(ctx context.Context, req *stream.PublishReq, v
 }
 
 func (svc *StreamService) List(ctx context.Context, query *stream.ListQuery) (data *stream.ListResp_Data, err error) {
-	uid, err := parseUint(query.UserId)
+	uid, err := util.ParseUint(query.UserId)
 	if err != nil {
 		err = errors.New("Bad uid format.")
 		return
@@ -186,6 +186,27 @@ func (svc *StreamService) Search(ctx context.Context, query *stream.SearchReq) (
 	for _, v := range videos {
 		data.Items = append(data.Items, streamDomain2Dto(v))
 	}
+	return
+}
+
+func (svc *StreamService) Visit(ctx context.Context, query *stream.VisitQuery) (data *common.VideoInfo, err error) {
+	vid, err := util.ParseUint(query.VideoId)
+	if err != nil {
+		return
+	}
+
+	// get video metadata from db
+	v, err := svc.repo.GetById(vid)
+	if err != nil {
+		return
+	}
+	data = streamDomain2Dto(v)
+
+	// db increase visit
+	if err = svc.repo.IncrVisit(ctx, vid); err != nil {
+		return
+	}
+
 	return
 }
 

@@ -17,6 +17,7 @@ import (
 func Register(r *server.Hertz) {
 
 	root := r.Group("/", rootMw()...)
+	root.GET("/video/:vid", append(_visitMw(), stream.Visit)...)
 	{
 		_video := root.Group("/video", _videoMw()...)
 		_video.GET("/feed", append(_feedMw(), stream.Feed)...)

@@ -11,14 +11,6 @@ import (
 	"time"
 )
 
-func parseUint(s string) (uint, error) {
-	uid, err := strconv.ParseUint(s, 10, 32)
-	if err != nil {
-		return 0, err
-	}
-	return uint(uid), nil
-}
-
 func parseTIme(timestamp string) (t time.Time, err error) {
 	unix, err := strconv.ParseUint(timestamp, 10, 64)
 	if err != nil {

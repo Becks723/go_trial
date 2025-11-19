@@ -27,3 +27,11 @@ func Uint2StringOrEmpty(n *uint) string {
 	}
 	return strconv.FormatUint(uint64(*n), 10)
 }
+
+func ParseUint(s string) (uint, error) {
+	uid, err := strconv.ParseUint(s, 10, 32)
+	if err != nil {
+		return 0, err
+	}
+	return uint(uid), nil
+}

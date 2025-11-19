@@ -38,3 +38,8 @@ func _publishMw() []app.HandlerFunc {
 func _searchMw() []app.HandlerFunc {
 	return []app.HandlerFunc{middleware.JWTAuthFunc()}
 }
+
+func _visitMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

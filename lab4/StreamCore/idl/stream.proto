@@ -76,6 +76,15 @@ message SearchResp {
   Data data = 2;
 }
 
+message VisitQuery {
+  string video_id = 1[(api.form)="video_id"];
+}
+
+message VisitResp {
+  common.RespStatus base = 1;
+  common.VideoInfo data = 2;
+}
+
 service StreamService {
   rpc Feed(FeedQuery) returns (FeedResp) {
     option (api.get)="/video/feed";
@@ -91,5 +100,8 @@ service StreamService {
   }
   rpc Search(SearchReq) returns (SearchResp) {
     option (api.post)="/video/search";
+  }
+  rpc Visit(VisitQuery) returns (VisitResp) {
+    option (api.get)="/video/:vid";
   }
 }
