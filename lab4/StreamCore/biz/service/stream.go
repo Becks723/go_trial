@@ -65,7 +65,7 @@ func (svc *StreamService) Publish(ctx context.Context, req *stream.PublishReq, v
 		return
 	}
 
-	if !isValidVideo(videoHeader) {
+	if !util.IsValidVideo(videoHeader) {
 		err = errors.New("Bad stream format.")
 		return
 	}
@@ -74,20 +74,20 @@ func (svc *StreamService) Publish(ctx context.Context, req *stream.PublishReq, v
 	dir := fmt.Sprintf(localPrefix + accessPrefix + "/videos/")
 	name := uuid.New().String()
 	vdst := dir + name + ".mp4"
-	if err = saveFile(videoHeader, vdst); err != nil {
+	if err = util.SaveFile(videoHeader, vdst); err != nil {
 		return
 	}
 
 	// get cover
 	var cdst string
 	if coverHeader != nil {
-		if !isValidImage(coverHeader) {
+		if !util.IsValidImage(coverHeader) {
 			err = errors.New("cover: Bad image format.")
 			return
 		}
 
 		cdst = dir + name + ".jpg"
-		if err = saveFile(coverHeader, cdst); err != nil {
+		if err = util.SaveFile(coverHeader, cdst); err != nil {
 			return
 		}
 	} else {

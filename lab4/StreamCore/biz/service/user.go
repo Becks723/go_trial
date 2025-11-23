@@ -110,7 +110,7 @@ func (serv *UserService) UploadAvatar(ctx context.Context, fileHeader *multipart
 	)
 	curUid := retrieveUid(ctx)
 
-	if !isValidImage(fileHeader) {
+	if !util.IsValidImage(fileHeader) {
 		err = errors.New("Bad image format.")
 		return
 	}
@@ -118,7 +118,7 @@ func (serv *UserService) UploadAvatar(ctx context.Context, fileHeader *multipart
 	// save image locally
 	dst := fmt.Sprintf(localPrefix+accessPrefix+"/avatars/%d_%d.png", // TODO: match extensions
 		curUid, time.Now().Unix())
-	err = saveFile(fileHeader, dst)
+	err = util.SaveFile(fileHeader, dst)
 	if err != nil {
 		return
 	}
