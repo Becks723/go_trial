@@ -5,6 +5,7 @@ import (
 	"StreamCore/biz/model/common"
 	"StreamCore/biz/model/stream"
 	"StreamCore/biz/repo"
+	"StreamCore/pkg/env"
 	"StreamCore/pkg/util"
 	"context"
 	"errors"
@@ -70,6 +71,13 @@ func (svc *StreamService) Publish(ctx context.Context, req *stream.PublishReq, v
 		return
 	}
 
+	// exceeds video limit
+	limit := env.Instance().IO_VideoSizeLimit
+	if videoHeader.Size > util.ToByte(limit) {
+		err = fmt.Errorf("Exceeds video size limit (current %dmb but limits %dmb)", limit, util.ToMb(videoHeader.Size))
+		return
+	}
+
 	// save video locally
 	dir := fmt.Sprintf(localPrefix + accessPrefix + "/videos/")
 	name := uuid.New().String()
@@ -83,6 +91,13 @@ func (svc *StreamService) Publish(ctx context.Context, req *stream.PublishReq, v
 	if coverHeader != nil {
 		if !util.IsValidImage(coverHeader) {
 			err = errors.New("cover: Bad image format.")
+			return
+		}
+
+		// exceeds image limit
+		limit := env.Instance().IO_ImageSizeLimit
+		if coverHeader.Size > util.ToByte(limit) {
+			err = fmt.Errorf("Exceeds image size limit (current %dmb but limits %dmb)", limit, util.ToMb(coverHeader.Size))
 			return
 		}
 

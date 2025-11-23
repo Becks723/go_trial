@@ -115,6 +115,13 @@ func (serv *UserService) UploadAvatar(ctx context.Context, fileHeader *multipart
 		return
 	}
 
+	// exceeds image limit
+	limit := env.Instance().IO_ImageSizeLimit
+	if fileHeader.Size > util.ToByte(limit) {
+		err = fmt.Errorf("Exceeds image size limit (current %dmb but limits %dmb)", limit, util.ToMb(fileHeader.Size))
+		return
+	}
+
 	// save image locally
 	dst := fmt.Sprintf(localPrefix+accessPrefix+"/avatars/%d_%d.png", // TODO: match extensions
 		curUid, time.Now().Unix())

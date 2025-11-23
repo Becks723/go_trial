@@ -8,18 +8,20 @@ import (
 )
 
 type env struct {
-	DB_Host                  string `mapstructure:"db_host"`
-	DB_Port                  string `mapstructure:"db_port"`
-	DB_Username              string `mapstructure:"db_username"`
-	DB_Password              string `mapstructure:"db_password"`
-	DB_Name                  string `mapstructure:"db_name"`
-	REDIS_Addr               string `mapstructure:"redis_addr"`
-	REDIS_Password           string `mapstructure:"redis_password"`
-	REDIS_DB                 int    `mapstructure:"redis_db"`
-	AccessToken_Secret       string `mapstructure:"access_token_secret"`
-	AccessToken_ExpiryHours  int    `mapstructure:"access_token_expiry_hours"`
-	RefreshToken_Secret      string `mapstructure:"refresh_token_secret"`
-	RefreshToken_ExpiryHours int    `mapstructure:"refresh_token_expiry_hours"`
+	DB_Host                  string  `mapstructure:"db_host"`
+	DB_Port                  string  `mapstructure:"db_port"`
+	DB_Username              string  `mapstructure:"db_username"`
+	DB_Password              string  `mapstructure:"db_password"`
+	DB_Name                  string  `mapstructure:"db_name"`
+	REDIS_Addr               string  `mapstructure:"redis_addr"`
+	REDIS_Password           string  `mapstructure:"redis_password"`
+	REDIS_DB                 int     `mapstructure:"redis_db"`
+	AccessToken_Secret       string  `mapstructure:"access_token_secret"`
+	AccessToken_ExpiryHours  int     `mapstructure:"access_token_expiry_hours"`
+	RefreshToken_Secret      string  `mapstructure:"refresh_token_secret"`
+	RefreshToken_ExpiryHours int     `mapstructure:"refresh_token_expiry_hours"`
+	IO_ImageSizeLimit        float64 `mapstructure:"io_image_size_limit"` // mb
+	IO_VideoSizeLimit        float64 `mapstructure:"io_video_size_limit"` // mb
 }
 
 var (

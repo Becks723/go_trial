@@ -60,3 +60,21 @@ func SaveFile(fileHeader *multipart.FileHeader, dst string) error {
 	_, err = io.Copy(out, src)
 	return err
 }
+
+const (
+	Mb = 1 << 20
+)
+
+func ToMb(bytes int64) float64 {
+	if bytes < 0 {
+		return 0
+	}
+	return float64(bytes) / float64(Mb)
+}
+
+func ToByte(mb float64) int64 {
+	if mb < 0 {
+		return 0
+	}
+	return int64(mb * Mb)
+}
