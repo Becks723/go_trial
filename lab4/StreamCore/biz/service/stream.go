@@ -5,6 +5,7 @@ import (
 	"StreamCore/biz/model/common"
 	"StreamCore/biz/model/stream"
 	"StreamCore/biz/repo"
+	"StreamCore/biz/repo/es"
 	"StreamCore/pkg/env"
 	"StreamCore/pkg/util"
 	"context"
@@ -22,11 +23,13 @@ import (
 
 type StreamService struct {
 	repo repo.VideoRepo
+	es   *es.VideoEsClient
 }
 
-func NewStreamService(repo repo.VideoRepo) *StreamService {
+func NewStreamService(repo repo.VideoRepo, es *es.VideoEsClient) *StreamService {
 	return &StreamService{
 		repo: repo,
+		es:   es,
 	}
 }
 
@@ -130,6 +133,11 @@ func (svc *StreamService) Publish(ctx context.Context, req *stream.PublishReq, v
 		return
 	}
 
+	// add to es
+	err = svc.es.AddVideo(ctx, &v)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -202,6 +210,40 @@ func (svc *StreamService) Search(ctx context.Context, query *stream.SearchReq) (
 		data.Items = append(data.Items, streamDomain2Dto(v))
 	}
 	return
+}
+
+// SearchEs - search using es
+func (svc *StreamService) SearchEs(ctx context.Context, query *stream.SearchReq) (*stream.SearchResp_Data, error) {
+	var err error
+
+	esquery := &domain.VideoQuery{
+		TitleMatches:    query.Keywords,
+		DescMatches:     query.Keywords,
+		FromDate:        query.FromDate,
+		ToDate:          query.ToDate,
+		UsernameMatches: query.Username,
+	}
+	hits, total, err := svc.es.SearchVideo(ctx, esquery)
+	if err != nil {
+		return nil, err
+	}
+	data := new(stream.SearchResp_Data)
+	data.Total = int32(total)
+	failId := make([]uint, 0)
+	for _, id := range hits {
+		video, err := svc.repo.GetById(id)
+		if err != nil {
+			failId = append(failId, id)
+		} else {
+			data.Items = append(data.Items, streamDomain2Dto(video))
+		}
+	}
+
+	if len(failId) == int(total) { // all failed -> throw error
+		return nil, fmt.Errorf("StreamService.SearchEs failed: all %d hits fetch failed", total)
+	} else { // partial fail is acceptable
+		return data, nil
+	}
 }
 
 func (svc *StreamService) Visit(ctx context.Context, query *stream.VisitQuery) (data *common.VideoInfo, err error) {

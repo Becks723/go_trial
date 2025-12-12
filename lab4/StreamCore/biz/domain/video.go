@@ -19,3 +19,13 @@ type Video struct {
 	PublishedAt  time.Time
 	EditedAt     time.Time
 }
+
+// VideoQuery - for es querying
+type VideoQuery struct {
+	TitleMatches    string
+	DescMatches     string
+	FromDate        string
+	ToDate          string
+	AuthorIdIsExact *uint
+	UsernameMatches string
+}

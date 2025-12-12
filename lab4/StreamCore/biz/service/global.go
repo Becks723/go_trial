@@ -2,6 +2,7 @@ package service
 
 import (
 	"StreamCore/biz/repo"
+	"StreamCore/biz/repo/es"
 	"sync"
 )
 
@@ -28,7 +29,7 @@ func UserSvc() *UserService {
 // StreamService singleton
 func StreamSvc() *StreamService {
 	streamOnce.Do(func() {
-		streamSvc = NewStreamService(repo.NewVideoRepo())
+		streamSvc = NewStreamService(repo.NewVideoRepo(), es.NewVideoClient())
 	})
 	return streamSvc
 }

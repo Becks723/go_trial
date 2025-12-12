@@ -4,6 +4,7 @@ package main
 
 import (
 	"StreamCore/biz/repo"
+	"StreamCore/biz/repo/es"
 	"StreamCore/biz/repo/redis"
 
 	"github.com/cloudwego/hertz/pkg/app/server"
@@ -12,6 +13,7 @@ import (
 func main() {
 	repo.Init()
 	redis.Init()
+	es.Init()
 
 	h := server.Default()
 	h.Static("/static", "./uploads")
