@@ -4,7 +4,6 @@ package user
 
 import (
 	user "StreamCore/biz/handler/user"
-
 	"github.com/cloudwego/hertz/pkg/app/server"
 )
 
@@ -16,6 +15,7 @@ import (
 
 // Register register routes based on the IDL 'api.${HTTP Method}' annotation.
 func Register(r *server.Hertz) {
+
 	root := r.Group("/", rootMw()...)
 	{
 		_user := root.Group("/user", _userMw()...)

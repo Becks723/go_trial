@@ -29,9 +29,9 @@ type ActionReq struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	VideoId    string `protobuf:"bytes,1,opt,name=video_id,json=videoId,proto3" form:"video_id" json:"video_id,omitempty"`
-	CommentId  string `protobuf:"bytes,2,opt,name=comment_id,json=commentId,proto3" form:"comment_id" json:"comment_id,omitempty"`
-	ActionType int32  `protobuf:"varint,3,opt,name=action_type,json=actionType,proto3" form:"action_type" json:"action_type,omitempty"`
+	VideoId    string `protobuf:"bytes,1,opt,name=video_id,json=videoId,proto3" form:"video_id" json:"video_id"`
+	CommentId  string `protobuf:"bytes,2,opt,name=comment_id,json=commentId,proto3" form:"comment_id" json:"comment_id"`
+	ActionType int32  `protobuf:"varint,3,opt,name=action_type,json=actionType,proto3" form:"action_type" json:"action_type"`
 }
 
 func (x *ActionReq) Reset() {
@@ -92,7 +92,7 @@ type ActionResp struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Base *common.RespStatus `protobuf:"bytes,1,opt,name=base,proto3" form:"base" json:"base,omitempty" query:"base"`
+	Base *common.RespStatus `protobuf:"bytes,1,opt,name=base,proto3" form:"base" json:"base" query:"base"`
 }
 
 func (x *ActionResp) Reset() {
@@ -139,9 +139,9 @@ type ListQuery struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	UserId   string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" query:"user_id"`
-	PageSize int32  `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty" query:"page_size"`
-	PageNum  int32  `protobuf:"varint,3,opt,name=page_num,json=pageNum,proto3" json:"page_num,omitempty" query:"page_num"`
+	UserId   string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id" query:"user_id"`
+	PageSize int32  `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size" query:"page_size"`
+	PageNum  int32  `protobuf:"varint,3,opt,name=page_num,json=pageNum,proto3" json:"page_num" query:"page_num"`
 }
 
 func (x *ListQuery) Reset() {
@@ -202,8 +202,8 @@ type ListResp struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Base *common.RespStatus `protobuf:"bytes,1,opt,name=base,proto3" form:"base" json:"base,omitempty" query:"base"`
-	Data *ListResp_Data     `protobuf:"bytes,2,opt,name=data,proto3" form:"data" json:"data,omitempty" query:"data"`
+	Base *common.RespStatus `protobuf:"bytes,1,opt,name=base,proto3" form:"base" json:"base" query:"base"`
+	Data *ListResp_Data     `protobuf:"bytes,2,opt,name=data,proto3" form:"data" json:"data" query:"data"`
 }
 
 func (x *ListResp) Reset() {
@@ -257,7 +257,7 @@ type ListResp_Data struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Items []*common.VideoInfo `protobuf:"bytes,1,rep,name=items,proto3" form:"items" json:"items,omitempty" query:"items"`
+	Items []*common.VideoInfo `protobuf:"bytes,1,rep,name=items,proto3" form:"items" json:"items" query:"items"`
 }
 
 func (x *ListResp_Data) Reset() {

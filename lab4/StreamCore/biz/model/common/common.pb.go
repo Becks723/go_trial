@@ -28,8 +28,8 @@ type RespStatus struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Code int32  `protobuf:"varint,1,opt,name=code,proto3" form:"code" json:"code,omitempty" query:"code"`
-	Msg  string `protobuf:"bytes,2,opt,name=msg,proto3" form:"msg" json:"msg,omitempty" query:"msg"`
+	Code int32  `protobuf:"varint,1,opt,name=code,proto3" form:"code" json:"code" query:"code"`
+	Msg  string `protobuf:"bytes,2,opt,name=msg,proto3" form:"msg" json:"msg" query:"msg"`
 }
 
 func (x *RespStatus) Reset() {
@@ -83,11 +83,11 @@ type UserInfo struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	CreatedAt string `protobuf:"bytes,1,opt,name=created_at,json=createdAt,proto3" form:"created_at" json:"created_at,omitempty"`
-	UpdatedAt string `protobuf:"bytes,2,opt,name=updated_at,json=updatedAt,proto3" form:"updated_at" json:"updated_at,omitempty"`
+	CreatedAt string `protobuf:"bytes,1,opt,name=created_at,json=createdAt,proto3" form:"created_at" json:"created_at"`
+	UpdatedAt string `protobuf:"bytes,2,opt,name=updated_at,json=updatedAt,proto3" form:"updated_at" json:"updated_at"`
 	DeletedAt string `protobuf:"bytes,3,opt,name=deleted_at,json=deletedAt,proto3" form:"deleted_at" json:"deleted_at"`
-	Id        string `protobuf:"bytes,4,opt,name=id,proto3" form:"id" json:"id,omitempty"`
-	Username  string `protobuf:"bytes,5,opt,name=username,proto3" form:"username" json:"username,omitempty"`
+	Id        string `protobuf:"bytes,4,opt,name=id,proto3" form:"id" json:"id"`
+	Username  string `protobuf:"bytes,5,opt,name=username,proto3" form:"username" json:"username"`
 	AvatarUrl string `protobuf:"bytes,6,opt,name=avatar_url,json=avatarUrl,proto3" form:"avatar_url" json:"avatar_url"`
 }
 
@@ -170,8 +170,8 @@ type AuthenticationInfo struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	AccessToken  string `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" form:"access_token" json:"access_token,omitempty"`
-	RefreshToken string `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" form:"refresh_token" json:"refresh_token,omitempty"`
+	AccessToken  string `protobuf:"bytes,1,opt,name=access_token,json=accessToken,proto3" form:"access_token" json:"access_token"`
+	RefreshToken string `protobuf:"bytes,2,opt,name=refresh_token,json=refreshToken,proto3" form:"refresh_token" json:"refresh_token"`
 }
 
 func (x *AuthenticationInfo) Reset() {
@@ -225,13 +225,13 @@ type VideoInfo struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	CreatedAt    string `protobuf:"bytes,1,opt,name=created_at,json=createdAt,proto3" form:"created_at" json:"created_at,omitempty"`
-	UpdatedAt    string `protobuf:"bytes,2,opt,name=updated_at,json=updatedAt,proto3" form:"updated_at" json:"updated_at,omitempty"`
+	CreatedAt    string `protobuf:"bytes,1,opt,name=created_at,json=createdAt,proto3" form:"created_at" json:"created_at"`
+	UpdatedAt    string `protobuf:"bytes,2,opt,name=updated_at,json=updatedAt,proto3" form:"updated_at" json:"updated_at"`
 	DeletedAt    string `protobuf:"bytes,3,opt,name=deleted_at,json=deletedAt,proto3" form:"deleted_at" json:"deleted_at"`
-	Id           string `protobuf:"bytes,4,opt,name=id,proto3" form:"id" json:"id,omitempty"`
-	UserId       string `protobuf:"bytes,5,opt,name=user_id,json=userId,proto3" form:"user_id" json:"user_id,omitempty"`
-	VideoUrl     string `protobuf:"bytes,6,opt,name=video_url,json=videoUrl,proto3" form:"video_url" json:"video_url,omitempty"`
-	CoverUrl     string `protobuf:"bytes,7,opt,name=cover_url,json=coverUrl,proto3" form:"cover_url" json:"cover_url,omitempty"`
+	Id           string `protobuf:"bytes,4,opt,name=id,proto3" form:"id" json:"id"`
+	UserId       string `protobuf:"bytes,5,opt,name=user_id,json=userId,proto3" form:"user_id" json:"user_id"`
+	VideoUrl     string `protobuf:"bytes,6,opt,name=video_url,json=videoUrl,proto3" form:"video_url" json:"video_url"`
+	CoverUrl     string `protobuf:"bytes,7,opt,name=cover_url,json=coverUrl,proto3" form:"cover_url" json:"cover_url"`
 	Title        string `protobuf:"bytes,8,opt,name=title,proto3" form:"title" json:"title"`
 	Description  string `protobuf:"bytes,9,opt,name=description,proto3" form:"description" json:"description"`
 	VisitCount   int32  `protobuf:"varint,10,opt,name=visit_count,json=visitCount,proto3" form:"visit_count" json:"visit_count"`
@@ -360,11 +360,11 @@ type CommentInfo struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	CreatedAt  string `protobuf:"bytes,1,opt,name=created_at,json=createdAt,proto3" form:"created_at" json:"created_at,omitempty"`
-	UpdatedAt  string `protobuf:"bytes,2,opt,name=updated_at,json=updatedAt,proto3" form:"updated_at" json:"updated_at,omitempty"`
+	CreatedAt  string `protobuf:"bytes,1,opt,name=created_at,json=createdAt,proto3" form:"created_at" json:"created_at"`
+	UpdatedAt  string `protobuf:"bytes,2,opt,name=updated_at,json=updatedAt,proto3" form:"updated_at" json:"updated_at"`
 	DeletedAt  string `protobuf:"bytes,3,opt,name=deleted_at,json=deletedAt,proto3" form:"deleted_at" json:"deleted_at"`
-	Id         string `protobuf:"bytes,4,opt,name=id,proto3" form:"id" json:"id,omitempty"`
-	UserId     string `protobuf:"bytes,5,opt,name=user_id,json=userId,proto3" form:"user_id" json:"user_id,omitempty"`
+	Id         string `protobuf:"bytes,4,opt,name=id,proto3" form:"id" json:"id"`
+	UserId     string `protobuf:"bytes,5,opt,name=user_id,json=userId,proto3" form:"user_id" json:"user_id"`
 	VideoId    string `protobuf:"bytes,6,opt,name=video_id,json=videoId,proto3" form:"video_id" json:"video_id"`
 	ParentId   string `protobuf:"bytes,7,opt,name=parent_id,json=parentId,proto3" form:"parent_id" json:"parent_id"`
 	LikeCount  int32  `protobuf:"varint,8,opt,name=like_count,json=likeCount,proto3" form:"like_count" json:"like_count"`
@@ -479,9 +479,9 @@ type SocialUserInfo struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id        string `protobuf:"bytes,1,opt,name=id,proto3" form:"id" json:"id,omitempty"`
-	Username  string `protobuf:"bytes,2,opt,name=username,proto3" form:"username" json:"username,omitempty"`
-	AvatarUrl string `protobuf:"bytes,3,opt,name=avatar_url,json=avatarUrl,proto3" form:"avatar_url" json:"avatar_url,omitempty"`
+	Id        string `protobuf:"bytes,1,opt,name=id,proto3" form:"id" json:"id"`
+	Username  string `protobuf:"bytes,2,opt,name=username,proto3" form:"username" json:"username"`
+	AvatarUrl string `protobuf:"bytes,3,opt,name=avatar_url,json=avatarUrl,proto3" form:"avatar_url" json:"avatar_url"`
 }
 
 func (x *SocialUserInfo) Reset() {

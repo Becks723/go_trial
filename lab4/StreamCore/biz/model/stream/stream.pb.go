@@ -29,7 +29,7 @@ type FeedQuery struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	LatestTime string `protobuf:"bytes,1,opt,name=latest_time,json=latestTime,proto3" json:"latest_time,omitempty" query:"latest_time"`
+	LatestTime string `protobuf:"bytes,1,opt,name=latest_time,json=latestTime,proto3" json:"latest_time" query:"latest_time"`
 }
 
 func (x *FeedQuery) Reset() {
@@ -76,8 +76,8 @@ type FeedResp struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Base *common.RespStatus `protobuf:"bytes,1,opt,name=base,proto3" form:"base" json:"base,omitempty" query:"base"`
-	Data *FeedResp_Data     `protobuf:"bytes,2,opt,name=data,proto3" form:"data" json:"data,omitempty" query:"data"`
+	Base *common.RespStatus `protobuf:"bytes,1,opt,name=base,proto3" form:"base" json:"base" query:"base"`
+	Data *FeedResp_Data     `protobuf:"bytes,2,opt,name=data,proto3" form:"data" json:"data" query:"data"`
 }
 
 func (x *FeedResp) Reset() {
@@ -131,9 +131,9 @@ type PublishReq struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Data        string `protobuf:"bytes,1,opt,name=data,proto3" form:"data" json:"data,omitempty"`
-	Title       string `protobuf:"bytes,2,opt,name=title,proto3" form:"title" json:"title,omitempty"`
-	Description string `protobuf:"bytes,3,opt,name=description,proto3" form:"description" json:"description,omitempty"`
+	Data        string `protobuf:"bytes,1,opt,name=data,proto3" form:"data" json:"data"`
+	Title       string `protobuf:"bytes,2,opt,name=title,proto3" form:"title" json:"title"`
+	Description string `protobuf:"bytes,3,opt,name=description,proto3" form:"description" json:"description"`
 }
 
 func (x *PublishReq) Reset() {
@@ -194,7 +194,7 @@ type PublishResp struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Base *common.RespStatus `protobuf:"bytes,1,opt,name=base,proto3" form:"base" json:"base,omitempty" query:"base"`
+	Base *common.RespStatus `protobuf:"bytes,1,opt,name=base,proto3" form:"base" json:"base" query:"base"`
 }
 
 func (x *PublishResp) Reset() {
@@ -241,9 +241,9 @@ type ListQuery struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	UserId   string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" query:"user_id"`
-	PageNum  int32  `protobuf:"varint,2,opt,name=page_num,json=pageNum,proto3" json:"page_num,omitempty" query:"page_num"`
-	PageSize int32  `protobuf:"varint,3,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty" query:"page_size"`
+	UserId   string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id" query:"user_id"`
+	PageNum  int32  `protobuf:"varint,2,opt,name=page_num,json=pageNum,proto3" json:"page_num" query:"page_num"`
+	PageSize int32  `protobuf:"varint,3,opt,name=page_size,json=pageSize,proto3" json:"page_size" query:"page_size"`
 }
 
 func (x *ListQuery) Reset() {
@@ -304,8 +304,8 @@ type ListResp struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Base *common.RespStatus `protobuf:"bytes,1,opt,name=base,proto3" form:"base" json:"base,omitempty" query:"base"`
-	Data *ListResp_Data     `protobuf:"bytes,2,opt,name=data,proto3" form:"data" json:"data,omitempty" query:"data"`
+	Base *common.RespStatus `protobuf:"bytes,1,opt,name=base,proto3" form:"base" json:"base" query:"base"`
+	Data *ListResp_Data     `protobuf:"bytes,2,opt,name=data,proto3" form:"data" json:"data" query:"data"`
 }
 
 func (x *ListResp) Reset() {
@@ -359,8 +359,8 @@ type PopularQuery struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	PageNum  int32 `protobuf:"varint,2,opt,name=page_num,json=pageNum,proto3" json:"page_num,omitempty" query:"page_num"`
-	PageSize int32 `protobuf:"varint,3,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty" query:"page_size"`
+	PageNum  int32 `protobuf:"varint,2,opt,name=page_num,json=pageNum,proto3" json:"page_num" query:"page_num"`
+	PageSize int32 `protobuf:"varint,3,opt,name=page_size,json=pageSize,proto3" json:"page_size" query:"page_size"`
 }
 
 func (x *PopularQuery) Reset() {
@@ -414,8 +414,8 @@ type PopularResp struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Base *common.RespStatus `protobuf:"bytes,1,opt,name=base,proto3" form:"base" json:"base,omitempty" query:"base"`
-	Data *PopularResp_Data  `protobuf:"bytes,2,opt,name=data,proto3" form:"data" json:"data,omitempty" query:"data"`
+	Base *common.RespStatus `protobuf:"bytes,1,opt,name=base,proto3" form:"base" json:"base" query:"base"`
+	Data *PopularResp_Data  `protobuf:"bytes,2,opt,name=data,proto3" form:"data" json:"data" query:"data"`
 }
 
 func (x *PopularResp) Reset() {
@@ -469,12 +469,12 @@ type SearchReq struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Keywords string `protobuf:"bytes,1,opt,name=keywords,proto3" form:"keywords" json:"keywords,omitempty"`
-	PageNum  int32  `protobuf:"varint,2,opt,name=page_num,json=pageNum,proto3" form:"page_num" json:"page_num,omitempty"`
-	PageSize int32  `protobuf:"varint,3,opt,name=page_size,json=pageSize,proto3" form:"page_size" json:"page_size,omitempty"`
-	FromDate string `protobuf:"bytes,4,opt,name=from_date,json=fromDate,proto3" form:"from_date" json:"from_date,omitempty"`
-	ToDate   string `protobuf:"bytes,5,opt,name=to_date,json=toDate,proto3" form:"to_date" json:"to_date,omitempty"`
-	Username string `protobuf:"bytes,6,opt,name=username,proto3" form:"username" json:"username,omitempty"`
+	Keywords string `protobuf:"bytes,1,opt,name=keywords,proto3" form:"keywords" json:"keywords"`
+	PageNum  int32  `protobuf:"varint,2,opt,name=page_num,json=pageNum,proto3" form:"page_num" json:"page_num"`
+	PageSize int32  `protobuf:"varint,3,opt,name=page_size,json=pageSize,proto3" form:"page_size" json:"page_size"`
+	FromDate string `protobuf:"bytes,4,opt,name=from_date,json=fromDate,proto3" form:"from_date" json:"from_date"`
+	ToDate   string `protobuf:"bytes,5,opt,name=to_date,json=toDate,proto3" form:"to_date" json:"to_date"`
+	Username string `protobuf:"bytes,6,opt,name=username,proto3" form:"username" json:"username"`
 }
 
 func (x *SearchReq) Reset() {
@@ -556,8 +556,8 @@ type SearchResp struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Base *common.RespStatus `protobuf:"bytes,1,opt,name=base,proto3" form:"base" json:"base,omitempty" query:"base"`
-	Data *SearchResp_Data   `protobuf:"bytes,2,opt,name=data,proto3" form:"data" json:"data,omitempty" query:"data"`
+	Base *common.RespStatus `protobuf:"bytes,1,opt,name=base,proto3" form:"base" json:"base" query:"base"`
+	Data *SearchResp_Data   `protobuf:"bytes,2,opt,name=data,proto3" form:"data" json:"data" query:"data"`
 }
 
 func (x *SearchResp) Reset() {
@@ -611,7 +611,7 @@ type VisitQuery struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	VideoId string `protobuf:"bytes,1,opt,name=video_id,json=videoId,proto3" form:"video_id" json:"video_id,omitempty"`
+	VideoId string `protobuf:"bytes,1,opt,name=video_id,json=videoId,proto3" form:"video_id" json:"video_id"`
 }
 
 func (x *VisitQuery) Reset() {
@@ -658,8 +658,8 @@ type VisitResp struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Base *common.RespStatus `protobuf:"bytes,1,opt,name=base,proto3" form:"base" json:"base,omitempty" query:"base"`
-	Data *common.VideoInfo  `protobuf:"bytes,2,opt,name=data,proto3" form:"data" json:"data,omitempty" query:"data"`
+	Base *common.RespStatus `protobuf:"bytes,1,opt,name=base,proto3" form:"base" json:"base" query:"base"`
+	Data *common.VideoInfo  `protobuf:"bytes,2,opt,name=data,proto3" form:"data" json:"data" query:"data"`
 }
 
 func (x *VisitResp) Reset() {
@@ -713,7 +713,7 @@ type FeedResp_Data struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Items []*common.VideoInfo `protobuf:"bytes,1,rep,name=items,proto3" form:"items" json:"items,omitempty" query:"items"`
+	Items []*common.VideoInfo `protobuf:"bytes,1,rep,name=items,proto3" form:"items" json:"items" query:"items"`
 }
 
 func (x *FeedResp_Data) Reset() {
@@ -760,8 +760,8 @@ type ListResp_Data struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Items []*common.VideoInfo `protobuf:"bytes,1,rep,name=items,proto3" form:"items" json:"items,omitempty" query:"items"`
-	Total int32               `protobuf:"varint,2,opt,name=total,proto3" form:"total" json:"total,omitempty" query:"total"`
+	Items []*common.VideoInfo `protobuf:"bytes,1,rep,name=items,proto3" form:"items" json:"items" query:"items"`
+	Total int32               `protobuf:"varint,2,opt,name=total,proto3" form:"total" json:"total" query:"total"`
 }
 
 func (x *ListResp_Data) Reset() {
@@ -815,7 +815,7 @@ type PopularResp_Data struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Items []*common.VideoInfo `protobuf:"bytes,1,rep,name=items,proto3" form:"items" json:"items,omitempty" query:"items"`
+	Items []*common.VideoInfo `protobuf:"bytes,1,rep,name=items,proto3" form:"items" json:"items" query:"items"`
 }
 
 func (x *PopularResp_Data) Reset() {
@@ -862,8 +862,8 @@ type SearchResp_Data struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Items []*common.VideoInfo `protobuf:"bytes,1,rep,name=items,proto3" form:"items" json:"items,omitempty" query:"items"`
-	Total int32               `protobuf:"varint,2,opt,name=total,proto3" form:"total" json:"total,omitempty" query:"total"`
+	Items []*common.VideoInfo `protobuf:"bytes,1,rep,name=items,proto3" form:"items" json:"items" query:"items"`
+	Total int32               `protobuf:"varint,2,opt,name=total,proto3" form:"total" json:"total" query:"total"`
 }
 
 func (x *SearchResp_Data) Reset() {
@@ -1013,7 +1013,7 @@ var file_stream_proto_rawDesc = []byte{
 	0x6e, 0x2e, 0x52, 0x65, 0x73, 0x70, 0x53, 0x74, 0x61, 0x74, 0x75, 0x73, 0x52, 0x04, 0x62, 0x61,
 	0x73, 0x65, 0x12, 0x25, 0x0a, 0x04, 0x64, 0x61, 0x74, 0x61, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0b,
 	0x32, 0x11, 0x2e, 0x63, 0x6f, 0x6d, 0x6d, 0x6f, 0x6e, 0x2e, 0x56, 0x69, 0x64, 0x65, 0x6f, 0x49,
-	0x6e, 0x66, 0x6f, 0x52, 0x04, 0x64, 0x61, 0x74, 0x61, 0x32, 0x9d, 0x03, 0x0a, 0x0d, 0x53, 0x74,
+	0x6e, 0x66, 0x6f, 0x52, 0x04, 0x64, 0x61, 0x74, 0x61, 0x32, 0xa2, 0x03, 0x0a, 0x0d, 0x53, 0x74,
 	0x72, 0x65, 0x61, 0x6d, 0x53, 0x65, 0x72, 0x76, 0x69, 0x63, 0x65, 0x12, 0x3c, 0x0a, 0x04, 0x46,
 	0x65, 0x65, 0x64, 0x12, 0x11, 0x2e, 0x73, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x2e, 0x46, 0x65, 0x65,
 	0x64, 0x51, 0x75, 0x65, 0x72, 0x79, 0x1a, 0x10, 0x2e, 0x73, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x2e,
@@ -1035,13 +1035,14 @@ var file_stream_proto_rawDesc = []byte{
 	0x72, 0x63, 0x68, 0x12, 0x11, 0x2e, 0x73, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x2e, 0x53, 0x65, 0x61,
 	0x72, 0x63, 0x68, 0x52, 0x65, 0x71, 0x1a, 0x12, 0x2e, 0x73, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x2e,
 	0x53, 0x65, 0x61, 0x72, 0x63, 0x68, 0x52, 0x65, 0x73, 0x70, 0x22, 0x11, 0xd2, 0xc1, 0x18, 0x0d,
-	0x2f, 0x76, 0x69, 0x64, 0x65, 0x6f, 0x2f, 0x73, 0x65, 0x61, 0x72, 0x63, 0x68, 0x12, 0x3a, 0x0a,
+	0x2f, 0x76, 0x69, 0x64, 0x65, 0x6f, 0x2f, 0x73, 0x65, 0x61, 0x72, 0x63, 0x68, 0x12, 0x3f, 0x0a,
 	0x05, 0x56, 0x69, 0x73, 0x69, 0x74, 0x12, 0x12, 0x2e, 0x73, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x2e,
 	0x56, 0x69, 0x73, 0x69, 0x74, 0x51, 0x75, 0x65, 0x72, 0x79, 0x1a, 0x11, 0x2e, 0x73, 0x74, 0x72,
-	0x65, 0x61, 0x6d, 0x2e, 0x56, 0x69, 0x73, 0x69, 0x74, 0x52, 0x65, 0x73, 0x70, 0x22, 0x0a, 0xca,
-	0xc1, 0x18, 0x06, 0x2f, 0x76, 0x69, 0x64, 0x65, 0x6f, 0x42, 0x1d, 0x5a, 0x1b, 0x53, 0x74, 0x72,
-	0x65, 0x61, 0x6d, 0x43, 0x6f, 0x72, 0x65, 0x2f, 0x62, 0x69, 0x7a, 0x2f, 0x6d, 0x6f, 0x64, 0x65,
-	0x6c, 0x2f, 0x73, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x65, 0x61, 0x6d, 0x2e, 0x56, 0x69, 0x73, 0x69, 0x74, 0x52, 0x65, 0x73, 0x70, 0x22, 0x0f, 0xca,
+	0xc1, 0x18, 0x0b, 0x2f, 0x76, 0x69, 0x64, 0x65, 0x6f, 0x2f, 0x3a, 0x76, 0x69, 0x64, 0x42, 0x1d,
+	0x5a, 0x1b, 0x53, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x43, 0x6f, 0x72, 0x65, 0x2f, 0x62, 0x69, 0x7a,
+	0x2f, 0x6d, 0x6f, 0x64, 0x65, 0x6c, 0x2f, 0x73, 0x74, 0x72, 0x65, 0x61, 0x6d, 0x62, 0x06, 0x70,
+	0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (

@@ -29,8 +29,8 @@ type SocialList struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Items []*common.SocialUserInfo `protobuf:"bytes,1,rep,name=items,proto3" form:"items" json:"items,omitempty" query:"items"`
-	Total int32                    `protobuf:"varint,2,opt,name=total,proto3" form:"total" json:"total,omitempty" query:"total"`
+	Items []*common.SocialUserInfo `protobuf:"bytes,1,rep,name=items,proto3" form:"items" json:"items" query:"items"`
+	Total int32                    `protobuf:"varint,2,opt,name=total,proto3" form:"total" json:"total" query:"total"`
 }
 
 func (x *SocialList) Reset() {
@@ -84,8 +84,8 @@ type FollowReq struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	ToUserId   string `protobuf:"bytes,1,opt,name=to_user_id,json=toUserId,proto3" form:"to_user_id" json:"to_user_id,omitempty"`
-	ActionType int32  `protobuf:"varint,2,opt,name=action_type,json=actionType,proto3" form:"action_type" json:"action_type,omitempty"`
+	ToUserId   string `protobuf:"bytes,1,opt,name=to_user_id,json=toUserId,proto3" form:"to_user_id" json:"to_user_id"`
+	ActionType int32  `protobuf:"varint,2,opt,name=action_type,json=actionType,proto3" form:"action_type" json:"action_type"`
 }
 
 func (x *FollowReq) Reset() {
@@ -139,7 +139,7 @@ type FollowResp struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Base *common.RespStatus `protobuf:"bytes,1,opt,name=base,proto3" form:"base" json:"base,omitempty" query:"base"`
+	Base *common.RespStatus `protobuf:"bytes,1,opt,name=base,proto3" form:"base" json:"base" query:"base"`
 }
 
 func (x *FollowResp) Reset() {
@@ -186,9 +186,9 @@ type ListFollowsQuery struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	UserId   string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" query:"user_id"`
-	PageSize int32  `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty" query:"page_size"`
-	PageNum  int32  `protobuf:"varint,3,opt,name=page_num,json=pageNum,proto3" json:"page_num,omitempty" query:"page_num"`
+	UserId   string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id" query:"user_id"`
+	PageSize int32  `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size" query:"page_size"`
+	PageNum  int32  `protobuf:"varint,3,opt,name=page_num,json=pageNum,proto3" json:"page_num" query:"page_num"`
 }
 
 func (x *ListFollowsQuery) Reset() {
@@ -249,8 +249,8 @@ type ListFollowsResp struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Base *common.RespStatus `protobuf:"bytes,1,opt,name=base,proto3" form:"base" json:"base,omitempty" query:"base"`
-	Data *SocialList        `protobuf:"bytes,2,opt,name=data,proto3" form:"data" json:"data,omitempty" query:"data"`
+	Base *common.RespStatus `protobuf:"bytes,1,opt,name=base,proto3" form:"base" json:"base" query:"base"`
+	Data *SocialList        `protobuf:"bytes,2,opt,name=data,proto3" form:"data" json:"data" query:"data"`
 }
 
 func (x *ListFollowsResp) Reset() {
@@ -304,9 +304,9 @@ type ListFollowersQuery struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	UserId   string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" query:"user_id"`
-	PageSize int32  `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty" query:"page_size"`
-	PageNum  int32  `protobuf:"varint,3,opt,name=page_num,json=pageNum,proto3" json:"page_num,omitempty" query:"page_num"`
+	UserId   string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id" query:"user_id"`
+	PageSize int32  `protobuf:"varint,2,opt,name=page_size,json=pageSize,proto3" json:"page_size" query:"page_size"`
+	PageNum  int32  `protobuf:"varint,3,opt,name=page_num,json=pageNum,proto3" json:"page_num" query:"page_num"`
 }
 
 func (x *ListFollowersQuery) Reset() {
@@ -367,8 +367,8 @@ type ListFollowersResp struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Base *common.RespStatus `protobuf:"bytes,1,opt,name=base,proto3" form:"base" json:"base,omitempty" query:"base"`
-	Data *SocialList        `protobuf:"bytes,2,opt,name=data,proto3" form:"data" json:"data,omitempty" query:"data"`
+	Base *common.RespStatus `protobuf:"bytes,1,opt,name=base,proto3" form:"base" json:"base" query:"base"`
+	Data *SocialList        `protobuf:"bytes,2,opt,name=data,proto3" form:"data" json:"data" query:"data"`
 }
 
 func (x *ListFollowersResp) Reset() {
@@ -422,8 +422,8 @@ type ListFriendsQuery struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	PageSize int32 `protobuf:"varint,1,opt,name=page_size,json=pageSize,proto3" json:"page_size,omitempty" query:"page_size"`
-	PageNum  int32 `protobuf:"varint,2,opt,name=page_num,json=pageNum,proto3" json:"page_num,omitempty" query:"page_num"`
+	PageSize int32 `protobuf:"varint,1,opt,name=page_size,json=pageSize,proto3" json:"page_size" query:"page_size"`
+	PageNum  int32 `protobuf:"varint,2,opt,name=page_num,json=pageNum,proto3" json:"page_num" query:"page_num"`
 }
 
 func (x *ListFriendsQuery) Reset() {
@@ -477,8 +477,8 @@ type ListFriendsResp struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Base *common.RespStatus `protobuf:"bytes,1,opt,name=base,proto3" form:"base" json:"base,omitempty" query:"base"`
-	Data *SocialList        `protobuf:"bytes,2,opt,name=data,proto3" form:"data" json:"data,omitempty" query:"data"`
+	Base *common.RespStatus `protobuf:"bytes,1,opt,name=base,proto3" form:"base" json:"base" query:"base"`
+	Data *SocialList        `protobuf:"bytes,2,opt,name=data,proto3" form:"data" json:"data" query:"data"`
 }
 
 func (x *ListFriendsResp) Reset() {

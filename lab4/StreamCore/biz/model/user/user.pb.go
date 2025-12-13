@@ -29,8 +29,8 @@ type RegisterReq struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Username string `protobuf:"bytes,1,opt,name=username,proto3" form:"username" json:"username,omitempty"`
-	Password string `protobuf:"bytes,2,opt,name=password,proto3" form:"password" json:"password,omitempty"`
+	Username string `protobuf:"bytes,1,opt,name=username,proto3" form:"username" json:"username"`
+	Password string `protobuf:"bytes,2,opt,name=password,proto3" form:"password" json:"password"`
 }
 
 func (x *RegisterReq) Reset() {
@@ -84,7 +84,7 @@ type RegisterResp struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Base *common.RespStatus `protobuf:"bytes,1,opt,name=base,proto3" form:"base" json:"base,omitempty" query:"base"`
+	Base *common.RespStatus `protobuf:"bytes,1,opt,name=base,proto3" form:"base" json:"base" query:"base"`
 }
 
 func (x *RegisterResp) Reset() {
@@ -131,9 +131,9 @@ type LoginReq struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Username string `protobuf:"bytes,1,opt,name=username,proto3" form:"username" json:"username,omitempty"`
-	Password string `protobuf:"bytes,2,opt,name=password,proto3" form:"password" json:"password,omitempty"`
-	Code     string `protobuf:"bytes,3,opt,name=code,proto3" form:"code" json:"code,omitempty"`
+	Username string `protobuf:"bytes,1,opt,name=username,proto3" form:"username" json:"username"`
+	Password string `protobuf:"bytes,2,opt,name=password,proto3" form:"password" json:"password"`
+	Code     string `protobuf:"bytes,3,opt,name=code,proto3" form:"code" json:"code"`
 }
 
 func (x *LoginReq) Reset() {
@@ -194,9 +194,9 @@ type LoginResp struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Base *common.RespStatus         `protobuf:"bytes,1,opt,name=base,proto3" form:"base" json:"base,omitempty" query:"base"`
-	Data *common.UserInfo           `protobuf:"bytes,2,opt,name=data,proto3" form:"data" json:"data,omitempty" query:"data"`
-	Auth *common.AuthenticationInfo `protobuf:"bytes,3,opt,name=auth,proto3" form:"auth" json:"auth,omitempty" query:"auth"`
+	Base *common.RespStatus         `protobuf:"bytes,1,opt,name=base,proto3" form:"base" json:"base" query:"base"`
+	Data *common.UserInfo           `protobuf:"bytes,2,opt,name=data,proto3" form:"data" json:"data" query:"data"`
+	Auth *common.AuthenticationInfo `protobuf:"bytes,3,opt,name=auth,proto3" form:"auth" json:"auth" query:"auth"`
 }
 
 func (x *LoginResp) Reset() {
@@ -257,7 +257,7 @@ type InfoQuery struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	UserId string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" query:"user_id"`
+	UserId string `protobuf:"bytes,1,opt,name=user_id,json=userId,proto3" json:"user_id" query:"user_id"`
 }
 
 func (x *InfoQuery) Reset() {
@@ -304,8 +304,8 @@ type InfoResp struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Base *common.RespStatus `protobuf:"bytes,1,opt,name=base,proto3" form:"base" json:"base,omitempty" query:"base"`
-	Data *common.UserInfo   `protobuf:"bytes,2,opt,name=data,proto3" form:"data" json:"data,omitempty" query:"data"`
+	Base *common.RespStatus `protobuf:"bytes,1,opt,name=base,proto3" form:"base" json:"base" query:"base"`
+	Data *common.UserInfo   `protobuf:"bytes,2,opt,name=data,proto3" form:"data" json:"data" query:"data"`
 }
 
 func (x *InfoResp) Reset() {
@@ -359,7 +359,7 @@ type AvatarReq struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	File string `protobuf:"bytes,1,opt,name=file,proto3" form:"data" json:"file,omitempty"`
+	File string `protobuf:"bytes,1,opt,name=file,proto3" form:"data" json:"file"`
 }
 
 func (x *AvatarReq) Reset() {
@@ -406,8 +406,8 @@ type AvatarResp struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Base *common.RespStatus `protobuf:"bytes,1,opt,name=base,proto3" form:"base" json:"base,omitempty" query:"base"`
-	Data *common.UserInfo   `protobuf:"bytes,2,opt,name=data,proto3" form:"data" json:"data,omitempty" query:"data"`
+	Base *common.RespStatus `protobuf:"bytes,1,opt,name=base,proto3" form:"base" json:"base" query:"base"`
+	Data *common.UserInfo   `protobuf:"bytes,2,opt,name=data,proto3" form:"data" json:"data" query:"data"`
 }
 
 func (x *AvatarResp) Reset() {
