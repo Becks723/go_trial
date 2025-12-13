@@ -100,6 +100,51 @@ func UploadAvatar(ctx context.Context, c *app.RequestContext) {
 	c.JSON(consts.StatusOK, resp)
 }
 
+// MFAQrcode .
+// @router /auth/mfa/qrcode [GET]
+func MFAQrcode(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req user.MFAQrcodeReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.JSON(consts.StatusBadRequest, ctl.ResponseError(err, consts.StatusBadRequest))
+		return
+	}
+
+	data, err := service.UserSvc().MFAQrcode(contextWithUid(ctx, c), &req)
+	if err != nil {
+		c.JSON(consts.StatusInternalServerError, ctl.ResponseError(err))
+		return
+	}
+
+	resp := new(user.MFAQrcodeResp)
+	resp.Base = ctl.ResponseSuccess()
+	resp.Data = data
+	c.JSON(consts.StatusOK, resp)
+}
+
+// MFABind .
+// @router /auth/mfa/bind [POST]
+func MFABind(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req user.MFABindReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		c.JSON(consts.StatusBadRequest, ctl.ResponseError(err, consts.StatusBadRequest))
+		return
+	}
+
+	err = service.UserSvc().MFABind(contextWithUid(ctx, c), &req)
+	if err != nil {
+		c.JSON(consts.StatusInternalServerError, ctl.ResponseError(err))
+		return
+	}
+
+	resp := new(user.MFABindResp)
+	resp.Base = ctl.ResponseSuccess()
+	c.JSON(consts.StatusOK, resp)
+}
+
 func contextWithUid(ctx context.Context, c *app.RequestContext) context.Context {
 	obj, _ := c.Get("uid")
 	uid, _ := obj.(uint)

@@ -20,6 +20,8 @@ type env struct {
 	AccessToken_ExpiryHours  int     `mapstructure:"access_token_expiry_hours"`
 	RefreshToken_Secret      string  `mapstructure:"refresh_token_secret"`
 	RefreshToken_ExpiryHours int     `mapstructure:"refresh_token_expiry_hours"`
+	MFA_QrcodeWidth          int     `mapstructure:"mfa_qrcode_width"`
+	MFA_QrcodeHeight         int     `mapstructure:"mfa_qrcode_height"`
 	IO_ImageSizeLimit        float64 `mapstructure:"io_image_size_limit"` // mb
 	IO_VideoSizeLimit        float64 `mapstructure:"io_video_size_limit"` // mb
 }

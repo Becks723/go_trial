@@ -12,6 +12,7 @@ type UserRepo interface {
 	GetByUsername(username string) (u *domain.User, err error)
 	GetById(id uint) (u *domain.User, err error)
 	UpdateAvatar(id uint, url string) (u *domain.User, err error)
+	UpdateTOTPSecret(uid uint, secret string) error
 }
 
 type baseRepository struct {
@@ -83,6 +84,14 @@ func (repo *UserRepository) UpdateAvatar(id uint, url string) (u *domain.User, e
 	return
 }
 
+func (repo *UserRepository) UpdateTOTPSecret(uid uint, secret string) error {
+	return repo.db.
+		Model(&model.UserModel{}).
+		Where("id = ?", uid).
+		Update("totp_secret", secret).
+		Error
+}
+
 func userDomain2Po(u *domain.User) *model.UserModel {
 	return &model.UserModel{
 		Model: gorm.Model{
@@ -99,12 +108,14 @@ func userDomain2Po(u *domain.User) *model.UserModel {
 
 func userPo2Domain(po *model.UserModel) *domain.User {
 	return &domain.User{
-		Id:        po.ID,
-		CreatedAt: po.CreatedAt,
-		UpdatedAt: po.UpdatedAt,
-		DeletedAt: deletedAtToPtr(po.DeletedAt),
-		Username:  po.Username,
-		Password:  po.Password,
-		AvatarUrl: po.AvatarUrl,
+		Id:         po.ID,
+		CreatedAt:  po.CreatedAt,
+		UpdatedAt:  po.UpdatedAt,
+		DeletedAt:  deletedAtToPtr(po.DeletedAt),
+		Username:   po.Username,
+		Password:   po.Password,
+		AvatarUrl:  po.AvatarUrl,
+		TOTPBound:  po.TOTPSecret != "",
+		TOTPSecret: po.TOTPSecret,
 	}
 }

@@ -40,3 +40,21 @@ func _avatarMw() []app.HandlerFunc {
 func _uploadavatarMw() []app.HandlerFunc {
 	return []app.HandlerFunc{middleware.JWTAuthFunc()}
 }
+
+func _authMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _mfaMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _mfabindMw() []app.HandlerFunc {
+	return []app.HandlerFunc{middleware.JWTAuthFunc()}
+}
+
+func _mfaqrcodeMw() []app.HandlerFunc {
+	return []app.HandlerFunc{middleware.JWTAuthFunc()}
+}

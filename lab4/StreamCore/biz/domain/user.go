@@ -5,11 +5,13 @@ import (
 )
 
 type User struct {
-	Id        uint
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt *time.Time
-	Username  string
-	Password  string
-	AvatarUrl string
+	Id         uint
+	CreatedAt  time.Time
+	UpdatedAt  time.Time
+	DeletedAt  *time.Time
+	Username   string
+	Password   string
+	AvatarUrl  string
+	TOTPBound  bool
+	TOTPSecret string
 }

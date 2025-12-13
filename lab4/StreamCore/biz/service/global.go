@@ -2,6 +2,7 @@ package service
 
 import (
 	"StreamCore/biz/repo"
+	usercache "StreamCore/biz/repo/cache/user"
 	"StreamCore/biz/repo/es"
 	"sync"
 )
@@ -21,7 +22,7 @@ var (
 // UserService singleton
 func UserSvc() *UserService {
 	userOnce.Do(func() {
-		userSvc = NewUserService(repo.NewUserRepo())
+		userSvc = NewUserService(repo.NewUserRepo(), usercache.NewUserCache())
 	})
 	return userSvc
 }

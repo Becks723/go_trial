@@ -47,6 +47,26 @@ message AvatarResp {
   common.UserInfo data = 2;
 }
 
+message MFAQrcodeReq {}
+
+message MFAQrcodeResp {
+  message Data {
+    string secret = 1;
+    string qrcode = 2;
+  }
+  common.RespStatus base = 1;
+  Data data = 2;
+}
+
+message MFABindReq {
+  string code = 1[(api.form)="code"];
+  string secret = 2[(api.form)="secret"];
+}
+
+message MFABindResp {
+  common.RespStatus base = 1;
+}
+
 service UserService {
   rpc Register(RegisterReq) returns (RegisterResp) {
     option (api.post)="/user/register";
@@ -59,5 +79,11 @@ service UserService {
   }
   rpc UploadAvatar(AvatarReq) returns (AvatarResp) {
     option (api.put)="/user/avatar/upload";
+  }
+  rpc MFAQrcode(MFAQrcodeReq) returns (MFAQrcodeResp) {
+    option (api.get)="/auth/mfa/qrcode";
+  }
+  rpc MFABind(MFABindReq) returns (MFABindResp) {
+    option (api.post)="/auth/mfa/bind";
   }
 }
