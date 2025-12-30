@@ -9,6 +9,7 @@ import (
 	"StreamCore/pkg/constants"
 	"StreamCore/pkg/env"
 	"StreamCore/pkg/util"
+	"StreamCore/pkg/util/jwt"
 	"bytes"
 	"context"
 	"encoding/base64"
@@ -77,11 +78,11 @@ func (s *UserService) Login(ctx context.Context, req *user.LoginReq) (data *comm
 
 	// generate access, refresh tokens
 	ev := env.Instance()
-	atoken, err := util.GenerateAccessToken(u, ev.AccessToken_Secret, util.HoursOf(ev.AccessToken_ExpiryHours))
+	atoken, err := jwt.GenerateAccessToken(u, ev.AccessToken_Secret, jwt.HoursOf(ev.AccessToken_ExpiryHours))
 	if err != nil {
 		return
 	}
-	rtoken, err := util.GenerateRefreshToken(u, ev.RefreshToken_Secret, util.HoursOf(ev.RefreshToken_ExpiryHours))
+	rtoken, err := jwt.GenerateRefreshToken(u, ev.RefreshToken_Secret, jwt.HoursOf(ev.RefreshToken_ExpiryHours))
 	if err != nil {
 		return
 	}

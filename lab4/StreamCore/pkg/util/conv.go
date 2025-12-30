@@ -35,3 +35,11 @@ func ParseUint(s string) (uint, error) {
 	}
 	return uint(uid), nil
 }
+
+func FromTimestamp(ts string) (time.Time, error) {
+	unix, err := strconv.ParseUint(ts, 10, 64)
+	if err != nil {
+		return time.Time{}, err
+	}
+	return time.UnixMilli(int64(unix)), nil
+}

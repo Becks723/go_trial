@@ -24,6 +24,9 @@ type env struct {
 	MFA_QrcodeHeight         int     `mapstructure:"mfa_qrcode_height"`
 	IO_ImageSizeLimit        float64 `mapstructure:"io_image_size_limit"` // mb
 	IO_VideoSizeLimit        float64 `mapstructure:"io_video_size_limit"` // mb
+	Video_DefaultPageSize    int     `mapstructure:"video_default_page_size"`
+	Social_DefaultPageSize   int     `mapstructure:"social_default_page_size"`
+	Etcd_Addr                string  `mapstructure:"etcd_addr"`
 }
 
 var (

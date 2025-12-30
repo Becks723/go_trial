@@ -1,0 +1,64 @@
+package service
+
+import (
+	"StreamCore/kitex_gen/common"
+	"StreamCore/kitex_gen/video"
+	"StreamCore/pkg/env"
+	"StreamCore/pkg/util"
+	"errors"
+	"fmt"
+)
+
+func (s *VideoService) Popular(query *video.PopularQuery) (*video.PopularRespData, error) {
+	var limit, page int
+	if query.PageSize == nil {
+		limit = env.Instance().Video_DefaultPageSize
+	} else {
+		limit = int(*query.PageSize)
+	}
+
+	if query.PageNum == nil {
+		page = 0
+	} else {
+		page = int(*query.PageNum)
+	}
+
+	vids, err := s.cache.VisitRank(s.ctx, limit, page, false)
+	if err != nil {
+		return nil, fmt.Errorf("error cache.VisitRank: %w", err)
+	}
+
+	var videos []*common.VideoInfo
+	var failCount int
+	for _, vid := range vids {
+		v, err := s.db.GetById(vid)
+		if err != nil { // if fail to fetch data, fill in with only vid
+			failCount++
+			videos = append(videos, &common.VideoInfo{
+				Id: util.Uint2String(vid),
+			})
+		} else {
+			videos = append(videos, &common.VideoInfo{
+				CreatedAt:    v.CreatedAt.String(),
+				UpdatedAt:    v.UpdatedAt.String(),
+				DeletedAt:    util.TimePtr2String(v.DeletedAt),
+				Id:           util.Uint2String(v.Id),
+				UserId:       util.Uint2String(v.AuthorId),
+				VideoUrl:     v.VideoUrl,
+				CoverUrl:     v.CoverUrl,
+				Title:        v.Title,
+				Description:  v.Description,
+				VisitCount:   int32(v.VisitCount),
+				LikeCount:    int32(v.LikeCount),
+				CommentCount: int32(v.CommentCount),
+			})
+		}
+	}
+
+	if failCount == len(vids) {
+		return nil, errors.New("failed to fetch all video data, something might go wrong")
+	}
+	data := new(video.PopularRespData)
+	data.Items = videos
+	return data, nil
+}

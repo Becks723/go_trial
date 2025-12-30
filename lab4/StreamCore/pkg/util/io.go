@@ -1,7 +1,6 @@
 package util
 
 import (
-	"io"
 	"mime/multipart"
 	"net/http"
 	"os"
@@ -24,57 +23,45 @@ func mime(fileHeader *multipart.FileHeader) (string, error) {
 	mime := http.DetectContentType(buf)
 	return mime, nil
 }
-func IsValidImage(fileHeader *multipart.FileHeader) bool {
-	s, err := mime(fileHeader)
-	if err != nil {
+
+func IsValidImage(raw []byte) bool {
+	t := http.DetectContentType(raw[:512])
+	if !strings.HasPrefix(t, "image/") {
 		return false
 	}
-	return strings.HasPrefix(s, "image/")
+	return true
 }
 
-func IsValidVideo(fileHeader *multipart.FileHeader) bool {
-	s, err := mime(fileHeader)
-	if err != nil {
+func IsValidVideo(raw []byte) bool {
+	t := http.DetectContentType(raw[:512])
+	if !strings.HasPrefix(t, "video/") {
 		return false
 	}
-	return strings.HasPrefix(s, "video/")
+	return true
 }
 
-func SaveFile(fileHeader *multipart.FileHeader, dst string) error {
-	src, err := fileHeader.Open()
+func SaveFile(raw []byte, dst string) error {
+	err := os.MkdirAll(filepath.Dir(dst), 0750)
 	if err != nil {
 		return err
 	}
-	defer src.Close()
-
-	err = os.MkdirAll(filepath.Dir(dst), 0750)
-	if err != nil {
-		return err
-	}
-	out, err := os.Create(dst)
-	if err != nil {
-		return err
-	}
-	defer out.Close()
-
-	_, err = io.Copy(out, src)
-	return err
+	return os.WriteFile(dst, raw, 0644)
 }
 
 const (
 	Mb = 1 << 20
 )
 
-func ToMb(bytes int64) float64 {
+func ToMb(bytes int) float64 {
 	if bytes < 0 {
 		return 0
 	}
 	return float64(bytes) / float64(Mb)
 }
 
-func ToByte(mb float64) int64 {
+func ToByte(mb float64) int {
 	if mb < 0 {
 		return 0
 	}
-	return int64(mb * Mb)
+	return int(mb * Mb)
 }

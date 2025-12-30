@@ -1,7 +1,6 @@
-package util
+package jwt
 
 import (
-	"StreamCore/biz/domain"
 	"errors"
 	"time"
 
@@ -14,11 +13,10 @@ type userCustomClaims struct {
 	jwt.RegisteredClaims
 }
 
-func GenerateAccessToken(u *domain.User, secret string, expiresIn time.Duration) (result string, err error) {
+func GenerateAccessToken(uid uint, secret string, expiresIn time.Duration) (result string, err error) {
 	exp := time.Now().Add(expiresIn)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, userCustomClaims{
-		UserId:   u.Id,
-		Username: u.Username,
+		UserId: uid,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    "StreamCore",
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -28,10 +26,10 @@ func GenerateAccessToken(u *domain.User, secret string, expiresIn time.Duration)
 	return token.SignedString([]byte(secret))
 }
 
-func GenerateRefreshToken(u *domain.User, secret string, expiresIn time.Duration) (result string, err error) {
+func GenerateRefreshToken(uid uint, secret string, expiresIn time.Duration) (result string, err error) {
 	exp := time.Now().Add(expiresIn)
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, userCustomClaims{
-		UserId: u.Id,
+		UserId: uid,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    "StreamCore",
 			IssuedAt:  jwt.NewNumericDate(time.Now()),

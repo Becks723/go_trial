@@ -5,7 +5,7 @@ import (
 	"StreamCore/biz/repo"
 	"StreamCore/pkg/ctl"
 	"StreamCore/pkg/env"
-	"StreamCore/pkg/util"
+	"StreamCore/pkg/util/jwt"
 	"context"
 	"errors"
 	"time"
@@ -31,7 +31,7 @@ func JWTAuthFunc() app.HandlerFunc {
 		}
 
 		env := env.Instance()
-		claims, err := util.ParseToken(access, env.AccessToken_Secret)
+		claims, err := jwt.ParseToken(access, env.AccessToken_Secret)
 		// access failed
 		if err != nil ||
 			time.Now().Unix() > claims.ExpiresAt.Unix() {
@@ -45,7 +45,7 @@ func JWTAuthFunc() app.HandlerFunc {
 			// update headers
 			c.Header(AccessTokenKey, newAccess)
 			c.Header(RefreshTokenKey, newRefresh)
-			claims, _ = util.ParseToken(newAccess, env.AccessToken_Secret)
+			claims, _ = jwt.ParseToken(newAccess, env.AccessToken_Secret)
 		}
 		c.Set("uid", claims.UserId)
 		c.Next(ctx)
@@ -54,7 +54,7 @@ func JWTAuthFunc() app.HandlerFunc {
 
 func refreshToken(refresh string, secret string, ur repo.UserRepo) (newAccess, newRefresh string, err error) {
 	// resolve refresh token
-	claims, err := util.ParseToken(refresh, secret)
+	claims, err := jwt.ParseToken(refresh, secret)
 	if err != nil {
 		return "", "", errors.New("Error resolving refresh token.")
 	}
@@ -72,12 +72,12 @@ func refreshToken(refresh string, secret string, ur repo.UserRepo) (newAccess, n
 
 	env := env.Instance()
 	// new access token
-	newAccess, err = util.GenerateAccessToken(u, env.AccessToken_Secret, util.HoursOf(env.AccessToken_ExpiryHours))
+	newAccess, err = jwt.GenerateAccessToken(u, env.AccessToken_Secret, jwt.HoursOf(env.AccessToken_ExpiryHours))
 	if err != nil {
 		return "", "", err
 	}
 	// new refresh token (optional)
-	newRefresh, err = util.GenerateRefreshToken(u, env.RefreshToken_Secret, util.HoursOf(env.RefreshToken_ExpiryHours))
+	newRefresh, err = jwt.GenerateRefreshToken(u, env.RefreshToken_Secret, jwt.HoursOf(env.RefreshToken_ExpiryHours))
 	if err != nil {
 		return "", "", err
 	}
