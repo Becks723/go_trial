@@ -1,6 +1,7 @@
 package service
 
 import (
+	"StreamCore/internal/pkg/pack"
 	"StreamCore/kitex_gen/common"
 	"StreamCore/kitex_gen/user"
 	"StreamCore/pkg/util"
@@ -21,13 +22,5 @@ func (s *UserService) GetInfo(query *user.InfoQuery) (*common.UserInfo, error) {
 		return nil, fmt.Errorf("cannot find user (uid=%d)", uid)
 	}
 
-	data := &common.UserInfo{
-		Id:        util.Uint2String(u.Id),
-		CreatedAt: u.CreatedAt.String(),
-		UpdatedAt: u.UpdatedAt.String(),
-		DeletedAt: util.TimePtr2String(u.DeletedAt),
-		Username:  u.Username,
-		AvatarUrl: u.AvatarUrl,
-	}
-	return data, nil
+	return pack.UserInfo(u), nil
 }

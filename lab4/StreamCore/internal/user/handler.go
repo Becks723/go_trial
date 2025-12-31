@@ -3,6 +3,7 @@ package user
 import (
 	"StreamCore/internal/pkg/base"
 	"StreamCore/internal/pkg/base/logincontext"
+	"StreamCore/internal/pkg/pack"
 	"StreamCore/internal/user/service"
 	"StreamCore/kitex_gen/user"
 	"context"
@@ -26,9 +27,9 @@ func (s *UserServiceImpl) Register(ctx context.Context, req *user.RegisterReq) (
 
 	err = service.NewUserService(ctx, s.infra).Register(req.Username, req.Password)
 	if err != nil {
-		resp.Base = base.BuildBaseResp(err)
+		resp.Base = pack.BuildBaseResp(err)
 	} else {
-		resp.Base = base.BuildSuccessResp()
+		resp.Base = pack.BuildSuccessResp()
 	}
 	return resp, nil
 }
@@ -39,9 +40,9 @@ func (s *UserServiceImpl) Login(ctx context.Context, req *user.LoginReq) (resp *
 
 	data, auth, err := service.NewUserService(ctx, s.infra).Login(req)
 	if err != nil {
-		resp.Base = base.BuildBaseResp(err)
+		resp.Base = pack.BuildBaseResp(err)
 	} else {
-		resp.Base = base.BuildSuccessResp()
+		resp.Base = pack.BuildSuccessResp()
 		resp.Data = data
 		resp.Auth = auth
 	}
@@ -54,9 +55,9 @@ func (s *UserServiceImpl) GetInfo(ctx context.Context, req *user.InfoQuery) (res
 
 	data, err := service.NewUserService(ctx, s.infra).GetInfo(req)
 	if err != nil {
-		resp.Base = base.BuildBaseResp(err)
+		resp.Base = pack.BuildBaseResp(err)
 	} else {
-		resp.Base = base.BuildSuccessResp()
+		resp.Base = pack.BuildSuccessResp()
 		resp.Data = data
 	}
 	return resp, nil
@@ -73,9 +74,9 @@ func (s *UserServiceImpl) UploadAvatar(ctx context.Context, req *user.AvatarReq)
 
 	data, err := service.NewUserService(ctx, s.infra).UploadAvatar(uid, req.Data)
 	if err != nil {
-		resp.Base = base.BuildBaseResp(err)
+		resp.Base = pack.BuildBaseResp(err)
 	} else {
-		resp.Base = base.BuildSuccessResp()
+		resp.Base = pack.BuildSuccessResp()
 		resp.Data = data
 	}
 	return resp, nil
@@ -92,9 +93,9 @@ func (s *UserServiceImpl) MFAQrcode(ctx context.Context, req *user.MFAQrcodeReq)
 
 	data, err := service.NewUserService(ctx, s.infra).MFAQrcode(uid)
 	if err != nil {
-		resp.Base = base.BuildBaseResp(err)
+		resp.Base = pack.BuildBaseResp(err)
 	} else {
-		resp.Base = base.BuildSuccessResp()
+		resp.Base = pack.BuildSuccessResp()
 		resp.Data = data
 	}
 	return resp, nil
@@ -111,9 +112,9 @@ func (s *UserServiceImpl) MFABind(ctx context.Context, req *user.MFABindReq) (re
 
 	err = service.NewUserService(ctx, s.infra).MFABind(uid, req)
 	if err != nil {
-		resp.Base = base.BuildBaseResp(err)
+		resp.Base = pack.BuildBaseResp(err)
 	} else {
-		resp.Base = base.BuildSuccessResp()
+		resp.Base = pack.BuildSuccessResp()
 	}
 	return resp, nil
 }

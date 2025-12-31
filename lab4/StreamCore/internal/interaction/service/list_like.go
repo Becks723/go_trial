@@ -1,6 +1,7 @@
 package service
 
 import (
+	"StreamCore/internal/pkg/pack"
 	"StreamCore/kitex_gen/common"
 	"StreamCore/kitex_gen/interaction"
 	"StreamCore/pkg/util"
@@ -29,20 +30,7 @@ func (s *InteractionService) ListLikedVideos(query *interaction.ListLikeQuery) (
 				Id: util.Uint2String(vid),
 			})
 		} else {
-			videos = append(videos, &common.VideoInfo{
-				CreatedAt:    v.CreatedAt.String(),
-				UpdatedAt:    v.UpdatedAt.String(),
-				DeletedAt:    util.TimePtr2String(v.DeletedAt),
-				Id:           util.Uint2String(v.Id),
-				UserId:       util.Uint2String(v.AuthorId),
-				VideoUrl:     v.VideoUrl,
-				CoverUrl:     v.CoverUrl,
-				Title:        v.Title,
-				Description:  v.Description,
-				VisitCount:   int32(v.VisitCount),
-				LikeCount:    int32(v.LikeCount),
-				CommentCount: int32(v.CommentCount),
-			})
+			videos = append(videos, pack.VideoInfo(v))
 		}
 	}
 

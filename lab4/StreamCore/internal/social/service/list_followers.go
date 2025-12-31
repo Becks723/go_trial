@@ -1,6 +1,7 @@
 package service
 
 import (
+	"StreamCore/internal/pkg/pack"
 	"StreamCore/kitex_gen/common"
 	"StreamCore/kitex_gen/social"
 	"StreamCore/pkg/env"
@@ -48,11 +49,6 @@ func (s *SocialService) getSocialInfo(uid uint) *common.SocialUserInfo {
 			Id: util.Uint2String(uid),
 		}
 	} else {
-		return &common.SocialUserInfo{
-			Id:        util.Uint2String(uid),
-			Username:  u.Username,
-			AvatarUrl: u.AvatarUrl,
-		}
+		return pack.SocialUserInfo(u)
 	}
-
 }

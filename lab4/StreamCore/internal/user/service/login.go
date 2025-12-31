@@ -1,6 +1,7 @@
 package service
 
 import (
+	"StreamCore/internal/pkg/pack"
 	"StreamCore/kitex_gen/common"
 	"StreamCore/kitex_gen/user"
 	"StreamCore/pkg/env"
@@ -35,17 +36,9 @@ func (s *UserService) Login(req *user.LoginReq) (*common.UserInfo, *common.Authe
 		return nil, nil, fmt.Errorf("failed gen refreshToken: %w", err)
 	}
 
-	data := &common.UserInfo{
-		Id:        util.Uint2String(u.Id),
-		CreatedAt: u.CreatedAt.String(),
-		UpdatedAt: u.UpdatedAt.String(),
-		DeletedAt: util.TimePtr2String(u.DeletedAt),
-		Username:  u.Username,
-		AvatarUrl: u.AvatarUrl,
-	}
 	auth := &common.AuthenticationInfo{
 		AccessToken:  atoken,
 		RefreshToken: rtoken,
 	}
-	return data, auth, nil
+	return pack.UserInfo(u), auth, nil
 }

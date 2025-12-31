@@ -1,7 +1,7 @@
 package service
 
 import (
-	"StreamCore/kitex_gen/common"
+	"StreamCore/internal/pkg/pack"
 	"StreamCore/kitex_gen/video"
 	"StreamCore/pkg/util"
 	"errors"
@@ -24,20 +24,7 @@ func (s *VideoService) List(query *video.ListQuery) (*video.ListRespData, error)
 	data := new(video.ListRespData)
 	data.Total = int32(total)
 	for _, v := range videos {
-		data.Items = append(data.Items, &common.VideoInfo{
-			CreatedAt:    v.CreatedAt.String(),
-			UpdatedAt:    v.UpdatedAt.String(),
-			DeletedAt:    util.TimePtr2String(v.DeletedAt),
-			Id:           util.Uint2String(v.Id),
-			UserId:       util.Uint2String(v.AuthorId),
-			VideoUrl:     v.VideoUrl,
-			CoverUrl:     v.CoverUrl,
-			Title:        v.Title,
-			Description:  v.Description,
-			VisitCount:   int32(v.VisitCount),
-			LikeCount:    int32(v.LikeCount),
-			CommentCount: int32(v.CommentCount),
-		})
+		data.Items = append(data.Items, pack.VideoInfo(v))
 	}
 	return data, nil
 }

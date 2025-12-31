@@ -1,4 +1,4 @@
-package base
+package pack
 
 import (
 	"StreamCore/kitex_gen/common"

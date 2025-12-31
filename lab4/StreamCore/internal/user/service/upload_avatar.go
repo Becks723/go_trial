@@ -1,6 +1,7 @@
 package service
 
 import (
+	"StreamCore/internal/pkg/pack"
 	"StreamCore/kitex_gen/common"
 	"StreamCore/pkg/env"
 	"StreamCore/pkg/util"
@@ -44,14 +45,5 @@ func (s *UserService) UploadAvatar(uid uint, data []byte) (*common.UserInfo, err
 		return nil, fmt.Errorf("error updating database avatar: %w", err)
 	}
 
-	// make resp
-	user := &common.UserInfo{
-		Id:        util.Uint2String(u.Id),
-		CreatedAt: u.CreatedAt.String(),
-		UpdatedAt: u.UpdatedAt.String(),
-		DeletedAt: util.TimePtr2String(u.DeletedAt),
-		Username:  u.Username,
-		AvatarUrl: u.AvatarUrl,
-	}
-	return user, nil
+	return pack.UserInfo(u), nil
 }

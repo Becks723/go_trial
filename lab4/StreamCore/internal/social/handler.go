@@ -3,6 +3,7 @@ package social
 import (
 	"StreamCore/internal/pkg/base"
 	"StreamCore/internal/pkg/base/logincontext"
+	"StreamCore/internal/pkg/pack"
 	"StreamCore/internal/social/service"
 	"StreamCore/kitex_gen/social"
 	"context"
@@ -30,9 +31,9 @@ func (s *SocialServiceImpl) Follow(ctx context.Context, req *social.FollowReq) (
 
 	err = service.NewSocialService(ctx, s.infra).Follow(uid, req)
 	if err != nil {
-		resp.Base = base.BuildBaseResp(err)
+		resp.Base = pack.BuildBaseResp(err)
 	} else {
-		resp.Base = base.BuildSuccessResp()
+		resp.Base = pack.BuildSuccessResp()
 	}
 	return resp, nil
 }
@@ -43,9 +44,9 @@ func (s *SocialServiceImpl) ListFollows(ctx context.Context, req *social.ListFol
 
 	data, err := service.NewSocialService(ctx, s.infra).ListFollows(req)
 	if err != nil {
-		resp.Base = base.BuildBaseResp(err)
+		resp.Base = pack.BuildBaseResp(err)
 	} else {
-		resp.Base = base.BuildSuccessResp()
+		resp.Base = pack.BuildSuccessResp()
 		resp.Data = data
 	}
 	return resp, nil
@@ -57,9 +58,9 @@ func (s *SocialServiceImpl) ListFollowers(ctx context.Context, req *social.ListF
 
 	data, err := service.NewSocialService(ctx, s.infra).ListFollowers(req)
 	if err != nil {
-		resp.Base = base.BuildBaseResp(err)
+		resp.Base = pack.BuildBaseResp(err)
 	} else {
-		resp.Base = base.BuildSuccessResp()
+		resp.Base = pack.BuildSuccessResp()
 		resp.Data = data
 	}
 	return resp, nil
@@ -75,9 +76,9 @@ func (s *SocialServiceImpl) ListFriends(ctx context.Context, req *social.ListFri
 
 	data, err := service.NewSocialService(ctx, s.infra).ListFriends(uid, req)
 	if err != nil {
-		resp.Base = base.BuildBaseResp(err)
+		resp.Base = pack.BuildBaseResp(err)
 	} else {
-		resp.Base = base.BuildSuccessResp()
+		resp.Base = pack.BuildSuccessResp()
 		resp.Data = data
 	}
 	return resp, nil

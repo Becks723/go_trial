@@ -3,6 +3,7 @@ package video
 import (
 	"StreamCore/internal/pkg/base"
 	"StreamCore/internal/pkg/base/logincontext"
+	"StreamCore/internal/pkg/pack"
 	"StreamCore/internal/video/service"
 	"StreamCore/kitex_gen/video"
 	"context"
@@ -26,9 +27,9 @@ func (s *VideoServiceImpl) Feed(ctx context.Context, req *video.FeedQuery) (resp
 
 	data, err := service.NewVideoService(ctx, s.infra).GetVideoFeed(req)
 	if err != nil {
-		resp.Base = base.BuildBaseResp(err)
+		resp.Base = pack.BuildBaseResp(err)
 	} else {
-		resp.Base = base.BuildSuccessResp()
+		resp.Base = pack.BuildSuccessResp()
 		resp.Data = data
 	}
 	return resp, nil
@@ -45,9 +46,9 @@ func (s *VideoServiceImpl) Publish(ctx context.Context, req *video.PublishReq) (
 
 	err = service.NewVideoService(ctx, s.infra).Publish(uid, req)
 	if err != nil {
-		resp.Base = base.BuildBaseResp(err)
+		resp.Base = pack.BuildBaseResp(err)
 	} else {
-		resp.Base = base.BuildSuccessResp()
+		resp.Base = pack.BuildSuccessResp()
 	}
 	return resp, nil
 }
@@ -58,9 +59,9 @@ func (s *VideoServiceImpl) List(ctx context.Context, req *video.ListQuery) (resp
 
 	data, err := service.NewVideoService(ctx, s.infra).List(req)
 	if err != nil {
-		resp.Base = base.BuildBaseResp(err)
+		resp.Base = pack.BuildBaseResp(err)
 	} else {
-		resp.Base = base.BuildSuccessResp()
+		resp.Base = pack.BuildSuccessResp()
 		resp.Data = data
 	}
 	return resp, nil
@@ -72,9 +73,9 @@ func (s *VideoServiceImpl) Popular(ctx context.Context, req *video.PopularQuery)
 
 	data, err := service.NewVideoService(ctx, s.infra).Popular(req)
 	if err != nil {
-		resp.Base = base.BuildBaseResp(err)
+		resp.Base = pack.BuildBaseResp(err)
 	} else {
-		resp.Base = base.BuildSuccessResp()
+		resp.Base = pack.BuildSuccessResp()
 		resp.Data = data
 	}
 	return resp, nil
@@ -86,9 +87,9 @@ func (s *VideoServiceImpl) Search(ctx context.Context, req *video.SearchReq) (re
 
 	data, err := service.NewVideoService(ctx, s.infra).SearchES(req)
 	if err != nil {
-		resp.Base = base.BuildBaseResp(err)
+		resp.Base = pack.BuildBaseResp(err)
 	} else {
-		resp.Base = base.BuildSuccessResp()
+		resp.Base = pack.BuildSuccessResp()
 		resp.Data = data
 	}
 	return resp, nil
@@ -100,9 +101,9 @@ func (s *VideoServiceImpl) Visit(ctx context.Context, req *video.VisitQuery) (re
 
 	data, err := service.NewVideoService(ctx, s.infra).Visit(req)
 	if err != nil {
-		resp.Base = base.BuildBaseResp(err)
+		resp.Base = pack.BuildBaseResp(err)
 	} else {
-		resp.Base = base.BuildSuccessResp()
+		resp.Base = pack.BuildSuccessResp()
 		resp.Data = data
 	}
 	return resp, nil

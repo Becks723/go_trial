@@ -4,6 +4,7 @@ import (
 	"StreamCore/internal/interaction/service"
 	"StreamCore/internal/pkg/base"
 	"StreamCore/internal/pkg/base/logincontext"
+	"StreamCore/internal/pkg/pack"
 	ia "StreamCore/kitex_gen/interaction"
 	"context"
 	"fmt"
@@ -30,9 +31,9 @@ func (s *InteractionServiceImpl) PublishLike(ctx context.Context, req *ia.Publis
 
 	err = service.NewInteractionService(ctx, s.infra).PublishLike(uid, req)
 	if err != nil {
-		resp.Base = base.BuildBaseResp(err)
+		resp.Base = pack.BuildBaseResp(err)
 	} else {
-		resp.Base = base.BuildSuccessResp()
+		resp.Base = pack.BuildSuccessResp()
 	}
 	return resp, nil
 }
@@ -43,9 +44,9 @@ func (s *InteractionServiceImpl) ListLike(ctx context.Context, req *ia.ListLikeQ
 
 	data, err := service.NewInteractionService(ctx, s.infra).ListLikedVideos(req)
 	if err != nil {
-		resp.Base = base.BuildBaseResp(err)
+		resp.Base = pack.BuildBaseResp(err)
 	} else {
-		resp.Base = base.BuildSuccessResp()
+		resp.Base = pack.BuildSuccessResp()
 		resp.Data = data
 	}
 	return resp, nil
@@ -61,9 +62,9 @@ func (s *InteractionServiceImpl) PublishComment(ctx context.Context, req *ia.Pub
 
 	err = service.NewInteractionService(ctx, s.infra).PublishComment(uid, req)
 	if err != nil {
-		resp.Base = base.BuildBaseResp(err)
+		resp.Base = pack.BuildBaseResp(err)
 	} else {
-		resp.Base = base.BuildSuccessResp()
+		resp.Base = pack.BuildSuccessResp()
 	}
 	return resp, nil
 }
@@ -74,9 +75,9 @@ func (s *InteractionServiceImpl) ListComment(ctx context.Context, query *ia.List
 
 	data, err := service.NewInteractionService(ctx, s.infra).ListComment(query)
 	if err != nil {
-		resp.Base = base.BuildBaseResp(err)
+		resp.Base = pack.BuildBaseResp(err)
 	} else {
-		resp.Base = base.BuildSuccessResp()
+		resp.Base = pack.BuildSuccessResp()
 		resp.Data = data
 	}
 	return resp, nil
@@ -92,9 +93,9 @@ func (s *InteractionServiceImpl) DeleteComment(ctx context.Context, req *ia.Dele
 
 	err = service.NewInteractionService(ctx, s.infra).DeleteComment(uid, req)
 	if err != nil {
-		resp.Base = base.BuildBaseResp(err)
+		resp.Base = pack.BuildBaseResp(err)
 	} else {
-		resp.Base = base.BuildSuccessResp()
+		resp.Base = pack.BuildSuccessResp()
 	}
 	return resp, nil
 }
