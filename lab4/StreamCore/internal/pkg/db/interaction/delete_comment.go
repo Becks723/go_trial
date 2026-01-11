@@ -8,7 +8,7 @@ func (repo *iactiondb) DeleteCommentById(cid, authorId uint) (err error) {
 		Delete(&model.CommentModel{}).
 		Error
 	if err != nil {
-		return
+		return err
 	}
 	// delete all subs
 	err = repo.db.

@@ -2,6 +2,7 @@ package user
 
 import (
 	"StreamCore/internal/pkg/db/model"
+	"StreamCore/internal/pkg/db/pack"
 	"StreamCore/internal/pkg/domain"
 )
 
@@ -14,8 +15,7 @@ func (repo *userdb) GetByUsername(username string) (u *domain.User, err error) {
 	if err != nil {
 		return nil, err
 	}
-	u = userPo2Domain(&po)
-	return u, nil
+	return pack.User(&po), nil
 }
 
 func (repo *userdb) GetById(id uint) (u *domain.User, err error) {
@@ -27,6 +27,5 @@ func (repo *userdb) GetById(id uint) (u *domain.User, err error) {
 	if err != nil {
 		return nil, err
 	}
-	u = userPo2Domain(&po)
-	return u, nil
+	return pack.User(&po), nil
 }

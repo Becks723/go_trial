@@ -1,14 +1,12 @@
 package video
 
 import (
-	redisClient "StreamCore/biz/repo/redis"
-	"StreamCore/pkg/util"
+	"StreamCore/internal/pkg/db/pack"
+	"StreamCore/internal/pkg/db/util"
 	"time"
 
 	"StreamCore/internal/pkg/db/model"
 	"StreamCore/internal/pkg/domain"
-
-	"github.com/redis/go-redis/v9"
 )
 
 func (repo *videodb) Fetch(after *time.Time) (videos []*domain.Video, err error) {
@@ -19,13 +17,13 @@ func (repo *videodb) Fetch(after *time.Time) (videos []*domain.Video, err error)
 		err = repo.db.Where("published_at > ?", after).Find(&records).Error
 	}
 	if err != nil {
-		return
+		return nil, err
 	}
 
 	for _, po := range records {
-		videos = append(videos, vidPo2Domain(po))
+		videos = append(videos, repo.packVideo(po))
 	}
-	return
+	return videos, nil
 }
 
 func (repo *videodb) FetchByUid(uid uint, limit, page int) (videos []*domain.Video, total int, err error) {
@@ -36,54 +34,19 @@ func (repo *videodb) FetchByUid(uid uint, limit, page int) (videos []*domain.Vid
 		Where("author_id = ?", uid).
 		Count(&cnt)
 	if err = tx.Error; err != nil {
-		return
+		return nil, -1, err
 	}
-	total = int(cnt)
 
-	if isPageParamsValid(cnt, limit, page) {
+	if util.IsPageParamsValid(limit, page) {
 		tx = tx.Limit(limit).
 			Offset(limit * page)
 	}
 	if err = tx.Find(&records).Error; err != nil {
-		return
+		return nil, -1, err
 	}
 
 	for _, po := range records {
-		videos = append(videos, vidPo2Domain(po))
+		videos = append(videos, pack.Video(po))
 	}
-	return
-}
-
-func (repo *videodb) FetchByVisits(ctx context.Context, limit, page int, reverse bool) (videos []*domain.Video, err error) {
-	if err = repo.ensureVideoRank(ctx); err != nil {
-		return
-	}
-
-	res, err := redisClient.Rdb.ZRangeArgs(ctx, redis.ZRangeArgs{
-		Key:   redisClient.VideoRankKey,
-		Start: 0,
-		Stop:  -1,
-		Rev:   reverse,
-	}).Result()
-	if err != nil {
-		return
-	}
-
-	if isPageParamsValid(int64(len(res)), limit, page) {
-		res, _ = redisClient.Rdb.ZRangeArgs(ctx, redis.ZRangeArgs{
-			Key:   redisClient.VideoRankKey,
-			Start: limit * page,
-			Stop:  limit*(page+1) - 1,
-			Rev:   reverse,
-		}).Result()
-	}
-	for _, s := range res {
-		vid := util.String2Uint(s)
-		var v *domain.Video
-		if v, err = repo.GetById(vid); err != nil {
-			return
-		}
-		videos = append(videos, v)
-	}
-	return
+	return videos, int(cnt), nil
 }

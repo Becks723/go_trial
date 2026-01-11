@@ -2,6 +2,8 @@ package video
 
 import (
 	"StreamCore/internal/pkg/db/model"
+	"StreamCore/internal/pkg/db/pack"
+	"StreamCore/internal/pkg/db/util"
 	"StreamCore/internal/pkg/domain"
 	"time"
 )
@@ -25,21 +27,17 @@ func (repo *videodb) Search(keywords string, limit, page int, from, to *time.Tim
 			Where("u.username LIKE ?", "%"+*username+"%")
 	}
 	var cnt int64
-	if err = tx.Count(&cnt).Error; err != nil {
-		return
-	}
-	if isPageParamsValid(cnt, limit, page) {
+	tx = tx.Count(&cnt)
+	if util.IsPageParamsValid(limit, page) {
 		tx = tx.Limit(limit).
 			Offset(limit * page)
 	}
-
 	if err = tx.Find(&records).Error; err != nil {
-		return
+		return nil, -1, err
 	}
 
 	for _, po := range records {
-		videos = append(videos, vidPo2Domain(po))
+		videos = append(videos, pack.Video(po))
 	}
-	total = int(cnt)
-	return
+	return videos, int(cnt), nil
 }

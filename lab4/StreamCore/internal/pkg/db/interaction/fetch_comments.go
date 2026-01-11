@@ -1,7 +1,9 @@
 package interaction
 
 import (
-	"StreamCore/biz/repo/model"
+	"StreamCore/internal/pkg/db/model"
+	"StreamCore/internal/pkg/db/pack"
+	"StreamCore/internal/pkg/db/util"
 	"StreamCore/internal/pkg/domain"
 )
 
@@ -13,17 +15,17 @@ func (repo *iactiondb) ListRootComments(vid uint, limit, page int) (comments []*
 		Where("video_id = ? AND parent_id IS NULL", vid).
 		Count(&cnt)
 
-	if isPageParamsValid(cnt, limit, page) {
+	if util.IsPageParamsValid(limit, page) {
 		tx = tx.Limit(limit).
 			Offset(limit * page)
 	}
 	if err = tx.Find(&records).Error; err != nil {
-		return
+		return nil, err
 	}
 	for _, po := range records {
-		comments = append(comments, comPo2Domain(po))
+		comments = append(comments, pack.Comment(po))
 	}
-	return
+	return comments, nil
 }
 
 func (repo *iactiondb) ListSubComments(cid uint, limit, page int) (comments []*domain.Comment, err error) {
@@ -34,15 +36,15 @@ func (repo *iactiondb) ListSubComments(cid uint, limit, page int) (comments []*d
 		Where("parent_id = ?", cid).
 		Count(&cnt)
 
-	if isPageParamsValid(cnt, limit, page) {
+	if util.IsPageParamsValid(limit, page) {
 		tx = tx.Limit(limit).
 			Offset(limit * page)
 	}
 	if err = tx.Find(&records).Error; err != nil {
-		return
+		return nil, err
 	}
 	for _, po := range records {
-		comments = append(comments, comPo2Domain(po))
+		comments = append(comments, pack.Comment(po))
 	}
-	return
+	return comments, nil
 }
