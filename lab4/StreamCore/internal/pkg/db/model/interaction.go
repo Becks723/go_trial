@@ -1,6 +1,28 @@
 package model
 
-import "gorm.io/gorm"
+import (
+	"time"
+
+	"gorm.io/gorm"
+)
+
+type LikeRelationModel struct {
+	Id         uint `gorm:"primaryKey"`
+	Uid        uint
+	User       *UserModel `gorm:"foreignKey:Uid;reference:ID"`
+	TargetType int        // 1-video 2-comment    多态关联
+	TargetId   uint
+	Status     int // 1-like 2-unlike
+	Time       time.Time
+}
+
+type LikeCountModel struct {
+	Id          uint `gorm:"primaryKey"`
+	TargetType  int  // 1-video 2-comment
+	TargetId    uint
+	LikeCount   int64
+	UnlikeCount int64
+}
 
 type CommentModel struct {
 	gorm.Model

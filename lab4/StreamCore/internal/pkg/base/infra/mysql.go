@@ -1,8 +1,8 @@
 package infra
 
 import (
-	"StreamCore/biz/repo/model"
 	"StreamCore/config"
+	"StreamCore/internal/pkg/db/model"
 	"fmt"
 	"net/url"
 
@@ -30,7 +30,8 @@ func InitMySQL() (*gorm.DB, error) {
 	err = db.AutoMigrate(
 		&model.UserModel{},
 		&model.VideoModel{},
-		&model.LikeModel{},
+		&model.LikeRelationModel{},
+		&model.LikeCountModel{},
 		&model.CommentModel{},
 		&model.FollowModel{})
 	if err != nil {

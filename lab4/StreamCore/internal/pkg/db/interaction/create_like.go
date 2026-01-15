@@ -1,53 +1,26 @@
 package interaction
 
 import (
-	"StreamCore/biz/repo/model"
-	redisClient "StreamCore/biz/repo/redis"
+	"StreamCore/internal/pkg/constants"
+	"StreamCore/internal/pkg/db/model"
 	"context"
-	"fmt"
 	"time"
 )
 
-func (repo *iactiondb) LikeVideo(ctx context.Context, uid, vid uint, status int) (err error) {
-	// write fast to cache
-	if status == 1 {
-		err = redisClient.Rdb.SAdd(ctx, redisClient.VideoLikeKey(vid), uid).Err()
-		if err != nil {
-			return
-		}
-		err = redisClient.Rdb.SAdd(ctx, redisClient.UserLikeVidKey(uid), vid).Err()
-	} else if status == 2 {
-		err = redisClient.Rdb.SRem(ctx, redisClient.VideoLikeKey(vid), uid).Err()
-		if err != nil {
-			return
-		}
-		err = redisClient.Rdb.SRem(ctx, redisClient.UserLikeVidKey(uid), vid).Err()
-	} else {
-		err = fmt.Errorf("Unknown status value: %d", status)
-	}
-	if err != nil {
-		return
-	}
-
-	// async write to db
-	wbc := likeWbc() // write-behind caching
-	err = wbc.Enqueue(ctx, &model.LikeModel{
-		Userid:     uid,
-		TargetId:   vid,
-		TargetType: 1,
-		Status:     status,
-		Time:       time.Now(),
+func (repo *iactiondb) CreateLike(ctx context.Context, tarType int, uid, tarId uint, time time.Time) error {
+	// TODO: atomic
+	repo.db.Model(&model.LikeRelationModel{}).Create(&model.LikeRelationModel{
+		Uid:        uid,
+		TargetType: tarType,
+		TargetId:   tarId,
+		Status:     constants.LikeAction_Like,
+		Time:       time,
 	})
-	return
-}
-
-func (repo *iactiondb) LikeComment(ctx context.Context, uid, cid uint, status int) (err error) {
-	if status == 1 {
-		err = redisClient.Rdb.SAdd(ctx, redisClient.CommentLikeKey(cid), uid).Err()
-	} else if status == 2 {
-		err = redisClient.Rdb.SRem(ctx, redisClient.CommentLikeKey(cid), uid).Err()
-	} else {
-		err = fmt.Errorf("Unknown status value: %d", status)
-	}
-	return
+	repo.db.Model(&model.LikeCountModel{}).Create(&model.LikeCountModel{
+		TargetType:  tarType,
+		TargetId:    tarId,
+		LikeCount:   1,
+		UnlikeCount: 0,
+	})
+	return nil
 }

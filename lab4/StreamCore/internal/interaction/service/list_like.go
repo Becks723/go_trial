@@ -15,11 +15,26 @@ func (s *InteractionService) ListLikedVideos(query *interaction.ListLikeQuery) (
 		return nil, fmt.Errorf("bad uid format")
 	}
 
+	// cache-aside
+	// 1. try fetch from cache
 	vids, err := s.cache.GetUserLikedVideos(s.ctx, uid)
-	if err != nil {
-		return nil, fmt.Errorf("error cache.GetUserLikedVideos: %w", err)
+	if err == nil && len(vids) > 0 {
+		return s.saturateVideos(vids)
 	}
 
+	// 2. fetch from db, then set back to cache
+	vids, err = s.db.FetchUserLikedVideos(s.ctx, uid, int(query.PageSize), int(query.PageNum))
+	if err != nil {
+		return nil, fmt.Errorf("error db.FetchUserLikedVideos: %w", err)
+	}
+	err = s.cache.SetUserLikedVideos(s.ctx, uid, vids)
+	if err != nil {
+		return nil, fmt.Errorf("error cache.SetUserLikedVideos: %w", err) // TODO: log, not return err?
+	}
+	return s.saturateVideos(vids)
+}
+
+func (s *InteractionService) saturateVideos(vids []uint) (*interaction.ListLikeRespData, error) {
 	var videos []*common.VideoInfo
 	var failCount int
 	for _, vid := range vids {

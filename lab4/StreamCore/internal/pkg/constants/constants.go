@@ -9,4 +9,9 @@ const (
 	TOTPFailureReset = 5 * time.Minute
 
 	MuxConnection = 1
+
+	LikeTarType_Video   = 1
+	LikeTarType_Comment = 2
+	LikeAction_Like     = 1
+	LikeAction_Unlike   = 2
 )

@@ -10,7 +10,9 @@ import (
 func main() {
 	infra := base.GetInfraSet(
 		base.WithDB(),
-		base.WithCache())
+		base.WithCache(),
+		base.WithES(),
+		base.WithMQ())
 
 	svr := interactionservice.NewServer(interaction.NewInteractionHandler(infra))
 

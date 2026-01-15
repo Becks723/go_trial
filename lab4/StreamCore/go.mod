@@ -6,6 +6,7 @@ replace github.com/apache/thrift => github.com/apache/thrift v0.13.0
 
 require (
 	github.com/apache/thrift v0.22.0
+	github.com/bytedance/sonic v1.14.1
 	github.com/cloudwego/gopkg v0.1.6
 	github.com/cloudwego/hertz v0.10.3
 	github.com/cloudwego/kitex v0.15.2
@@ -14,6 +15,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/kitex-contrib/registry-etcd v0.3.0
 	github.com/pquerna/otp v1.5.0
+	github.com/rabbitmq/amqp091-go v1.10.0
 	github.com/redis/go-redis/v9 v9.16.0
 	github.com/spf13/viper v1.21.0
 	go.uber.org/mock v0.6.0
@@ -27,7 +29,6 @@ require (
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/boombuler/barcode v1.0.1-0.20190219062509-6c824513bacc // indirect
 	github.com/bytedance/gopkg v0.1.3 // indirect
-	github.com/bytedance/sonic v1.14.1 // indirect
 	github.com/bytedance/sonic/loader v0.3.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
 	github.com/cloudwego/base64x v0.1.6 // indirect

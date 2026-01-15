@@ -4,6 +4,7 @@ import (
 	"StreamCore/internal/pkg/base/infra"
 	"StreamCore/internal/pkg/cache"
 	"StreamCore/internal/pkg/db"
+	"StreamCore/internal/pkg/mq"
 	"log"
 	"sync"
 
@@ -14,6 +15,7 @@ type InfraSet struct {
 	Cache *cache.CacheSet
 	DB    *db.DatabaseSet
 	ES    *elasticsearch.TypedClient
+	MQ    *mq.MQSet
 }
 
 var (
@@ -60,5 +62,15 @@ func WithES() Option {
 			log.Fatal(err)
 		}
 		s.ES = es
+	}
+}
+
+func WithMQ() Option {
+	return func(s *InfraSet) {
+		conn, err := infra.InitRabbitMQ()
+		if err != nil {
+			log.Fatal(err)
+		}
+		s.MQ = mq.NewMQSet(conn)
 	}
 }

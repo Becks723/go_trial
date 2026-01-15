@@ -10,7 +10,9 @@ import (
 func main() {
 	infra := base.GetInfraSet(
 		base.WithDB(),
-		base.WithCache())
+		base.WithCache(),
+		base.WithES(),
+		base.WithMQ())
 
 	svr := userservice.NewServer(user.NewUserHandler(infra))
 
