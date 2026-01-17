@@ -14,4 +14,8 @@ const (
 	LikeTarType_Comment = 2
 	LikeAction_Like     = 1
 	LikeAction_Unlike   = 2
+
+	VideoVisitQueueSize                   = 5000
+	VideoVisitBatchSize                   = 1000
+	VideoVisitFlushInterval time.Duration = 10 * time.Second
 )

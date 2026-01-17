@@ -99,7 +99,14 @@ func (s *VideoServiceImpl) Search(ctx context.Context, req *video.SearchReq) (re
 func (s *VideoServiceImpl) Visit(ctx context.Context, req *video.VisitQuery) (resp *video.VisitResp, err error) {
 	resp = new(video.VisitResp)
 
-	data, err := service.NewVideoService(ctx, s.infra).Visit(req)
+	var uidOptional *uint
+	uid, err := logincontext.RetrieveLoginUid(ctx)
+	if err != nil {
+		uidOptional = nil
+	} else {
+		uidOptional = &uid
+	}
+	data, err := service.NewVideoService(ctx, s.infra).Visit(uidOptional, req)
 	if err != nil {
 		resp.Base = pack.BuildBaseResp(err)
 	} else {

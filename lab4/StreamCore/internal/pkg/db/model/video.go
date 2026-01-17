@@ -21,3 +21,8 @@ type VideoModel struct {
 	PublishedAt  time.Time
 	EditedAt     time.Time
 }
+
+type VisitCountModel struct {
+	Vid        uint `gorm:"primaryKey"`
+	VisitCount int64
+}

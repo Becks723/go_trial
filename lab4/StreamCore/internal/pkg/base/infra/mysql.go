@@ -30,6 +30,7 @@ func InitMySQL() (*gorm.DB, error) {
 	err = db.AutoMigrate(
 		&model.UserModel{},
 		&model.VideoModel{},
+		&model.VisitCountModel{},
 		&model.LikeRelationModel{},
 		&model.LikeCountModel{},
 		&model.CommentModel{},

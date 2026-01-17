@@ -3,6 +3,7 @@ package video
 import (
 	"StreamCore/internal/pkg/db/pack"
 	"StreamCore/internal/pkg/db/util"
+	"context"
 	"time"
 
 	"StreamCore/internal/pkg/db/model"
@@ -49,4 +50,27 @@ func (repo *videodb) FetchByUid(uid uint, limit, page int) (videos []*domain.Vid
 		videos = append(videos, pack.Video(po))
 	}
 	return videos, int(cnt), nil
+}
+
+func (repo *videodb) FetchVideoIdsByVisit(ctx context.Context, limit, page int) (map[uint]int64, error) {
+	type kv struct {
+		vid   uint
+		visit int64
+	}
+	var pairs []kv
+	err := repo.db.Model(&model.VisitCountModel{}).
+		Select("vid, visit_count").
+		Order("visit_count DESC").
+		Limit(limit).
+		Offset(limit * page).
+		Scan(&pairs).
+		Error
+	if err != nil {
+		return nil, err
+	}
+	m := make(map[uint]int64, len(pairs))
+	for _, p := range pairs {
+		m[p.vid] = p.visit
+	}
+	return m, nil
 }

@@ -1,9 +1,9 @@
 package video
 
 import (
-	redisClient "StreamCore/biz/repo/redis"
 	"StreamCore/pkg/util"
 	"context"
+	"fmt"
 	"strconv"
 
 	"github.com/redis/go-redis/v9"
@@ -11,7 +11,8 @@ import (
 
 type VideoCache interface {
 	OnVisited(ctx context.Context, vid uint) error
-	VisitRank(ctx context.Context, limit, page int, desc bool) ([]uint, error)
+	GetVisitRank(ctx context.Context, limit, page int, desc bool) ([]uint, error)
+	RebuildVisitRank(ctx context.Context, videos map[uint]int64) error
 }
 
 func NewVideoCache(rdb *redis.Client) VideoCache {
@@ -21,21 +22,23 @@ func NewVideoCache(rdb *redis.Client) VideoCache {
 }
 
 func (c *videocache) OnVisited(ctx context.Context, vid uint) error {
-	// incr score
 	member := strconv.FormatUint(uint64(vid), 10)
+
+	// incr zset score
 	_, err := c.rdb.ZIncrBy(ctx, c.zVideoRankKey(), 1, member).Result()
 	if err != nil {
 		return err
 	}
 
-	// TODO
-	// signal async db update
-	visitWbc().SetTask(vid, &visitCache{vid: vid})
-
+	// incr video visit
+	_, err = c.rdb.Incr(ctx, c.videoVisitCountKey(vid)).Result()
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
-func (c *videocache) VisitRank(ctx context.Context, limit, page int, desc bool) ([]uint, error) {
+func (c *videocache) GetVisitRank(ctx context.Context, limit, page int, desc bool) ([]uint, error) {
 	res, err := c.rdb.ZRangeArgs(ctx, redis.ZRangeArgs{
 		Key:   c.zVideoRankKey(),
 		Start: limit * page,
@@ -54,8 +57,37 @@ func (c *videocache) VisitRank(ctx context.Context, limit, page int, desc bool) 
 	return videos, nil
 }
 
+// RebuildVisitRank rebuilds the video ranking zset from database data
+func (c *videocache) RebuildVisitRank(ctx context.Context, videos map[uint]int64) error {
+	if len(videos) == 0 {
+		return nil
+	}
+
+	// Use pipeline for batch operations
+	pipe := c.rdb.Pipeline()
+
+	// Clear existing zset
+	pipe.Del(ctx, c.zVideoRankKey())
+
+	// Add all videos to zset
+	for vid, visitCount := range videos {
+		member := strconv.FormatUint(uint64(vid), 10)
+		pipe.ZAdd(ctx, c.zVideoRankKey(), redis.Z{
+			Score:  float64(visitCount),
+			Member: member,
+		})
+	}
+
+	_, err := pipe.Exec(ctx)
+	return err
+}
+
 func (c *videocache) zVideoRankKey() string {
 	return "zVideoRank"
+}
+
+func (c *videocache) videoVisitCountKey(vid uint) string {
+	return fmt.Sprintf("video:visit_count:%d", vid)
 }
 
 type videocache struct {

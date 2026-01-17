@@ -24,9 +24,18 @@ func (s *VideoService) Popular(query *video.PopularQuery) (*video.PopularRespDat
 		page = int(*query.PageNum)
 	}
 
-	vids, err := s.cache.VisitRank(s.ctx, limit, page, false)
-	if err != nil {
-		return nil, fmt.Errorf("error cache.VisitRank: %w", err)
+	// Get video IDs from cache (descending order - most popular first)
+	vids, err := s.cache.GetVisitRank(s.ctx, limit, page, true)
+	if err != nil { // cache unavailable
+		// TODO: log cache unavailable
+		// rebuild rank cache
+		if err = s.rebuildVisitRankCache(); err != nil {
+			return nil, err
+		}
+		vids, err = s.cache.GetVisitRank(s.ctx, limit, page, true)
+		if err != nil {
+			return nil, fmt.Errorf("error cache.GetVisitRank: %w", err)
+		}
 	}
 
 	var videos []*common.VideoInfo
@@ -49,4 +58,20 @@ func (s *VideoService) Popular(query *video.PopularQuery) (*video.PopularRespDat
 	data := new(video.PopularRespData)
 	data.Items = videos
 	return data, nil
+}
+
+// rebuildVisitRankCache rebuilds the visit ranking cache from database
+func (s *VideoService) rebuildVisitRankCache() error {
+	// Fetch top N videos from database (larger than typical page size to populate cache)
+	const cacheSize = 1000
+	m, err := s.db.FetchVideoIdsByVisit(s.ctx, cacheSize, 0)
+	if err != nil {
+		return fmt.Errorf("error db.FetchVideoIdsByVisit: %w", err)
+	}
+
+	// Rebuild cache
+	if err := s.cache.RebuildVisitRank(s.ctx, m); err != nil {
+		return fmt.Errorf("error cache.RebuildVisitRank: %w", err)
+	}
+	return nil
 }
