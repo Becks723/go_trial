@@ -4,12 +4,43 @@ package main
 
 import (
 	"StreamCore/api/router"
+	"StreamCore/config"
+	"StreamCore/internal/pkg/constants"
+	"StreamCore/pkg/util"
+	"log"
+	"time"
 
 	"github.com/cloudwego/hertz/pkg/app/server"
+	"github.com/hertz-contrib/cors"
 )
 
+var (
+	serviceName = constants.ApiServiceName
+	logPrefix   = "[api]"
+)
+
+func init() {
+	config.Init(serviceName)
+}
+
 func main() {
-	h := server.Default()
+	config := config.Instance()
+	listenAddr, ok := util.GetAvailablePort(config.Service.AddrList)
+	if !ok {
+		log.Fatalf("%s no port available", logPrefix)
+	}
+	h := server.New(
+		server.WithHostPorts(listenAddr),
+		server.WithHandleMethodNotAllowed(true))
+
+	h.Use(cors.New(cors.Config{
+		AllowOrigins:     []string{"*"},
+		AllowCredentials: true,
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
+		AllowHeaders:     []string{"*"},
+		ExposeHeaders:    []string{"Content-Length"},
+		MaxAge:           12 * time.Hour,
+	}))
 
 	router.GeneratedRegister(h)
 	h.Spin()

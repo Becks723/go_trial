@@ -10,3 +10,28 @@ server:
 
 general:
   page_size: 6
+
+etcd:
+  addr: 127.0.0.1:2379
+
+services:
+  api:
+    name: api
+    addr:
+      - 0.0.0.0:20001
+  user:
+    name: user
+    addr:
+      - 0.0.0.0:20002
+  video:
+    name: video
+    addr:
+      - 0.0.0.0:20003
+  interaction:
+    name: interaction
+    addr:
+      - 0.0.0.0:20004
+  social:
+    name: social
+    addr:
+      - 0.0.0.0:20005

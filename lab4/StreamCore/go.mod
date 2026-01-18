@@ -13,6 +13,7 @@ require (
 	github.com/elastic/go-elasticsearch/v8 v8.19.0
 	github.com/golang-jwt/jwt/v5 v5.3.0
 	github.com/google/uuid v1.6.0
+	github.com/hertz-contrib/cors v0.1.0
 	github.com/kitex-contrib/registry-etcd v0.3.0
 	github.com/pquerna/otp v1.5.0
 	github.com/rabbitmq/amqp091-go v1.10.0

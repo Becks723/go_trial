@@ -3,6 +3,15 @@ package constants
 import "time"
 
 const (
+	ApiServiceName         = "ApiService"
+	UserServiceName        = "UserService"
+	VideoServiceName       = "VideoService"
+	InteractionServiceName = "InteractionService"
+	SocialServiceName      = "SocialService"
+
+	MaxConnections = 1000
+	MaxQPS         = 100
+
 	TOTPSecretExpiry = 10 * time.Minute
 	TOTPInterval     = 30 // second
 	TOTPFailureLimit = 10
