@@ -42,6 +42,8 @@ func main() {
 		MaxAge:           12 * time.Hour,
 	}))
 
+	h.Static("/static", "./uploads")
+
 	router.GeneratedRegister(h)
 	h.Spin()
 }

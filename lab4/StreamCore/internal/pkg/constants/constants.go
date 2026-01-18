@@ -27,4 +27,8 @@ const (
 	VideoVisitQueueSize                   = 5000
 	VideoVisitBatchSize                   = 1000
 	VideoVisitFlushInterval time.Duration = 10 * time.Second
+
+	FollowAction_Follow   = 0
+	FollowAction_Unfollow = 1
+	SocialCacheExpiration = 30 * time.Minute
 )

@@ -1,66 +1,72 @@
 package social
 
 import (
+	"StreamCore/internal/pkg/constants"
 	"StreamCore/internal/pkg/db/model"
-	"StreamCore/internal/pkg/domain"
 	"context"
 )
 
-func (repo *socialdb) QueryFollows(ctx context.Context, uid uint, limit, page int) (follows []*domain.Follow, total int, err error) {
-	var records []*model.FollowModel
+func (repo *socialdb) FetchFollows(ctx context.Context, uid uint, limit, page int) ([]uint, int, error) {
+	var follows []uint
 	var cnt int64
-	tx := repo.db.Where("follower_id = ?", uid).
-		Count(&cnt)
-	if isPageParamsValid(cnt, limit, page) {
-		tx = tx.Limit(limit).
-			Offset(limit * page)
+	var err error
+	baseQuery := repo.db.Model(&model.FollowModel{}).
+		Select("followee_id").
+		Where("follower_id = ? AND status = ?", uid, constants.FollowAction_Follow)
+	if err = baseQuery.Count(&cnt).Error; err != nil {
+		return nil, -1, err
 	}
-	tx.Find(&records)
-
-	for _, po := range records {
-		follows = append(follows, followDomain(po))
+	err = baseQuery.
+		Limit(limit).
+		Offset(limit * page).
+		Scan(&follows).
+		Error
+	if err != nil {
+		return nil, -1, err
 	}
-	total = int(cnt)
-	return
+	return follows, int(cnt), nil
 }
 
-func (repo *socialdb) QueryFollowers(ctx context.Context, uid uint, limit, page int) (follows []*domain.Follow, total int, err error) {
-	var records []*model.FollowModel
+func (repo *socialdb) FetchFollowers(ctx context.Context, uid uint, limit, page int) ([]uint, int, error) {
+	var followers []uint
 	var cnt int64
-	tx := repo.db.Where("followee_id = ?", uid).
-		Count(&cnt)
-	if isPageParamsValid(cnt, limit, page) {
-		tx = tx.Limit(limit).
-			Offset(limit * page)
+	var err error
+	baseQuery := repo.db.Model(&model.FollowModel{}).
+		Select("follower_id").
+		Where("followee_id = ? AND status = ?", uid, constants.FollowAction_Follow)
+	if err = baseQuery.Count(&cnt).Error; err != nil {
+		return nil, -1, err
 	}
-	tx.Find(&records)
-
-	for _, po := range records {
-		follows = append(follows, followerDomain(po))
+	err = baseQuery.
+		Limit(limit).
+		Offset(limit * page).
+		Scan(&followers).
+		Error
+	if err != nil {
+		return nil, -1, err
 	}
-	total = int(cnt)
-	return
+	return followers, int(cnt), nil
 }
 
-func (repo *socialdb) QueryMutualFollows(ctx context.Context, uid uint, limit, page int) (mf []*domain.Follow, total int, err error) {
-	var followers []*model.FollowModel
-	repo.db.Where("followee_id = ?", uid).
-		Find(&followers)
-	for _, po := range followers {
-		err := repo.db.Where("follower_id = ? AND followee_id = ?", uid, po.FollowerId).
-			First(&model.FollowModel{}).
-			Error
-		if err != nil {
-			continue
-		}
-		mf = append(mf, &domain.Follow{
-			TargetUid: po.FollowerId,
-		})
+func (repo *socialdb) FetchFriends(ctx context.Context, uid uint, limit, page int) ([]uint, int, error) {
+	var friends []uint
+	var cnt int64
+	var err error
+	baseQuery := repo.db.Table("follows f1").
+		Select("f2.follower_id").
+		Joins("JOIN follows f2 ON f1.follower_id = f2.followee_id AND f2.follower_id = f1.followee_id").
+		Where("f1.follower_id = ? AND f1.status = ? AND f2.status = ?",
+			uid, constants.FollowAction_Follow, constants.FollowAction_Follow)
+	if err = baseQuery.Count(&cnt).Error; err != nil {
+		return nil, -1, err
 	}
-	// cursor
-	total = len(mf)
-	if isPageParamsValid(int64(total), limit, page) {
-		mf = mf[limit*page : limit*(page+1)]
+	err = baseQuery.
+		Limit(limit).
+		Offset(limit * page).
+		Scan(&friends).
+		Error
+	if err != nil {
+		return nil, -1, err
 	}
-	return
+	return friends, int(cnt), nil
 }

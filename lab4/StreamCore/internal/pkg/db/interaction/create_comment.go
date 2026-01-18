@@ -1,7 +1,7 @@
 package interaction
 
 import (
-	"StreamCore/biz/repo/model"
+	"StreamCore/internal/pkg/db/model"
 	"StreamCore/internal/pkg/domain"
 	"context"
 	"fmt"

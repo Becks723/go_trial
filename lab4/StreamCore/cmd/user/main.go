@@ -19,7 +19,7 @@ import (
 var (
 	infra       *base.InfraSet
 	serviceName = constants.UserServiceName
-	logPrefix   = "[video]"
+	logPrefix   = "[user]"
 )
 
 func init() {

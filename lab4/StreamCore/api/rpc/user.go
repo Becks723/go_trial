@@ -35,7 +35,7 @@ func LoginRPC(ctx context.Context, req *user.LoginReq) (*user.LoginResp, error) 
 		return nil, errors.New("user rpc client not initialized")
 	}
 
-	resp, err := *userClient.Login(ctx, req)
+	resp, err := userClient.Login(ctx, req)
 	if err != nil {
 		return nil, fmt.Errorf("login rpc call failed: %w", err)
 	}

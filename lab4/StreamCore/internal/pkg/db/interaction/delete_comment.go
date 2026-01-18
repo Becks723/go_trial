@@ -1,6 +1,6 @@
 package interaction
 
-import "StreamCore/biz/repo/model"
+import "StreamCore/internal/pkg/db/model"
 
 func (repo *iactiondb) DeleteCommentById(cid, authorId uint) (err error) {
 	err = repo.db.
