@@ -65,4 +65,5 @@ func (s *SocialService) writeUnfollowToDB(ctx context.Context, follower, followe
 			return fmt.Errorf("error db.UpdateFollowStatus: %w", err)
 		}
 	}
+	return nil
 }

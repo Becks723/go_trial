@@ -1,8 +1,8 @@
 package video
 
 import (
-	"StreamCore/biz/repo/es/model"
 	"StreamCore/internal/pkg/domain"
+	"StreamCore/internal/pkg/es/model"
 	"context"
 	"fmt"
 	"strconv"
@@ -159,10 +159,10 @@ func (c *VideoEsClient) buildQuery(query *domain.VideoQuery) *types.Query {
 	}
 
 	// must - match query (username)
-	if query.UsernameMatches != "" {
+	if query.UsernameMatches != nil {
 		bq.Must = append(bq.Must, types.Query{
 			Match: map[string]types.MatchQuery{
-				"username": {Query: query.UsernameMatches},
+				"username": {Query: *query.UsernameMatches},
 			},
 		})
 		anyCondition = true
@@ -182,13 +182,13 @@ func (c *VideoEsClient) buildQuery(query *domain.VideoQuery) *types.Query {
 	// filter - range query (from & to time)
 	rq := types.DateRangeQuery{}
 	timeRange := false
-	if query.FromDate != "" {
-		rq.Gte = &query.FromDate
+	if query.FromDate != nil {
+		rq.Gte = query.FromDate
 		timeRange = true
 		anyCondition = true
 	}
-	if query.ToDate != "" {
-		rq.Lte = &query.ToDate
+	if query.ToDate != nil {
+		rq.Lte = query.ToDate
 		timeRange = true
 		anyCondition = true
 	}

@@ -22,7 +22,7 @@ func (repo *videodb) Fetch(after *time.Time) (videos []*domain.Video, err error)
 	}
 
 	for _, po := range records {
-		videos = append(videos, repo.packVideo(po))
+		videos = append(videos, pack.Video(po))
 	}
 	return videos, nil
 }

@@ -35,7 +35,7 @@ func (s *UserService) MFAQrcode(uid uint) (*common.MFAInfo, error) {
 	qrcode := base64.StdEncoding.EncodeToString(buf.Bytes()) // base64
 
 	// cache secret
-	err = s.cache.SetTOTPPending(ctx, uid, secret)
+	err = s.cache.SetTOTPPending(s.ctx, uid, secret)
 	if err != nil {
 		return nil, err
 	}

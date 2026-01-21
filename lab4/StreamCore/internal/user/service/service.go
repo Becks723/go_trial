@@ -1,15 +1,15 @@
 package service
 
 import (
-	cache "StreamCore/biz/repo/cache/user"
 	"StreamCore/internal/pkg/base"
-	"StreamCore/internal/pkg/db/user"
+	cache "StreamCore/internal/pkg/cache/user"
+	db "StreamCore/internal/pkg/db/user"
 	"context"
 )
 
 type UserService struct {
 	ctx   context.Context
-	db    user.UserDatabase
+	db    db.UserDatabase
 	cache cache.UserCache
 	infra *base.InfraSet
 }
