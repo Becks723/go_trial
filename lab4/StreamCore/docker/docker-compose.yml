@@ -1,0 +1,89 @@
+services:
+  streamcore-redis:
+    container_name: streamcore-redis
+    image: redis
+    volumes:
+      - ./data/redis:/data
+    ports:
+      - "6379:6379"
+    env_file:
+      - ./env/redis.env
+    networks:
+      - streamcore
+
+  streamcore-mysql:
+    container_name: streamcore-mysql
+    image: mysql:8.0
+    user: "1000:50"
+    volumes:
+      - ../config/sql:/docker-entrypoint-initdb.d # magic docker directory to init database
+      - ./data/mysql:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    env_file:
+      - ./env/mysql.env
+    networks:
+      - streamcore
+
+  streamcore-etcd:
+    container_name: streamcore-etcd
+    image: quay.io/coreos/etcd:v3.5.12
+    restart: always
+    ports:
+      - 2379:2379
+      - 2380:2380
+    volumes:
+      - ./script:/script
+      - ../config:/config
+      - ./data/etcd:/data/etcd
+    env_file:
+      - ./env/etcd.env
+    networks:
+      - streamcore
+
+  streamcore-es:
+    container_name: streamcore-es
+    image: elasticsearch:8.4.2
+    restart: always
+    environment:
+      bootstrap.memory_lock: "true"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+      discovery.type: single-node
+      ingest.geoip.downloader.enabled: "false"
+      TZ: Asia/Shanghai
+      xpack.security.enabled: "false"
+    healthcheck:
+      test: [ "CMD-SHELL", "curl -sf http://elasticsearch:9200/_cluster/health || exit 1" ] # ⼼跳检测，成功之后不再执⾏后⾯的退出
+      interval: 60s # ⼼跳检测间隔周期
+      timeout: 10s
+      retries: 3
+      start_period: 60s # ⾸次检测延迟时间
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+       #- ../config/elasticsearch:/usr/share/elasticsearch/config
+       - ./data/elasticsearch:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    networks:
+      - streamcore
+
+  streamcore-rabbitmq:
+    container_name: streamcore-rabbitmq
+    image: rabbitmq:latest
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: streamcore
+      RABBITMQ_DEFAULT_PASS: streamcore
+    networks:
+      - streamcore
+
+networks:
+  streamcore:
+    driver: bridge
+    name: streamcore
