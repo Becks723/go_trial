@@ -12,24 +12,31 @@ type base struct {
 	Msg  string `json:"msg"`
 }
 
+type resp struct {
+	Base *base `json:"base"`
+}
+
 type respWithData struct {
-	Code int64  `json:"code"`
-	Msg  string `json:"msg"`
-	Data any    `json:"data"`
+	Base *base `json:"base"`
+	Data any   `json:"data,omitempty"`
 }
 
 func RespRPCError(c *app.RequestContext, err error) {
-	c.JSON(consts.StatusInternalServerError, base{
-		Code: consts.StatusInternalServerError,
-		Msg:  err.Error(),
+	c.JSON(consts.StatusInternalServerError, respWithData{
+		Base: &base{
+			Code: consts.StatusInternalServerError,
+			Msg:  err.Error(),
+		},
 	})
 }
 
 func RespBizError(c *app.RequestContext, resp *common.BaseResp) bool {
 	if resp.Code != consts.StatusOK {
-		c.JSON(int(resp.Code), base{
-			Code: int64(resp.Code),
-			Msg:  resp.Msg,
+		c.JSON(int(resp.Code), respWithData{
+			Base: &base{
+				Code: int64(resp.Code),
+				Msg:  resp.Msg,
+			},
 		})
 		return true
 	}
@@ -37,30 +44,38 @@ func RespBizError(c *app.RequestContext, resp *common.BaseResp) bool {
 }
 
 func RespParamError(c *app.RequestContext, err error) {
-	c.JSON(consts.StatusBadRequest, base{
-		Code: consts.StatusBadRequest,
-		Msg:  "Invalid parameter: " + err.Error(),
+	c.JSON(consts.StatusBadRequest, respWithData{
+		Base: &base{
+			Code: consts.StatusBadRequest,
+			Msg:  "Invalid parameter: " + err.Error(),
+		},
 	})
 }
 
 func RespUnauthorizedError(c *app.RequestContext, err error) {
-	c.JSON(consts.StatusUnauthorized, base{
-		Code: consts.StatusUnauthorized,
-		Msg:  err.Error(),
+	c.JSON(consts.StatusUnauthorized, respWithData{
+		Base: &base{
+			Code: consts.StatusUnauthorized,
+			Msg:  err.Error(),
+		},
 	})
 }
 
 func RespSuccess(c *app.RequestContext) {
-	c.JSON(consts.StatusOK, base{
-		Code: consts.StatusOK,
-		Msg:  "",
+	c.JSON(consts.StatusOK, respWithData{
+		Base: &base{
+			Code: consts.StatusOK,
+			Msg:  "",
+		},
 	})
 }
 
 func RespWithData(c *app.RequestContext, data any) {
 	c.JSON(consts.StatusOK, respWithData{
-		Code: consts.StatusOK,
-		Msg:  "",
+		Base: &base{
+			Code: consts.StatusOK,
+			Msg:  "",
+		},
 		Data: data,
 	})
 }

@@ -2,7 +2,7 @@ package video
 
 import (
 	"StreamCore/internal/pkg/base"
-	"StreamCore/internal/pkg/base/logincontext"
+	"StreamCore/internal/pkg/base/rpccontext"
 	"StreamCore/internal/pkg/pack"
 	"StreamCore/internal/video/service"
 	"StreamCore/kitex_gen/video"
@@ -39,7 +39,7 @@ func (s *VideoServiceImpl) Feed(ctx context.Context, req *video.FeedQuery) (resp
 func (s *VideoServiceImpl) Publish(ctx context.Context, req *video.PublishReq) (resp *video.PublishResp, err error) {
 	resp = new(video.PublishResp)
 
-	uid, err := logincontext.RetrieveLoginUid(ctx)
+	uid, err := rpccontext.RetrieveLoginUid(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("VideoService.Feed: get login uid failed: %w", err)
 	}
@@ -100,7 +100,7 @@ func (s *VideoServiceImpl) Visit(ctx context.Context, req *video.VisitQuery) (re
 	resp = new(video.VisitResp)
 
 	var uidOptional *uint
-	uid, err := logincontext.RetrieveLoginUid(ctx)
+	uid, err := rpccontext.RetrieveLoginUid(ctx)
 	if err != nil {
 		uidOptional = nil
 	} else {

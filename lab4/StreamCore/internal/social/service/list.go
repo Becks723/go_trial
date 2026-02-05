@@ -1,10 +1,10 @@
 package service
 
 import (
+	"StreamCore/config"
 	"StreamCore/internal/pkg/pack"
 	"StreamCore/kitex_gen/common"
 	"StreamCore/kitex_gen/social"
-	"StreamCore/pkg/env"
 	"StreamCore/pkg/util"
 	"errors"
 	"fmt"
@@ -18,7 +18,7 @@ func (s *SocialService) ListFollowers(query *social.ListFollowersQuery) (*social
 
 	var limit, page int
 	if query.PageSize == nil {
-		limit = env.Instance().Social_DefaultPageSize
+		limit = config.Instance().General.PageSize
 	} else {
 		limit = int(*query.PageSize)
 	}
@@ -54,7 +54,7 @@ func (s *SocialService) ListFollows(query *social.ListFollowsQuery) (*social.Soc
 
 	var limit, page int
 	if query.PageSize == nil {
-		limit = env.Instance().Social_DefaultPageSize
+		limit = config.Instance().General.PageSize
 	} else {
 		limit = int(*query.PageSize)
 	}
@@ -85,7 +85,7 @@ func (s *SocialService) ListFollows(query *social.ListFollowsQuery) (*social.Soc
 func (s *SocialService) ListFriends(uid uint, query *social.ListFriendsQuery) (*social.SocialList, error) {
 	var limit, page int
 	if query.PageSize == nil {
-		limit = env.Instance().Social_DefaultPageSize
+		limit = config.Instance().General.PageSize
 	} else {
 		limit = int(*query.PageSize)
 	}

@@ -77,7 +77,7 @@ var fieldIDToName_FeedRespData = map[int16]string{
 
 type FeedResp struct {
 	Base *common.BaseResp `thrift:"base,1,required" frugal:"1,required,common.BaseResp" json:"base"`
-	Data *FeedRespData    `thrift:"data,2,required" frugal:"2,required,FeedRespData" json:"data"`
+	Data *FeedRespData    `thrift:"data,2,optional" frugal:"2,optional,FeedRespData" json:"data,omitempty"`
 }
 
 func NewFeedResp() *FeedResp {
@@ -132,7 +132,7 @@ var fieldIDToName_FeedResp = map[int16]string{
 }
 
 type PublishReq struct {
-	Data        []byte  `thrift:"data,1,required" frugal:"1,required,binary" json:"data"`
+	Data        []byte  `thrift:"data,1,optional" frugal:"1,optional,binary" json:"data,omitempty"`
 	Title       *string `thrift:"title,2,optional" frugal:"2,optional,string" json:"title,omitempty"`
 	Description *string `thrift:"description,3,optional" frugal:"3,optional,string" json:"description,omitempty"`
 	CoverData   []byte  `thrift:"cover_data,4,optional" frugal:"4,optional,binary" json:"cover_data,omitempty"`
@@ -145,7 +145,12 @@ func NewPublishReq() *PublishReq {
 func (p *PublishReq) InitDefault() {
 }
 
+var PublishReq_Data_DEFAULT []byte
+
 func (p *PublishReq) GetData() (v []byte) {
+	if !p.IsSetData() {
+		return PublishReq_Data_DEFAULT
+	}
 	return p.Data
 }
 
@@ -186,6 +191,10 @@ func (p *PublishReq) SetDescription(val *string) {
 }
 func (p *PublishReq) SetCoverData(val []byte) {
 	p.CoverData = val
+}
+
+func (p *PublishReq) IsSetData() bool {
+	return p.Data != nil
 }
 
 func (p *PublishReq) IsSetTitle() bool {
@@ -339,7 +348,7 @@ var fieldIDToName_ListRespData = map[int16]string{
 
 type ListResp struct {
 	Base *common.BaseResp `thrift:"base,1,required" frugal:"1,required,common.BaseResp" json:"base"`
-	Data *ListRespData    `thrift:"data,2,required" frugal:"2,required,ListRespData" json:"data"`
+	Data *ListRespData    `thrift:"data,2,optional" frugal:"2,optional,ListRespData" json:"data,omitempty"`
 }
 
 func NewListResp() *ListResp {
@@ -480,7 +489,7 @@ var fieldIDToName_PopularRespData = map[int16]string{
 
 type PopularResp struct {
 	Base *common.BaseResp `thrift:"base,1,required" frugal:"1,required,common.BaseResp" json:"base"`
-	Data *PopularRespData `thrift:"data,2,required" frugal:"2,required,PopularRespData" json:"data"`
+	Data *PopularRespData `thrift:"data,2,optional" frugal:"2,optional,PopularRespData" json:"data,omitempty"`
 }
 
 func NewPopularResp() *PopularResp {
@@ -675,7 +684,7 @@ var fieldIDToName_SearchRespData = map[int16]string{
 
 type SearchResp struct {
 	Base *common.BaseResp `thrift:"base,1,required" frugal:"1,required,common.BaseResp" json:"base"`
-	Data *SearchRespData  `thrift:"data,2,required" frugal:"2,required,SearchRespData" json:"data"`
+	Data *SearchRespData  `thrift:"data,2,optional" frugal:"2,optional,SearchRespData" json:"data,omitempty"`
 }
 
 func NewSearchResp() *SearchResp {
@@ -760,7 +769,7 @@ var fieldIDToName_VisitQuery = map[int16]string{
 
 type VisitResp struct {
 	Base *common.BaseResp  `thrift:"base,1,required" frugal:"1,required,common.BaseResp" json:"base"`
-	Data *common.VideoInfo `thrift:"data,2,required" frugal:"2,required,common.VideoInfo" json:"data"`
+	Data *common.VideoInfo `thrift:"data,2,optional" frugal:"2,optional,common.VideoInfo" json:"data,omitempty"`
 }
 
 func NewVisitResp() *VisitResp {

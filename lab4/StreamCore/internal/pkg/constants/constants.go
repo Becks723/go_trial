@@ -3,14 +3,22 @@ package constants
 import "time"
 
 const (
-	ApiServiceName         = "ApiService"
-	UserServiceName        = "UserService"
-	VideoServiceName       = "VideoService"
-	InteractionServiceName = "InteractionService"
-	SocialServiceName      = "SocialService"
+	ApiServiceName         = "api"
+	UserServiceName        = "user"
+	VideoServiceName       = "video"
+	InteractionServiceName = "interaction"
+	SocialServiceName      = "social"
 
 	MaxConnections = 1000
 	MaxQPS         = 100
+
+	JWT_AccessSecret           = "access_token_secret"
+	JWT_RefreshSecret          = "refresh_token_secret"
+	JWT_AccessTokenExpiration  = 12 * time.Hour
+	JWT_RefreshTokenExpiration = 7 * 24 * time.Hour
+
+	MFA_QrcodeWidth  = 256
+	MFA_QrcodeHeight = 256
 
 	TOTPSecretExpiry = 10 * time.Minute
 	TOTPInterval     = 30 // second

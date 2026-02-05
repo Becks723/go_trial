@@ -1,8 +1,8 @@
 package service
 
 import (
+	"StreamCore/internal/pkg/constants"
 	"StreamCore/kitex_gen/common"
-	"StreamCore/pkg/env"
 	"bytes"
 	"encoding/base64"
 	"image/png"
@@ -23,8 +23,8 @@ func (s *UserService) MFAQrcode(uid uint) (*common.MFAInfo, error) {
 	}
 	secret := key.Secret()
 
-	w := env.Instance().MFA_QrcodeWidth
-	h := env.Instance().MFA_QrcodeHeight
+	w := constants.MFA_QrcodeWidth
+	h := constants.MFA_QrcodeHeight
 	img, err := key.Image(w, h)
 	if err != nil {
 		return nil, err

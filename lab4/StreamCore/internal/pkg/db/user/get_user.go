@@ -8,7 +8,7 @@ import (
 
 func (repo *userdb) GetByUsername(username string) (u *domain.User, err error) {
 	po := model.UserModel{}
-	err = repo.db.
+	err = repo.db.Model(&model.UserModel{}).
 		Where("username = ?", username).
 		First(&po).
 		Error

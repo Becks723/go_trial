@@ -2,7 +2,7 @@ package social
 
 import (
 	"StreamCore/internal/pkg/base"
-	"StreamCore/internal/pkg/base/logincontext"
+	"StreamCore/internal/pkg/base/rpccontext"
 	"StreamCore/internal/pkg/pack"
 	"StreamCore/internal/social/service"
 	"StreamCore/kitex_gen/social"
@@ -24,7 +24,7 @@ func NewSocialHandler(infra *base.InfraSet) social.SocialService {
 // Follow implements the SocialServiceImpl interface.
 func (s *SocialServiceImpl) Follow(ctx context.Context, req *social.FollowReq) (resp *social.FollowResp, err error) {
 	resp = new(social.FollowResp)
-	uid, err := logincontext.RetrieveLoginUid(ctx)
+	uid, err := rpccontext.RetrieveLoginUid(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("SocialService.Follow: get login uid failed: %w", err)
 	}
@@ -69,7 +69,7 @@ func (s *SocialServiceImpl) ListFollowers(ctx context.Context, req *social.ListF
 // ListFriends implements the SocialServiceImpl interface.
 func (s *SocialServiceImpl) ListFriends(ctx context.Context, req *social.ListFriendsQuery) (resp *social.ListFriendsResp, err error) {
 	resp = new(social.ListFriendsResp)
-	uid, err := logincontext.RetrieveLoginUid(ctx)
+	uid, err := rpccontext.RetrieveLoginUid(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("SocialService.ListFriends: get login uid failed: %w", err)
 	}

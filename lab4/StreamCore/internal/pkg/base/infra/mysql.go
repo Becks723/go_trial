@@ -12,12 +12,12 @@ import (
 
 func InitMySQL() (*gorm.DB, error) {
 	// connect to mysql database
-	c := config.Instance().MySql
+	c := config.Instance().MySQL
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s",
 		c.Username, c.Password, c.Host, c.Port, c.DBName)
 
 	params := url.Values{}
-	params.Set("charset", "utf8mb4")
+	params.Set("charset", c.Charset)
 	params.Set("parseTime", "true")
 
 	dsn += fmt.Sprintf("?%s", params.Encode())

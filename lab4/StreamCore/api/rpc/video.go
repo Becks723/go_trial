@@ -1,6 +1,7 @@
 package rpc
 
 import (
+	"StreamCore/internal/pkg/constants"
 	"StreamCore/kitex_gen/video"
 	"StreamCore/kitex_gen/video/videoservice"
 	"context"
@@ -10,7 +11,7 @@ import (
 )
 
 func initVideoRPC() {
-	c, err := initRPCClient(VideoServiceName, videoservice.NewClient)
+	c, err := initRPCClient(constants.VideoServiceName, videoservice.NewClient)
 	if err != nil {
 		log.Fatalf("failed to init video rpc client: %v", err)
 	}

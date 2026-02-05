@@ -542,7 +542,8 @@ func (p *FeedResp) String() string {
 }
 
 type PublishReq struct {
-	Data        []byte  `thrift:"data,1,required" form:"data,required" json:"data,required" query:"data,required"`
+	// required
+	Data        []byte  `thrift:"data,1,optional" form:"data" json:"data,omitempty" query:"data"`
 	Title       *string `thrift:"title,2,optional" form:"title" json:"title,omitempty" query:"title"`
 	Description *string `thrift:"description,3,optional" form:"description" json:"description,omitempty" query:"description"`
 	CoverData   []byte  `thrift:"cover_data,4,optional" form:"cover_data" json:"cover_data,omitempty" query:"cover_data"`
@@ -555,7 +556,12 @@ func NewPublishReq() *PublishReq {
 func (p *PublishReq) InitDefault() {
 }
 
+var PublishReq_Data_DEFAULT []byte
+
 func (p *PublishReq) GetData() (v []byte) {
+	if !p.IsSetData() {
+		return PublishReq_Data_DEFAULT
+	}
 	return p.Data
 }
 
@@ -593,6 +599,10 @@ var fieldIDToName_PublishReq = map[int16]string{
 	4: "cover_data",
 }
 
+func (p *PublishReq) IsSetData() bool {
+	return p.Data != nil
+}
+
 func (p *PublishReq) IsSetTitle() bool {
 	return p.Title != nil
 }
@@ -609,7 +619,6 @@ func (p *PublishReq) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
-	var issetData bool = false
 
 	if _, err = iprot.ReadStructBegin(); err != nil {
 		goto ReadStructBeginError
@@ -630,7 +639,6 @@ func (p *PublishReq) Read(iprot thrift.TProtocol) (err error) {
 				if err = p.ReadField1(iprot); err != nil {
 					goto ReadFieldError
 				}
-				issetData = true
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
 				goto SkipFieldError
 			}
@@ -671,10 +679,6 @@ func (p *PublishReq) Read(iprot thrift.TProtocol) (err error) {
 		goto ReadStructEndError
 	}
 
-	if !issetData {
-		fieldId = 1
-		goto RequiredFieldNotSetError
-	}
 	return nil
 ReadStructBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
@@ -689,8 +693,6 @@ ReadFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
 ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-RequiredFieldNotSetError:
-	return thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_PublishReq[fieldId]))
 }
 
 func (p *PublishReq) ReadField1(iprot thrift.TProtocol) error {
@@ -779,14 +781,16 @@ WriteStructEndError:
 }
 
 func (p *PublishReq) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("data", thrift.STRING, 1); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteBinary([]byte(p.Data)); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
+	if p.IsSetData() {
+		if err = oprot.WriteFieldBegin("data", thrift.STRING, 1); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteBinary([]byte(p.Data)); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
 	}
 	return nil
 WriteFieldBeginError:

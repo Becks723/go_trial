@@ -1,9 +1,9 @@
 package service
 
 import (
+	"StreamCore/config"
 	"StreamCore/internal/pkg/domain"
 	"StreamCore/kitex_gen/video"
-	"StreamCore/pkg/env"
 	"StreamCore/pkg/util"
 	"errors"
 	"fmt"
@@ -29,7 +29,7 @@ func (s *VideoService) Publish(uid uint, req *video.PublishReq) error {
 	}
 
 	// exceeds video limit
-	limit := env.Instance().IO_VideoSizeLimit
+	limit := config.Instance().General.VideoSizeLimit
 	size := len(req.Data)
 	if size > util.ToByte(limit) {
 		return fmt.Errorf("exceeds video size limit (current %.2fmb but limits %.2fmb)", util.ToMb(size), limit)
@@ -51,7 +51,7 @@ func (s *VideoService) Publish(uid uint, req *video.PublishReq) error {
 		}
 
 		// exceeds image limit
-		limit := env.Instance().IO_ImageSizeLimit
+		limit := config.Instance().General.ImageSizeLimit
 		size := len(req.CoverData)
 		if size > util.ToByte(limit) {
 			return fmt.Errorf("exceeds image size limit (current %.2fmb but limits %.2fmb)", util.ToMb(size), limit)

@@ -8,11 +8,13 @@ import (
 )
 
 type config struct {
-	Server  serverConfig  `mapstructure:"server"`
-	MySql   mySqlConfig   `mapstructure:"mysql"`
-	General generalConfig `mapstructure:"general"`
-	Etcd    *etcd
-	Service *svc
+	Server   serverConfig  `mapstructure:"server"`
+	MySQL    *mySql        `mapstructure:"mysql"`
+	General  generalConfig `mapstructure:"general"`
+	Redis    *redis        `mapstructure:"redis"`
+	RabbitMQ *rabbitmq     `mapstructure:"rabbitmq"`
+	Etcd     *etcd
+	Service  *svc
 }
 
 var (
@@ -52,12 +54,13 @@ func getService(service string, v *viper.Viper) *svc {
 	return s
 }
 
-type mySqlConfig struct {
+type mySql struct {
 	Host     string `mapstructure:"host"`
 	Port     string `mapstructure:"port"`
 	Username string `mapstructure:"username"`
 	Password string `mapstructure:"password"`
 	DBName   string `mapstructure:"dbname"`
+	Charset  string `mapstructure:"charset"`
 }
 
 type serverConfig struct {
@@ -65,7 +68,19 @@ type serverConfig struct {
 }
 
 type generalConfig struct {
-	PageSize int `mapstructure:"page_size"`
+	PageSize       int     `mapstructure:"page_size"`
+	ImageSizeLimit float64 `mapstructure:"image_size_limit"`
+	VideoSizeLimit float64 `mapstructure:"video_size_limit"`
+}
+
+type redis struct {
+	Addr     string `mapstructure:"addr"`
+	Password string `mapstructure:"password"`
+}
+
+type rabbitmq struct {
+	Username string `mapstructure:"username"`
+	Password string `mapstructure:"password"`
 }
 
 type etcd struct {

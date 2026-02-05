@@ -2,7 +2,8 @@ package middleware
 
 import (
 	"StreamCore/api/pack"
-	"StreamCore/pkg/env"
+	"StreamCore/internal/pkg/base/rpccontext"
+	"StreamCore/internal/pkg/constants"
 	"StreamCore/pkg/util/jwt"
 	"context"
 	"errors"
@@ -26,13 +27,12 @@ func JWTAuthFunc() app.HandlerFunc {
 			return
 		}
 
-		env := env.Instance()
-		claims, err := jwt.ParseToken(access, env.AccessToken_Secret)
+		claims, err := jwt.ParseToken(access, constants.JWT_AccessSecret)
 		// access failed
 		if err != nil ||
 			time.Now().Unix() > claims.ExpiresAt.Unix() {
 			// refresh access
-			newAccess, newRefresh, err := refreshToken(refresh, env.RefreshToken_Secret)
+			newAccess, newRefresh, err := refreshToken(refresh, constants.JWT_RefreshSecret)
 			if err != nil {
 				pack.RespUnauthorizedError(c, err)
 				c.Abort()
@@ -41,9 +41,9 @@ func JWTAuthFunc() app.HandlerFunc {
 			// update headers
 			c.Header(AccessTokenKey, newAccess)
 			c.Header(RefreshTokenKey, newRefresh)
-			claims, _ = jwt.ParseToken(newAccess, env.AccessToken_Secret)
+			claims, _ = jwt.ParseToken(newAccess, constants.JWT_AccessSecret)
 		}
-		c.Set("uid", claims.UserId)
+		ctx = rpccontext.WithLoginUid(ctx, claims.UserId)
 		c.Next(ctx)
 	}
 }
@@ -60,14 +60,13 @@ func refreshToken(refresh string, secret string) (newAccess, newRefresh string, 
 		return "", "", errors.New("refresh token expired")
 	}
 
-	env := env.Instance()
 	// new access token
-	newAccess, err = jwt.GenerateAccessToken(claims.UserId, env.AccessToken_Secret, jwt.HoursOf(env.AccessToken_ExpiryHours))
+	newAccess, err = jwt.GenerateAccessToken(claims.UserId, constants.JWT_AccessSecret, constants.JWT_AccessTokenExpiration)
 	if err != nil {
 		return "", "", err
 	}
 	// new refresh token (optional)
-	newRefresh, err = jwt.GenerateRefreshToken(claims.UserId, env.RefreshToken_Secret, jwt.HoursOf(env.RefreshToken_ExpiryHours))
+	newRefresh, err = jwt.GenerateRefreshToken(claims.UserId, constants.JWT_RefreshSecret, constants.JWT_RefreshTokenExpiration)
 	if err != nil {
 		return "", "", err
 	}

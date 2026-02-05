@@ -1256,7 +1256,8 @@ func (p *InfoResp) String() string {
 }
 
 type AvatarReq struct {
-	Data []byte `thrift:"data,1,required" form:"data,required" json:"data,required" query:"data,required"`
+	// required
+	Data []byte `thrift:"data,1,optional" form:"data" json:"data,omitempty" query:"data"`
 }
 
 func NewAvatarReq() *AvatarReq {
@@ -1266,7 +1267,12 @@ func NewAvatarReq() *AvatarReq {
 func (p *AvatarReq) InitDefault() {
 }
 
+var AvatarReq_Data_DEFAULT []byte
+
 func (p *AvatarReq) GetData() (v []byte) {
+	if !p.IsSetData() {
+		return AvatarReq_Data_DEFAULT
+	}
 	return p.Data
 }
 
@@ -1274,11 +1280,14 @@ var fieldIDToName_AvatarReq = map[int16]string{
 	1: "data",
 }
 
+func (p *AvatarReq) IsSetData() bool {
+	return p.Data != nil
+}
+
 func (p *AvatarReq) Read(iprot thrift.TProtocol) (err error) {
 
 	var fieldTypeId thrift.TType
 	var fieldId int16
-	var issetData bool = false
 
 	if _, err = iprot.ReadStructBegin(); err != nil {
 		goto ReadStructBeginError
@@ -1299,7 +1308,6 @@ func (p *AvatarReq) Read(iprot thrift.TProtocol) (err error) {
 				if err = p.ReadField1(iprot); err != nil {
 					goto ReadFieldError
 				}
-				issetData = true
 			} else if err = iprot.Skip(fieldTypeId); err != nil {
 				goto SkipFieldError
 			}
@@ -1316,10 +1324,6 @@ func (p *AvatarReq) Read(iprot thrift.TProtocol) (err error) {
 		goto ReadStructEndError
 	}
 
-	if !issetData {
-		fieldId = 1
-		goto RequiredFieldNotSetError
-	}
 	return nil
 ReadStructBeginError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct begin error: ", p), err)
@@ -1334,8 +1338,6 @@ ReadFieldEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read field end error", p), err)
 ReadStructEndError:
 	return thrift.PrependError(fmt.Sprintf("%T read struct end error: ", p), err)
-RequiredFieldNotSetError:
-	return thrift.NewTProtocolExceptionWithType(thrift.INVALID_DATA, fmt.Errorf("required field %s is not set", fieldIDToName_AvatarReq[fieldId]))
 }
 
 func (p *AvatarReq) ReadField1(iprot thrift.TProtocol) error {
@@ -1379,14 +1381,16 @@ WriteStructEndError:
 }
 
 func (p *AvatarReq) writeField1(oprot thrift.TProtocol) (err error) {
-	if err = oprot.WriteFieldBegin("data", thrift.STRING, 1); err != nil {
-		goto WriteFieldBeginError
-	}
-	if err := oprot.WriteBinary([]byte(p.Data)); err != nil {
-		return err
-	}
-	if err = oprot.WriteFieldEnd(); err != nil {
-		goto WriteFieldEndError
+	if p.IsSetData() {
+		if err = oprot.WriteFieldBegin("data", thrift.STRING, 1); err != nil {
+			goto WriteFieldBeginError
+		}
+		if err := oprot.WriteBinary([]byte(p.Data)); err != nil {
+			return err
+		}
+		if err = oprot.WriteFieldEnd(); err != nil {
+			goto WriteFieldEndError
+		}
 	}
 	return nil
 WriteFieldBeginError:

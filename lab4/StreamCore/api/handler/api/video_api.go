@@ -7,6 +7,7 @@ import (
 	"StreamCore/api/pack"
 	"StreamCore/api/rpc"
 	"StreamCore/kitex_gen/video"
+	"StreamCore/pkg/util"
 	"context"
 
 	"github.com/cloudwego/hertz/pkg/app"
@@ -40,18 +41,22 @@ func Feed(ctx context.Context, c *app.RequestContext) {
 // @router /video/publish [POST]
 func Publish(ctx context.Context, c *app.RequestContext) {
 	var err error
-	var req api.PublishReq
-	err = c.BindAndValidate(&req)
+
+	data, err := util.ReadRequiredFormFile(c, "data")
 	if err != nil {
 		pack.RespParamError(c, err)
 		return
 	}
-
+	coverData, err := util.ReadOptionalFormFile(c, "cover_data")
+	if err != nil {
+		pack.RespParamError(c, err)
+		return
+	}
 	resp, err := rpc.PublishRPC(ctx, &video.PublishReq{
-		Data:        req.Data,
-		Title:       req.Title,
-		Description: req.Description,
-		CoverData:   req.CoverData,
+		Data:        data,
+		Title:       util.StringOrNil(c.PostForm("title")),
+		Description: util.StringOrNil(c.PostForm("description")),
+		CoverData:   coverData,
 	})
 	if err != nil {
 		pack.RespRPCError(c, err)

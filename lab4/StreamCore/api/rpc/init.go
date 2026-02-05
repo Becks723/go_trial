@@ -1,13 +1,12 @@
 package rpc
 
 import (
+	"StreamCore/config"
 	"StreamCore/internal/pkg/constants"
 	"StreamCore/kitex_gen/interaction/interactionservice"
 	"StreamCore/kitex_gen/social/socialservice"
 	"StreamCore/kitex_gen/user/userservice"
 	"StreamCore/kitex_gen/video/videoservice"
-	"StreamCore/pkg/env"
-	"errors"
 	"fmt"
 
 	"github.com/cloudwego/kitex/client"
@@ -28,21 +27,9 @@ func Init() {
 	initInteractionRPC()
 }
 
-const (
-	MuxConnection = 1
-
-	UserServiceName        = "user"
-	VideoServiceName       = "video"
-	InteractionServiceName = "interaction"
-	SocialServiceName      = "social"
-)
-
 func initRPCClient[T any](serviceName string, newClientFunc func(string, ...client.Option) (T, error)) (*T, error) {
-	addr := env.Instance().Etcd_Addr
-	if addr == "" {
-		return nil, errors.New("env etcd addr null")
-	}
-	r, err := etcd.NewEtcdResolver([]string{addr})
+	config := config.Instance()
+	r, err := etcd.NewEtcdResolver([]string{config.Etcd.Addr})
 	if err != nil {
 		return nil, fmt.Errorf("initRPCClient: error etcd.NewEtcdResolver: %w", err)
 	}

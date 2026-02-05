@@ -4,6 +4,7 @@ package main
 
 import (
 	"StreamCore/api/router"
+	"StreamCore/api/rpc"
 	"StreamCore/config"
 	"StreamCore/internal/pkg/constants"
 	"StreamCore/pkg/util"
@@ -21,6 +22,7 @@ var (
 
 func init() {
 	config.Init(serviceName)
+	rpc.Init()
 }
 
 func main() {

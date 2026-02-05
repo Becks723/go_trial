@@ -1,6 +1,7 @@
 package service
 
 import (
+	"StreamCore/config"
 	"StreamCore/internal/pkg/pack"
 	"StreamCore/kitex_gen/common"
 	"StreamCore/pkg/env"
@@ -24,7 +25,7 @@ func (s *UserService) UploadAvatar(uid uint, data []byte) (*common.UserInfo, err
 	}
 
 	// exceeds image limit
-	limit := env.Instance().IO_ImageSizeLimit
+	limit := config.Instance().General.ImageSizeLimit
 	size := len(data)
 	if size > util.ToByte(limit) {
 		return nil, fmt.Errorf("exceeds image size limit (current %.2fmb but limits %.2fmb)", util.ToMb(size), limit)

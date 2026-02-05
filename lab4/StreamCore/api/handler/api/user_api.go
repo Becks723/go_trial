@@ -58,7 +58,10 @@ func Login(ctx context.Context, c *app.RequestContext) {
 	}
 
 	if !pack.RespBizError(c, resp.Base) {
-		pack.RespWithData(c, resp.Data)
+		pack.RespWithData(c, map[string]any{
+			"data": resp.Data,
+			"auth": resp.Auth,
+		})
 	}
 }
 

@@ -1,6 +1,7 @@
 package rpc
 
 import (
+	"StreamCore/internal/pkg/constants"
 	"StreamCore/kitex_gen/social"
 	"StreamCore/kitex_gen/social/socialservice"
 	"context"
@@ -10,7 +11,7 @@ import (
 )
 
 func initSocialRPC() {
-	c, err := initRPCClient(SocialServiceName, socialservice.NewClient)
+	c, err := initRPCClient(constants.SocialServiceName, socialservice.NewClient)
 	if err != nil {
 		log.Fatalf("failed to init social rpc client: %v", err)
 	}

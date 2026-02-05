@@ -1,11 +1,16 @@
 package util
 
 import (
+	"errors"
+	"io"
 	"mime/multipart"
 	"net/http"
 	"os"
 	"path/filepath"
 	"strings"
+
+	"github.com/cloudwego/hertz/pkg/app"
+	"github.com/cloudwego/hertz/pkg/protocol"
 )
 
 func mime(fileHeader *multipart.FileHeader) (string, error) {
@@ -64,4 +69,41 @@ func ToByte(mb float64) int {
 		return 0
 	}
 	return int(mb * Mb)
+}
+
+func ReadRequiredFormFile(c *app.RequestContext, key string) ([]byte, error) {
+	fh, err := c.FormFile(key)
+	if err != nil {
+		return nil, err
+	}
+	file, err := fh.Open()
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	buf, err := io.ReadAll(file)
+	if err != nil {
+		return nil, err
+	}
+	return buf, nil
+}
+
+// ReadOptionalFormFile may return (nil, nil)
+func ReadOptionalFormFile(c *app.RequestContext, key string) ([]byte, error) {
+	fh, err := c.FormFile(key)
+	if errors.Is(err, protocol.ErrMissingFile) { // client did not provide a file
+		return nil, nil
+	}
+	file, err := fh.Open()
+	if err != nil {
+		return nil, err
+	}
+	defer file.Close()
+
+	buf, err := io.ReadAll(file)
+	if err != nil {
+		return nil, err
+	}
+	return buf, nil
 }

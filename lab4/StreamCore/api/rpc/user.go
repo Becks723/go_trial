@@ -1,6 +1,7 @@
 package rpc
 
 import (
+	"StreamCore/internal/pkg/constants"
 	"StreamCore/kitex_gen/user"
 	"StreamCore/kitex_gen/user/userservice"
 	"context"
@@ -10,7 +11,7 @@ import (
 )
 
 func initUserRPC() {
-	c, err := initRPCClient(UserServiceName, userservice.NewClient)
+	c, err := initRPCClient(constants.UserServiceName, userservice.NewClient)
 	if err != nil {
 		log.Fatalf("failed to init user rpc client: %v", err)
 	}

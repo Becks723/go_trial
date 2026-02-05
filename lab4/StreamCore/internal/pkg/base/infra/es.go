@@ -6,7 +6,7 @@ import (
 
 func InitElastic() (*elasticsearch.TypedClient, error) {
 	es, err := elasticsearch.NewTypedClient(elasticsearch.Config{
-		Addresses: []string{"http://localhost:9200"},
+		Addresses: []string{"http://127.0.0.1:9200"},
 		// Username:
 		// Password:
 	})

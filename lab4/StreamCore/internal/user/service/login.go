@@ -1,10 +1,10 @@
 package service
 
 import (
+	"StreamCore/internal/pkg/constants"
 	"StreamCore/internal/pkg/pack"
 	"StreamCore/kitex_gen/common"
 	"StreamCore/kitex_gen/user"
-	"StreamCore/pkg/env"
 	"StreamCore/pkg/util"
 	"StreamCore/pkg/util/jwt"
 	"errors"
@@ -26,12 +26,11 @@ func (s *UserService) Login(req *user.LoginReq) (*common.UserInfo, *common.Authe
 	}
 
 	// generate access, refresh tokens
-	ev := env.Instance()
-	atoken, err := jwt.GenerateAccessToken(u.Id, ev.AccessToken_Secret, jwt.HoursOf(ev.AccessToken_ExpiryHours))
+	atoken, err := jwt.GenerateAccessToken(u.Id, constants.JWT_AccessSecret, constants.JWT_AccessTokenExpiration)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed gen accessToken: %w", err)
 	}
-	rtoken, err := jwt.GenerateRefreshToken(u.Id, ev.RefreshToken_Secret, jwt.HoursOf(ev.RefreshToken_ExpiryHours))
+	rtoken, err := jwt.GenerateRefreshToken(u.Id, constants.JWT_RefreshSecret, constants.JWT_RefreshTokenExpiration)
 	if err != nil {
 		return nil, nil, fmt.Errorf("failed gen refreshToken: %w", err)
 	}

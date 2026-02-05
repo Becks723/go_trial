@@ -12,11 +12,11 @@ struct FeedRespData {
 
 struct FeedResp {
     1: required common.BaseResp base
-    2: required FeedRespData data
+    2: optional FeedRespData data
 }
 
 struct PublishReq {
-    1: required binary data
+    1: optional binary data // required
     2: optional string title
     3: optional string description
     4: optional binary cover_data
@@ -39,7 +39,7 @@ struct ListRespData {
 
 struct ListResp {
     1: required common.BaseResp base
-    2: required ListRespData data
+    2: optional ListRespData data
 }
 
 struct PopularQuery {
@@ -53,7 +53,7 @@ struct PopularRespData {
 
 struct PopularResp {
     1: required common.BaseResp base
-    2: required PopularRespData data
+    2: optional PopularRespData data
 }
 
 struct SearchReq {
@@ -72,7 +72,7 @@ struct SearchRespData {
 
 struct SearchResp {
     1: required common.BaseResp base
-    2: required SearchRespData data
+    2: optional SearchRespData data
 }
 
 struct VisitQuery {
@@ -81,7 +81,7 @@ struct VisitQuery {
 
 struct VisitResp {
     1: required common.BaseResp base
-    2: required common.VideoInfo data
+    2: optional common.VideoInfo data
 }
 
 service VideoService {

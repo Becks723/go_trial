@@ -2,7 +2,7 @@ package user
 
 import (
 	"StreamCore/internal/pkg/base"
-	"StreamCore/internal/pkg/base/logincontext"
+	"StreamCore/internal/pkg/base/rpccontext"
 	"StreamCore/internal/pkg/pack"
 	"StreamCore/internal/user/service"
 	"StreamCore/kitex_gen/user"
@@ -67,7 +67,7 @@ func (s *UserServiceImpl) GetInfo(ctx context.Context, req *user.InfoQuery) (res
 func (s *UserServiceImpl) UploadAvatar(ctx context.Context, req *user.AvatarReq) (resp *user.AvatarResp, err error) {
 	resp = new(user.AvatarResp)
 
-	uid, err := logincontext.RetrieveLoginUid(ctx)
+	uid, err := rpccontext.RetrieveLoginUid(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("UserService.UploadAvatar: get login uid failed: %w", err)
 	}
@@ -86,7 +86,7 @@ func (s *UserServiceImpl) UploadAvatar(ctx context.Context, req *user.AvatarReq)
 func (s *UserServiceImpl) MFAQrcode(ctx context.Context, req *user.MFAQrcodeReq) (resp *user.MFAQrcodeResp, err error) {
 	resp = new(user.MFAQrcodeResp)
 
-	uid, err := logincontext.RetrieveLoginUid(ctx)
+	uid, err := rpccontext.RetrieveLoginUid(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("UserService.MFAQrcode: get login uid failed: %w", err)
 	}
@@ -105,7 +105,7 @@ func (s *UserServiceImpl) MFAQrcode(ctx context.Context, req *user.MFAQrcodeReq)
 func (s *UserServiceImpl) MFABind(ctx context.Context, req *user.MFABindReq) (resp *user.MFABindResp, err error) {
 	resp = new(user.MFABindResp)
 
-	uid, err := logincontext.RetrieveLoginUid(ctx)
+	uid, err := rpccontext.RetrieveLoginUid(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("UserService.MFABind: get login uid failed: %w", err)
 	}

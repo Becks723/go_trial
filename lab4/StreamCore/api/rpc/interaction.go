@@ -1,6 +1,7 @@
 package rpc
 
 import (
+	"StreamCore/internal/pkg/constants"
 	"StreamCore/kitex_gen/interaction"
 	"StreamCore/kitex_gen/interaction/interactionservice"
 	"context"
@@ -10,7 +11,7 @@ import (
 )
 
 func initInteractionRPC() {
-	c, err := initRPCClient(InteractionServiceName, interactionservice.NewClient)
+	c, err := initRPCClient(constants.InteractionServiceName, interactionservice.NewClient)
 	if err != nil {
 		log.Fatalf("failed to init interaction rpc client: %v", err)
 	}

@@ -33,7 +33,7 @@ struct InfoResp {
 }
 
 struct AvatarReq {
-    1: required binary data
+    1: optional binary data  // required
 }
 
 struct AvatarResp {

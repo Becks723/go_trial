@@ -1,10 +1,10 @@
 package service
 
 import (
+	"StreamCore/config"
 	"StreamCore/internal/pkg/pack"
 	"StreamCore/kitex_gen/common"
 	"StreamCore/kitex_gen/video"
-	"StreamCore/pkg/env"
 	"StreamCore/pkg/util"
 	"errors"
 	"fmt"
@@ -13,7 +13,7 @@ import (
 func (s *VideoService) Popular(query *video.PopularQuery) (*video.PopularRespData, error) {
 	var limit, page int
 	if query.PageSize == nil {
-		limit = env.Instance().Video_DefaultPageSize
+		limit = config.Instance().General.PageSize
 	} else {
 		limit = int(*query.PageSize)
 	}

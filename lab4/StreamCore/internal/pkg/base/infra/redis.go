@@ -1,7 +1,7 @@
 package infra
 
 import (
-	"StreamCore/pkg/env"
+	"StreamCore/config"
 	"context"
 	"fmt"
 
@@ -9,10 +9,10 @@ import (
 )
 
 func InitRedis() (*redis.Client, error) {
+	conf := config.Instance().Redis
 	rdb := redis.NewClient(&redis.Options{
-		Addr:     env.Instance().REDIS_Addr,
-		Password: env.Instance().REDIS_Password,
-		DB:       env.Instance().REDIS_DB,
+		Addr:     conf.Addr,
+		Password: conf.Password,
 	})
 
 	if err := rdb.Ping(context.Background()).Err(); err != nil {

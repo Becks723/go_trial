@@ -3,7 +3,7 @@ package interaction
 import (
 	"StreamCore/internal/interaction/service"
 	"StreamCore/internal/pkg/base"
-	"StreamCore/internal/pkg/base/logincontext"
+	"StreamCore/internal/pkg/base/rpccontext"
 	"StreamCore/internal/pkg/pack"
 	ia "StreamCore/kitex_gen/interaction"
 	"context"
@@ -24,7 +24,7 @@ func NewInteractionHandler(infra *base.InfraSet) ia.InteractionService {
 // PublishLike implements the InteractionServiceImpl interface.
 func (s *InteractionServiceImpl) PublishLike(ctx context.Context, req *ia.PublishLikeReq) (resp *ia.PublishLikeResp, err error) {
 	resp = new(ia.PublishLikeResp)
-	uid, err := logincontext.RetrieveLoginUid(ctx)
+	uid, err := rpccontext.RetrieveLoginUid(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("InteractionService.PublishLike: get login uid failed: %w", err)
 	}
@@ -55,7 +55,7 @@ func (s *InteractionServiceImpl) ListLike(ctx context.Context, req *ia.ListLikeQ
 // PublishComment implements the InteractionServiceImpl interface.
 func (s *InteractionServiceImpl) PublishComment(ctx context.Context, req *ia.PublishCommentReq) (resp *ia.PublishCommentResp, err error) {
 	resp = new(ia.PublishCommentResp)
-	uid, err := logincontext.RetrieveLoginUid(ctx)
+	uid, err := rpccontext.RetrieveLoginUid(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("InteractionService.PublishComment: get login uid failed: %w", err)
 	}
@@ -86,7 +86,7 @@ func (s *InteractionServiceImpl) ListComment(ctx context.Context, query *ia.List
 // DeleteComment implements the InteractionServiceImpl interface.
 func (s *InteractionServiceImpl) DeleteComment(ctx context.Context, req *ia.DeleteCommentReq) (resp *ia.DeleteCommentResp, err error) {
 	resp = new(ia.DeleteCommentResp)
-	uid, err := logincontext.RetrieveLoginUid(ctx)
+	uid, err := rpccontext.RetrieveLoginUid(ctx)
 	if err != nil {
 		return nil, fmt.Errorf("InteractionService.DeleteComment: get login uid failed: %w", err)
 	}
