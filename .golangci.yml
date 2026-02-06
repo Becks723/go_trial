@@ -29,10 +29,6 @@ formatters:
   enable:
     - gci
     - gofmt
-    - goimports
-    - gofumpt
-    - golines
-    - swaggo
   exclusions:
     generated: lax
     warn-unused: true

@@ -1,19 +1,21 @@
 package repo
 
 import (
-	"StreamCore/biz/repo/model"
-	redisClient "StreamCore/biz/repo/redis"
-	"StreamCore/biz/repo/wb"
 	"context"
 	"strconv"
 	"sync"
 	"time"
 
+	"StreamCore/biz/repo/model"
+	redisClient "StreamCore/biz/repo/redis"
+	"StreamCore/biz/repo/wb"
 	"gorm.io/gorm"
 )
 
-var vOnce sync.Once
-var vwbc *wb.DedupStrategy
+var (
+	vOnce sync.Once
+	vwbc  *wb.DedupStrategy
+)
 
 func visitWbc() *wb.DedupStrategy {
 	vOnce.Do(func() {

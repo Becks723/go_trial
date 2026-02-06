@@ -42,10 +42,11 @@ func NewDedupStrategy(cfg *DedupConfig) *DedupStrategy {
 }
 
 func (s *DedupStrategy) SetTask(key uint, c cache) {
-	_, dup := s.pendingSync.LoadOrStore(key, c)
+	_, _ = s.pendingSync.LoadOrStore(key, c)
+	/*_, dup := s.pendingSync.LoadOrStore(key, c)
 	if dup { // given key exists, should not dup
 		// log dup.
-	}
+	}*/
 }
 
 func (s *DedupStrategy) Stop() {

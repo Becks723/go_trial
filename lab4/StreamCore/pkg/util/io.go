@@ -24,6 +24,7 @@ func mime(fileHeader *multipart.FileHeader) (string, error) {
 	mime := http.DetectContentType(buf)
 	return mime, nil
 }
+
 func IsValidImage(fileHeader *multipart.FileHeader) bool {
 	s, err := mime(fileHeader)
 	if err != nil {
@@ -47,7 +48,7 @@ func SaveFile(fileHeader *multipart.FileHeader, dst string) error {
 	}
 	defer src.Close()
 
-	err = os.MkdirAll(filepath.Dir(dst), 0750)
+	err = os.MkdirAll(filepath.Dir(dst), 0o750)
 	if err != nil {
 		return err
 	}

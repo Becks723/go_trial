@@ -1,13 +1,6 @@
 package service
 
 import (
-	"StreamCore/biz/domain"
-	"StreamCore/biz/model/common"
-	"StreamCore/biz/model/stream"
-	"StreamCore/biz/repo"
-	"StreamCore/biz/repo/es"
-	"StreamCore/pkg/env"
-	"StreamCore/pkg/util"
 	"context"
 	"errors"
 	"fmt"
@@ -18,6 +11,13 @@ import (
 	"strings"
 	"time"
 
+	"StreamCore/biz/domain"
+	"StreamCore/biz/model/common"
+	"StreamCore/biz/model/stream"
+	"StreamCore/biz/repo"
+	"StreamCore/biz/repo/es"
+	"StreamCore/pkg/env"
+	"StreamCore/pkg/util"
 	"github.com/google/uuid"
 )
 
@@ -65,24 +65,24 @@ func (svc *StreamService) Publish(ctx context.Context, req *stream.PublishReq, v
 	)
 	curUid, err := util.RetrieveUserId(ctx)
 	if err != nil {
-		err = errors.New("Error retrieving user info.")
+		err = errors.New("error retrieving user info")
 		return
 	}
 
 	if !util.IsValidVideo(videoHeader) {
-		err = errors.New("Bad stream format.")
+		err = errors.New("bad stream format")
 		return
 	}
 
 	// exceeds video limit
 	limit := env.Instance().IO_VideoSizeLimit
 	if videoHeader.Size > util.ToByte(limit) {
-		err = fmt.Errorf("Exceeds video size limit (current %dmb but limits %dmb)", limit, util.ToMb(videoHeader.Size))
+		err = fmt.Errorf("exceeds video size limit (current %fmb but limits %.2fmb)", limit, util.ToMb(videoHeader.Size))
 		return
 	}
 
 	// save video locally
-	dir := fmt.Sprintf(localPrefix + accessPrefix + "/videos/")
+	dir := localPrefix + accessPrefix + "/videos/"
 	name := uuid.New().String()
 	vdst := dir + name + ".mp4"
 	if err = util.SaveFile(videoHeader, vdst); err != nil {
@@ -93,14 +93,14 @@ func (svc *StreamService) Publish(ctx context.Context, req *stream.PublishReq, v
 	var cdst string
 	if coverHeader != nil {
 		if !util.IsValidImage(coverHeader) {
-			err = errors.New("cover: Bad image format.")
+			err = errors.New("cover: Bad image format")
 			return
 		}
 
 		// exceeds image limit
 		limit := env.Instance().IO_ImageSizeLimit
 		if coverHeader.Size > util.ToByte(limit) {
-			err = fmt.Errorf("Exceeds image size limit (current %dmb but limits %dmb)", limit, util.ToMb(coverHeader.Size))
+			err = fmt.Errorf("exceeds image size limit (current %fmb but limits %.2fmb)", limit, util.ToMb(coverHeader.Size))
 			return
 		}
 
@@ -111,7 +111,7 @@ func (svc *StreamService) Publish(ctx context.Context, req *stream.PublishReq, v
 	} else {
 		cdst, err = randCover(vdst, dir)
 		if err != nil {
-			err = fmt.Errorf("Error getting cover.")
+			err = fmt.Errorf("error getting cover")
 			return
 		}
 	}
@@ -144,7 +144,7 @@ func (svc *StreamService) Publish(ctx context.Context, req *stream.PublishReq, v
 func (svc *StreamService) List(ctx context.Context, query *stream.ListQuery) (data *stream.ListResp_Data, err error) {
 	uid, err := util.ParseUint(query.UserId)
 	if err != nil {
-		err = errors.New("Bad uid format.")
+		err = errors.New("bad uid format")
 		return
 	}
 
@@ -295,15 +295,15 @@ func randCover(videoPath, coverDir string) (coverPath string, err error) {
 		videoPath)
 	output, err := cmd.Output()
 	if err != nil {
-		err = fmt.Errorf("Error retrieving video duration: %s", err.Error())
+		err = fmt.Errorf("error retrieving video duration: %s", err.Error())
 		return
 	}
 
 	// random a timepoint between 20% - 80%
 	var duration float64
-	fmt.Sscanf(string(output), "%f", &duration)
+	_, _ = fmt.Sscanf(string(output), "%f", &duration)
 	if duration <= 0 {
-		err = errors.New("Error reading video duration.")
+		err = errors.New("error reading video duration")
 		return
 	}
 	sec := duration * (0.2 + 0.6*rand.Float64())
@@ -321,7 +321,7 @@ func randCover(videoPath, coverDir string) (coverPath string, err error) {
 		"-q:v", "2",
 		coverPath)
 	if err = cmd.Run(); err != nil {
-		err = fmt.Errorf("Error writing to cover: %s", err.Error())
+		err = fmt.Errorf("error writing to cover: %s", err.Error())
 		return
 	}
 	return coverPath, nil

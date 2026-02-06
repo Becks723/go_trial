@@ -1,12 +1,13 @@
 package service
 
 import (
+	"context"
+	"fmt"
+
 	"StreamCore/biz/model/common"
 	"StreamCore/biz/model/social"
 	"StreamCore/biz/repo"
 	"StreamCore/pkg/util"
-	"context"
-	"fmt"
 )
 
 type SocialService struct {
@@ -32,7 +33,7 @@ func (svc *SocialService) Follow(ctx context.Context, req *social.FollowReq) (er
 	case 1:
 		err = svc.repo.Delete(ctx, curUid, followee)
 	default:
-		err = fmt.Errorf("Unknown follow action type: %d", req.ActionType)
+		err = fmt.Errorf("unknown follow action type: %d", req.ActionType)
 	}
 	return
 }

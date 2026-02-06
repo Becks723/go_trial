@@ -1,14 +1,14 @@
 package repo
 
 import (
-	"StreamCore/biz/domain"
-	"StreamCore/biz/repo/model"
-	redisClient "StreamCore/biz/repo/redis"
-	"StreamCore/pkg/util"
 	"context"
 	"fmt"
 	"time"
 
+	"StreamCore/biz/domain"
+	"StreamCore/biz/repo/model"
+	redisClient "StreamCore/biz/repo/redis"
+	"StreamCore/pkg/util"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
@@ -40,20 +40,21 @@ func NewLcRepository() *LcRepository {
 
 func (repo *LcRepository) LikeVideo(ctx context.Context, uid, vid uint, status int) (err error) {
 	// write fast to cache
-	if status == 1 {
+	switch status {
+	case 1:
 		err = redisClient.Rdb.SAdd(ctx, redisClient.VideoLikeKey(vid), uid).Err()
 		if err != nil {
 			return
 		}
 		err = redisClient.Rdb.SAdd(ctx, redisClient.UserLikeVidKey(uid), vid).Err()
-	} else if status == 2 {
+	case 2:
 		err = redisClient.Rdb.SRem(ctx, redisClient.VideoLikeKey(vid), uid).Err()
 		if err != nil {
 			return
 		}
 		err = redisClient.Rdb.SRem(ctx, redisClient.UserLikeVidKey(uid), vid).Err()
-	} else {
-		err = fmt.Errorf("Unknown status value: %d", status)
+	default:
+		err = fmt.Errorf("unknown status value: %d", status)
 	}
 	if err != nil {
 		return
@@ -95,12 +96,13 @@ func (repo *LcRepository) ListVideoLikes(ctx context.Context, uid uint, limit, p
 }
 
 func (repo *LcRepository) LikeComment(ctx context.Context, uid, cid uint, status int) (err error) {
-	if status == 1 {
+	switch status {
+	case 1:
 		err = redisClient.Rdb.SAdd(ctx, redisClient.CommentLikeKey(cid), uid).Err()
-	} else if status == 2 {
+	case 2:
 		err = redisClient.Rdb.SRem(ctx, redisClient.CommentLikeKey(cid), uid).Err()
-	} else {
-		err = fmt.Errorf("Unknown status value: %d", status)
+	default:
+		err = fmt.Errorf("unknown status value: %d", status)
 	}
 	return
 }
@@ -111,7 +113,7 @@ func (repo *LcRepository) CreateComment(ctx context.Context, c *domain.Comment) 
 		var parent model.CommentModel
 		err = repo.db.First(&parent, *po.ParentId).Error // call First to throw an error if not found
 		if err != nil {
-			err = fmt.Errorf("Parent comment(id:%d) not found.", *po.ParentId)
+			err = fmt.Errorf("parent comment(id:%d) not found", *po.ParentId)
 			return
 		}
 		po.VideoId = parent.VideoId

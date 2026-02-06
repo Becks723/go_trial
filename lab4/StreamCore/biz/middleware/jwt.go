@@ -1,15 +1,15 @@
 package middleware
 
 import (
+	"context"
+	"errors"
+	"time"
+
 	"StreamCore/biz/domain"
 	"StreamCore/biz/repo"
 	"StreamCore/pkg/ctl"
 	"StreamCore/pkg/env"
 	"StreamCore/pkg/util"
-	"context"
-	"errors"
-	"time"
-
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
@@ -24,7 +24,7 @@ func JWTAuthFunc() app.HandlerFunc {
 		refresh := string(c.GetHeader(RefreshTokenKey))
 
 		if access == "" && refresh == "" {
-			err := errors.New("Not authorized.")
+			err := errors.New("not authorized")
 			c.JSON(consts.StatusUnauthorized, ctl.ResponseError(err, consts.StatusUnauthorized))
 			c.Abort()
 			return
@@ -56,18 +56,18 @@ func refreshToken(refresh string, secret string, ur repo.UserRepo) (newAccess, n
 	// resolve refresh token
 	claims, err := util.ParseToken(refresh, secret)
 	if err != nil {
-		return "", "", errors.New("Error resolving refresh token.")
+		return "", "", errors.New("error resolving refresh token")
 	}
 
 	// refresh expired
 	if time.Now().Unix() > claims.ExpiresAt.Unix() {
-		return "", "", errors.New("Refresh token expired.")
+		return "", "", errors.New("refresh token expired")
 	}
 
 	// check if user still exists
 	var u *domain.User
 	if u, err = ur.GetById(claims.UserId); err != nil {
-		return "", "", errors.New("Refresh token: user not found.")
+		return "", "", errors.New("refresh token: user not found")
 	}
 
 	env := env.Instance()
