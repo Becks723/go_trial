@@ -1,13 +1,14 @@
 package rpc
 
 import (
-	"StreamCore/internal/pkg/constants"
-	"StreamCore/kitex_gen/video"
-	"StreamCore/kitex_gen/video/videoservice"
 	"context"
 	"errors"
 	"fmt"
 	"log"
+
+	"StreamCore/internal/pkg/constants"
+	"StreamCore/kitex_gen/video"
+	"StreamCore/kitex_gen/video/videoservice"
 )
 
 func initVideoRPC() {

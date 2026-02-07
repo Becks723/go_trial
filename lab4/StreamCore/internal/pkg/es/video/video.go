@@ -1,13 +1,13 @@
 package video
 
 import (
-	"StreamCore/internal/pkg/domain"
-	"StreamCore/internal/pkg/es/model"
 	"context"
 	"fmt"
 	"strconv"
 	"strings"
 
+	"StreamCore/internal/pkg/domain"
+	"StreamCore/internal/pkg/es/model"
 	elastic "github.com/elastic/go-elasticsearch/v8"
 	"github.com/elastic/go-elasticsearch/v8/esapi"
 	"github.com/elastic/go-elasticsearch/v8/typedapi/core/search"

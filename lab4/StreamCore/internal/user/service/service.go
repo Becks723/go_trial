@@ -1,10 +1,11 @@
 package service
 
 import (
+	"context"
+
 	"StreamCore/internal/pkg/base"
 	cache "StreamCore/internal/pkg/cache/user"
 	db "StreamCore/internal/pkg/db/user"
-	"context"
 )
 
 type UserService struct {

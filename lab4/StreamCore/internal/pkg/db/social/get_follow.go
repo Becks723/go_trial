@@ -1,10 +1,11 @@
 package social
 
 import (
+	"context"
+
 	"StreamCore/internal/pkg/db/model"
 	"StreamCore/internal/pkg/db/pack"
 	"StreamCore/internal/pkg/domain"
-	"context"
 )
 
 func (repo *socialdb) GetFollow(ctx context.Context, follower, followee uint) (*domain.Follow, error) {

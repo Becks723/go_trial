@@ -3,7 +3,6 @@ package util
 import (
 	"errors"
 	"io"
-	"mime/multipart"
 	"net/http"
 	"os"
 	"path/filepath"
@@ -13,36 +12,14 @@ import (
 	"github.com/cloudwego/hertz/pkg/protocol"
 )
 
-func mime(fileHeader *multipart.FileHeader) (string, error) {
-	file, err := fileHeader.Open()
-	if err != nil {
-		return "", err
-	}
-	defer file.Close()
-
-	buf := make([]byte, 512)
-	_, err = file.Read(buf)
-	if err != nil {
-		return "", err
-	}
-	mime := http.DetectContentType(buf)
-	return mime, nil
-}
-
 func IsValidImage(raw []byte) bool {
 	t := http.DetectContentType(raw[:512])
-	if !strings.HasPrefix(t, "image/") {
-		return false
-	}
-	return true
+	return strings.HasPrefix(t, "image/")
 }
 
 func IsValidVideo(raw []byte) bool {
 	t := http.DetectContentType(raw[:512])
-	if !strings.HasPrefix(t, "video/") {
-		return false
-	}
-	return true
+	return strings.HasPrefix(t, "video/")
 }
 
 func SaveFile(raw []byte, dst string) error {

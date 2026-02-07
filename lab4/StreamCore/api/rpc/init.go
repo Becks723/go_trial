@@ -1,14 +1,14 @@
 package rpc
 
 import (
+	"fmt"
+
 	"StreamCore/config"
 	"StreamCore/internal/pkg/constants"
 	"StreamCore/kitex_gen/interaction/interactionservice"
 	"StreamCore/kitex_gen/social/socialservice"
 	"StreamCore/kitex_gen/user/userservice"
 	"StreamCore/kitex_gen/video/videoservice"
-	"fmt"
-
 	"github.com/cloudwego/kitex/client"
 	etcd "github.com/kitex-contrib/registry-etcd"
 )

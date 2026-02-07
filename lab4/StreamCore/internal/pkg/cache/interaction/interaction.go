@@ -1,11 +1,11 @@
 package interaction
 
 import (
-	"StreamCore/internal/pkg/constants"
-	"StreamCore/pkg/util"
 	"context"
 	"fmt"
 
+	"StreamCore/internal/pkg/constants"
+	"StreamCore/pkg/util"
 	"github.com/redis/go-redis/v9"
 )
 

@@ -1,10 +1,6 @@
 package service
 
 import (
-	"StreamCore/config"
-	"StreamCore/internal/pkg/domain"
-	"StreamCore/kitex_gen/video"
-	"StreamCore/pkg/util"
 	"errors"
 	"fmt"
 	"math/rand"
@@ -13,6 +9,10 @@ import (
 	"strings"
 	"time"
 
+	"StreamCore/config"
+	"StreamCore/internal/pkg/domain"
+	"StreamCore/kitex_gen/video"
+	"StreamCore/pkg/util"
 	"github.com/google/uuid"
 )
 
@@ -36,7 +36,7 @@ func (s *VideoService) Publish(uid uint, req *video.PublishReq) error {
 	}
 
 	// save video locally
-	dir := fmt.Sprintf(localPrefix + accessPrefix + "/videos/")
+	dir := localPrefix + accessPrefix + "/videos/"
 	name := uuid.New().String()
 	vdst := dir + name + ".mp4"
 	if err = util.SaveFile(req.Data, vdst); err != nil {
@@ -120,7 +120,7 @@ func (s *VideoService) randCover(videoPath, coverDir string) (coverPath string, 
 
 	// random a timepoint between 20% - 80%
 	var duration float64
-	fmt.Sscanf(string(output), "%f", &duration)
+	_, _ = fmt.Sscanf(string(output), "%f", &duration)
 	if duration <= 0 {
 		err = errors.New("error reading video duration")
 		return

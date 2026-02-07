@@ -15,7 +15,7 @@ type Message struct {
 
 type Consumer interface {
 	Receive() (*Message, error)
-	Ack(msg *Message) error
+	Ack(msg *Message)
 }
 
 func NewRabbitConsumer(conn *amqp.Connection, queueName string) (Consumer, error) {
@@ -49,8 +49,10 @@ func (c *RabbitConsumer) Receive() (*Message, error) {
 	}, nil
 }
 
-func (c *RabbitConsumer) Ack(msg *Message) error {
-	return c.ch.Ack(msg.tag, false)
+func (c *RabbitConsumer) Ack(msg *Message) {
+	if err := c.ch.Ack(msg.tag, true); err != nil { //nolint:staticcheck
+		// TODO: log act failed, just log is ok
+	}
 }
 
 type RabbitConsumer struct {

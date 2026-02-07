@@ -3,9 +3,10 @@
 package social
 
 import (
-	"StreamCore/kitex_gen/common"
 	"context"
 	"fmt"
+
+	"StreamCore/kitex_gen/common"
 )
 
 type SocialList struct {

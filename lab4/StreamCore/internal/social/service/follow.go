@@ -1,13 +1,14 @@
 package service
 
 import (
-	"StreamCore/internal/pkg/constants"
-	"StreamCore/kitex_gen/social"
-	"StreamCore/pkg/util"
 	"context"
 	"errors"
 	"fmt"
 	"time"
+
+	"StreamCore/internal/pkg/constants"
+	"StreamCore/kitex_gen/social"
+	"StreamCore/pkg/util"
 )
 
 func (s *SocialService) Follow(uid uint, req *social.FollowReq) error {

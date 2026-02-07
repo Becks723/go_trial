@@ -1,13 +1,14 @@
 package service
 
 import (
+	"errors"
+	"fmt"
+
 	"StreamCore/config"
 	"StreamCore/internal/pkg/pack"
 	"StreamCore/kitex_gen/common"
 	"StreamCore/kitex_gen/social"
 	"StreamCore/pkg/util"
-	"errors"
-	"fmt"
 )
 
 func (s *SocialService) ListFollowers(query *social.ListFollowersQuery) (*social.SocialList, error) {

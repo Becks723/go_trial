@@ -3,9 +3,10 @@
 package user
 
 import (
-	"StreamCore/kitex_gen/common"
 	"context"
 	"fmt"
+
+	"StreamCore/kitex_gen/common"
 )
 
 type RegisterReq struct {

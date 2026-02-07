@@ -1,11 +1,12 @@
 package service
 
 import (
+	"errors"
+	"fmt"
+
 	"StreamCore/internal/pkg/pack"
 	"StreamCore/kitex_gen/video"
 	"StreamCore/pkg/util"
-	"errors"
-	"fmt"
 )
 
 func (s *VideoService) List(query *video.ListQuery) (*video.ListRespData, error) {

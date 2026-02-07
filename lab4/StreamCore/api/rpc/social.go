@@ -1,13 +1,14 @@
 package rpc
 
 import (
-	"StreamCore/internal/pkg/constants"
-	"StreamCore/kitex_gen/social"
-	"StreamCore/kitex_gen/social/socialservice"
 	"context"
 	"errors"
 	"fmt"
 	"log"
+
+	"StreamCore/internal/pkg/constants"
+	"StreamCore/kitex_gen/social"
+	"StreamCore/kitex_gen/social/socialservice"
 )
 
 func initSocialRPC() {

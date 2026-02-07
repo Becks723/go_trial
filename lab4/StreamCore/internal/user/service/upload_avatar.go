@@ -1,15 +1,15 @@
 package service
 
 import (
-	"StreamCore/config"
-	"StreamCore/internal/pkg/pack"
-	"StreamCore/kitex_gen/common"
-	"StreamCore/pkg/env"
-	"StreamCore/pkg/util"
 	"errors"
 	"fmt"
 	"strings"
 	"time"
+
+	"StreamCore/config"
+	"StreamCore/internal/pkg/pack"
+	"StreamCore/kitex_gen/common"
+	"StreamCore/pkg/util"
 )
 
 func (s *UserService) UploadAvatar(uid uint, data []byte) (*common.UserInfo, error) {

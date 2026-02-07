@@ -1,9 +1,10 @@
 package social
 
 import (
+	"context"
+
 	"StreamCore/internal/pkg/constants"
 	"StreamCore/internal/pkg/db/model"
-	"context"
 )
 
 func (repo *socialdb) FetchFollows(ctx context.Context, uid uint, limit, page int) ([]uint, int, error) {

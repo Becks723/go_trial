@@ -1,13 +1,13 @@
 package service
 
 import (
-	"StreamCore/internal/pkg/constants"
-	"StreamCore/kitex_gen/common"
 	"bytes"
 	"encoding/base64"
 	"image/png"
 	"strconv"
 
+	"StreamCore/internal/pkg/constants"
+	"StreamCore/kitex_gen/common"
 	"github.com/pquerna/otp/totp"
 )
 
@@ -31,7 +31,9 @@ func (s *UserService) MFAQrcode(uid uint) (*common.MFAInfo, error) {
 	}
 
 	var buf bytes.Buffer
-	png.Encode(&buf, img)                                    // encode img to png (binary)
+	if err = png.Encode(&buf, img); err != nil { // encode img to png (binary)
+		return nil, err
+	}
 	qrcode := base64.StdEncoding.EncodeToString(buf.Bytes()) // base64
 
 	// cache secret

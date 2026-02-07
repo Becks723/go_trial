@@ -1,10 +1,11 @@
 package social
 
 import (
-	"StreamCore/internal/pkg/constants"
-	"StreamCore/internal/pkg/db/model"
 	"context"
 	"time"
+
+	"StreamCore/internal/pkg/constants"
+	"StreamCore/internal/pkg/db/model"
 )
 
 func (repo *socialdb) CreateFollow(ctx context.Context, follower, followee uint, time time.Time) error {

@@ -3,7 +3,6 @@ package mq
 import (
 	"StreamCore/internal/pkg/mq/interaction"
 	"StreamCore/internal/pkg/mq/video"
-
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 

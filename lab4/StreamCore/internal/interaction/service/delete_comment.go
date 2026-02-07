@@ -1,10 +1,11 @@
 package service
 
 import (
-	"StreamCore/kitex_gen/interaction"
-	"StreamCore/pkg/util"
 	"errors"
 	"fmt"
+
+	"StreamCore/kitex_gen/interaction"
+	"StreamCore/pkg/util"
 )
 
 func (s *InteractionService) DeleteComment(uid uint, req *interaction.DeleteCommentReq) error {

@@ -1,12 +1,13 @@
 package service
 
 import (
+	"fmt"
+
 	"StreamCore/internal/pkg/mq/model"
 	"StreamCore/internal/pkg/pack"
 	"StreamCore/kitex_gen/common"
 	"StreamCore/kitex_gen/video"
 	"StreamCore/pkg/util"
-	"fmt"
 )
 
 func (s *VideoService) Visit(uid *uint, query *video.VisitQuery) (*common.VideoInfo, error) {

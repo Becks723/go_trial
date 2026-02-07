@@ -1,12 +1,12 @@
 package service
 
 import (
-	"StreamCore/internal/pkg/constants"
-	"StreamCore/internal/pkg/mq/model"
-	"StreamCore/pkg/mq"
 	"context"
 	"time"
 
+	"StreamCore/internal/pkg/constants"
+	"StreamCore/internal/pkg/mq/model"
+	"StreamCore/pkg/mq"
 	"github.com/bytedance/sonic"
 )
 

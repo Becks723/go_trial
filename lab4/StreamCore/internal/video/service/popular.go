@@ -1,13 +1,14 @@
 package service
 
 import (
+	"errors"
+	"fmt"
+
 	"StreamCore/config"
 	"StreamCore/internal/pkg/pack"
 	"StreamCore/kitex_gen/common"
 	"StreamCore/kitex_gen/video"
 	"StreamCore/pkg/util"
-	"errors"
-	"fmt"
 )
 
 func (s *VideoService) Popular(query *video.PopularQuery) (*video.PopularRespData, error) {

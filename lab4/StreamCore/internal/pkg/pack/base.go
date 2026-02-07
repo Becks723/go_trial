@@ -2,7 +2,6 @@ package pack
 
 import (
 	"StreamCore/kitex_gen/common"
-
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
 

@@ -4,7 +4,6 @@ package api
 
 import (
 	"StreamCore/api/middleware"
-
 	"github.com/cloudwego/hertz/pkg/app"
 )
 

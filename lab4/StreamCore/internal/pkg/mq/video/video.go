@@ -1,11 +1,11 @@
 package video
 
 import (
-	"StreamCore/internal/pkg/mq/model"
-	"StreamCore/pkg/mq"
 	"context"
 	"errors"
 
+	"StreamCore/internal/pkg/mq/model"
+	"StreamCore/pkg/mq"
 	"github.com/bytedance/sonic"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
@@ -29,11 +29,11 @@ func NewVideoMQ(conn *amqp.Connection) VideoMQ {
 	}
 }
 
-var senderNotInitializedErr = errors.New("sender not initialized")
+var errSenderNotInitialized = errors.New("sender not initialized")
 
 func (m *videomq) PublishVisitEvent(ctx context.Context, event *model.VisitEvent) error {
 	if m.sender == nil {
-		return senderNotInitializedErr
+		return errSenderNotInitialized
 	}
 	buffer, err := sonic.Marshal(event)
 	if err != nil {
@@ -46,15 +46,8 @@ func (m *videomq) Consumer() (mq.Consumer, error) {
 	return mq.NewRabbitConsumer(m.conn, m.queueName)
 }
 
-func (m *videomq) destroy() {
-	if m.sender != nil {
-		m.sender.Close()
-	}
-}
-
 type videomq struct {
 	sender    mq.Sender
 	conn      *amqp.Connection
 	queueName string
-	exchange  string
 }

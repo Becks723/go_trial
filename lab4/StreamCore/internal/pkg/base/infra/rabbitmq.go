@@ -1,9 +1,9 @@
 package infra
 
 import (
-	"StreamCore/config"
 	"fmt"
 
+	"StreamCore/config"
 	amqp "github.com/rabbitmq/amqp091-go"
 )
 

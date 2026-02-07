@@ -1,13 +1,14 @@
 package rpc
 
 import (
-	"StreamCore/internal/pkg/constants"
-	"StreamCore/kitex_gen/user"
-	"StreamCore/kitex_gen/user/userservice"
 	"context"
 	"errors"
 	"fmt"
 	"log"
+
+	"StreamCore/internal/pkg/constants"
+	"StreamCore/kitex_gen/user"
+	"StreamCore/kitex_gen/user/userservice"
 )
 
 func initUserRPC() {

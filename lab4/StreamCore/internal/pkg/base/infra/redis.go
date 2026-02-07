@@ -1,10 +1,10 @@
 package infra
 
 import (
-	"StreamCore/config"
 	"context"
 	"fmt"
 
+	"StreamCore/config"
 	"github.com/redis/go-redis/v9"
 )
 

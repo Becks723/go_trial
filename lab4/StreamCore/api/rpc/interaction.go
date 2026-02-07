@@ -1,13 +1,14 @@
 package rpc
 
 import (
-	"StreamCore/internal/pkg/constants"
-	"StreamCore/kitex_gen/interaction"
-	"StreamCore/kitex_gen/interaction/interactionservice"
 	"context"
 	"errors"
 	"fmt"
 	"log"
+
+	"StreamCore/internal/pkg/constants"
+	"StreamCore/kitex_gen/interaction"
+	"StreamCore/kitex_gen/interaction/interactionservice"
 )
 
 func initInteractionRPC() {

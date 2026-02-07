@@ -1,12 +1,13 @@
 package service
 
 import (
+	"context"
+	"sync"
+
 	"StreamCore/internal/pkg/base"
 	cache "StreamCore/internal/pkg/cache/interaction"
 	db "StreamCore/internal/pkg/db/interaction"
 	mq "StreamCore/internal/pkg/mq/interaction"
-	"context"
-	"sync"
 )
 
 type InteractionService struct {

@@ -1,10 +1,11 @@
 package interaction
 
 import (
-	"StreamCore/internal/pkg/constants"
-	"StreamCore/internal/pkg/db/model"
 	"context"
 	"time"
+
+	"StreamCore/internal/pkg/constants"
+	"StreamCore/internal/pkg/db/model"
 )
 
 func (repo *iactiondb) CreateLike(ctx context.Context, tarType int, uid, tarId uint, time time.Time) error {

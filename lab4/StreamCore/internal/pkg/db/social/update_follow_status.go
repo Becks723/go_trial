@@ -1,9 +1,10 @@
 package social
 
 import (
-	"StreamCore/internal/pkg/db/model"
 	"context"
 	"time"
+
+	"StreamCore/internal/pkg/db/model"
 )
 
 func (repo *socialdb) UpdateFollowStatus(ctx context.Context, follower, followee uint, status int, time time.Time) error {

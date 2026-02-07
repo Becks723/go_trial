@@ -1,12 +1,13 @@
 package service
 
 import (
+	"errors"
+	"fmt"
+
 	"StreamCore/internal/pkg/pack"
 	"StreamCore/kitex_gen/common"
 	"StreamCore/kitex_gen/interaction"
 	"StreamCore/pkg/util"
-	"errors"
-	"fmt"
 )
 
 func (s *InteractionService) ListLikedVideos(query *interaction.ListLikeQuery) (*interaction.ListLikeRespData, error) {

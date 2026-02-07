@@ -1,9 +1,10 @@
 package service
 
 import (
+	"errors"
+
 	"StreamCore/internal/pkg/domain"
 	"StreamCore/pkg/util"
-	"errors"
 )
 
 func (s *UserService) Register(username, password string) error {

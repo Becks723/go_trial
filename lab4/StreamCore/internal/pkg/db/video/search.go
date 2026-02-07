@@ -1,11 +1,12 @@
 package video
 
 import (
+	"time"
+
 	"StreamCore/internal/pkg/db/model"
 	"StreamCore/internal/pkg/db/pack"
 	"StreamCore/internal/pkg/db/util"
 	"StreamCore/internal/pkg/domain"
-	"time"
 )
 
 func (repo *videodb) Search(keywords string, limit, page int, from, to *time.Time, username *string) (videos []*domain.Video, total int, err error) {

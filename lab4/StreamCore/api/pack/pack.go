@@ -2,7 +2,6 @@ package pack
 
 import (
 	"StreamCore/kitex_gen/common"
-
 	"github.com/cloudwego/hertz/pkg/app"
 	"github.com/cloudwego/hertz/pkg/protocol/consts"
 )
@@ -10,10 +9,6 @@ import (
 type base struct {
 	Code int64  `json:"code"`
 	Msg  string `json:"msg"`
-}
-
-type resp struct {
-	Base *base `json:"base"`
 }
 
 type respWithData struct {

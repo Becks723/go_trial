@@ -1,12 +1,13 @@
 package service
 
 import (
+	"errors"
+	"fmt"
+
 	"StreamCore/internal/pkg/pack"
 	"StreamCore/kitex_gen/common"
 	"StreamCore/kitex_gen/user"
 	"StreamCore/pkg/util"
-	"errors"
-	"fmt"
 )
 
 func (s *UserService) GetInfo(query *user.InfoQuery) (*common.UserInfo, error) {

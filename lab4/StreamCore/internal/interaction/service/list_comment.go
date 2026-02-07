@@ -1,12 +1,13 @@
 package service
 
 import (
+	"errors"
+	"fmt"
+
 	"StreamCore/internal/pkg/domain"
 	"StreamCore/internal/pkg/pack"
 	"StreamCore/kitex_gen/interaction"
 	"StreamCore/pkg/util"
-	"errors"
-	"fmt"
 )
 
 func (s *InteractionService) ListComment(query *interaction.ListCommentQuery) (*interaction.ListCommentRespData, error) {

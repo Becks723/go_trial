@@ -3,9 +3,10 @@
 package social
 
 import (
-	"StreamCore/api/model/common"
 	"context"
 	"fmt"
+
+	"StreamCore/api/model/common"
 	"github.com/apache/thrift/lib/go/thrift"
 )
 

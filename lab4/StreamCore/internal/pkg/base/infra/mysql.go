@@ -1,11 +1,11 @@
 package infra
 
 import (
-	"StreamCore/config"
-	"StreamCore/internal/pkg/db/model"
 	"fmt"
 	"net/url"
 
+	"StreamCore/config"
+	"StreamCore/internal/pkg/db/model"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )

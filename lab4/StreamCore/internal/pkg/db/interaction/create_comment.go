@@ -1,11 +1,11 @@
 package interaction
 
 import (
-	"StreamCore/internal/pkg/db/model"
-	"StreamCore/internal/pkg/domain"
 	"context"
 	"fmt"
 
+	"StreamCore/internal/pkg/db/model"
+	"StreamCore/internal/pkg/domain"
 	"gorm.io/gorm"
 )
 

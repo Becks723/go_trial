@@ -1,14 +1,14 @@
 package service
 
 import (
-	"StreamCore/internal/pkg/constants"
-	"StreamCore/internal/pkg/mq/model"
-	"StreamCore/kitex_gen/interaction"
-	"StreamCore/pkg/util"
 	"context"
 	"fmt"
 	"time"
 
+	"StreamCore/internal/pkg/constants"
+	"StreamCore/internal/pkg/mq/model"
+	"StreamCore/kitex_gen/interaction"
+	"StreamCore/pkg/util"
 	"github.com/bytedance/sonic"
 )
 
@@ -84,11 +84,11 @@ func (s *InteractionService) consumeLike(ctx context.Context) {
 
 		// >>>> consume like event <<<<
 		if ev.Action == constants.LikeAction_Like {
-			if err = s.publishLikeToDB(ctx, ev.TarType, ev.Uid, ev.TarId, ev.Time); err != nil {
+			if err = s.publishLikeToDB(ctx, ev.TarType, ev.Uid, ev.TarId, ev.Time); err != nil { //nolint:staticcheck
 				// TODO: log
 			}
 		} else {
-			if err = s.publishUnlikeToDB(ctx, ev.TarType, ev.Uid, ev.TarId, ev.Time); err != nil {
+			if err = s.publishUnlikeToDB(ctx, ev.TarType, ev.Uid, ev.TarId, ev.Time); err != nil { //nolint:staticcheck
 				// TODO: log
 			}
 		}

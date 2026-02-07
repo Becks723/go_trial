@@ -1,11 +1,12 @@
 package service
 
 import (
+	"errors"
+	"fmt"
+
 	"StreamCore/internal/pkg/domain"
 	"StreamCore/kitex_gen/interaction"
 	"StreamCore/pkg/util"
-	"errors"
-	"fmt"
 )
 
 func (s *InteractionService) PublishComment(uid uint, req *interaction.PublishCommentReq) error {

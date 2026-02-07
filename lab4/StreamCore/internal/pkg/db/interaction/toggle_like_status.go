@@ -1,10 +1,10 @@
 package interaction
 
 import (
-	"StreamCore/internal/pkg/constants"
-	"StreamCore/internal/pkg/db/model"
 	"context"
 
+	"StreamCore/internal/pkg/constants"
+	"StreamCore/internal/pkg/db/model"
 	"gorm.io/gorm"
 )
 

@@ -1,12 +1,13 @@
 package service
 
 import (
+	"fmt"
+	"time"
+
 	"StreamCore/internal/pkg/domain"
 	"StreamCore/internal/pkg/pack"
 	"StreamCore/kitex_gen/video"
 	"StreamCore/pkg/util"
-	"fmt"
-	"time"
 )
 
 func (s *VideoService) Search(query *video.SearchReq) (*video.SearchRespData, error) {

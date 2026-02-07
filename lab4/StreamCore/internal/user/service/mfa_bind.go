@@ -1,12 +1,12 @@
 package service
 
 import (
-	"StreamCore/internal/pkg/constants"
-	"StreamCore/kitex_gen/user"
 	"errors"
 	"fmt"
 	"time"
 
+	"StreamCore/internal/pkg/constants"
+	"StreamCore/kitex_gen/user"
 	"github.com/pquerna/otp"
 	"github.com/pquerna/otp/totp"
 )
@@ -38,7 +38,7 @@ func (s *UserService) MFABind(uid uint, req *user.MFABindReq) error {
 	if failCount > constants.TOTPFailureLimit { // 防爆破
 		return errors.New("failure exceeds limit, please try again later")
 	}
-	success, err := totp.ValidateCustom(req.Code, pending, time.Now(), totp.ValidateOpts{
+	success, _ := totp.ValidateCustom(req.Code, pending, time.Now(), totp.ValidateOpts{
 		Period:    constants.TOTPInterval,
 		Algorithm: otp.AlgorithmSHA1,
 		Digits:    6,

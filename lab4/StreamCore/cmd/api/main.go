@@ -3,14 +3,14 @@
 package main
 
 import (
+	"log"
+	"time"
+
 	"StreamCore/api/router"
 	"StreamCore/api/rpc"
 	"StreamCore/config"
 	"StreamCore/internal/pkg/constants"
 	"StreamCore/pkg/util"
-	"log"
-	"time"
-
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/hertz-contrib/cors"
 )

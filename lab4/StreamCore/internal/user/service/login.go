@@ -1,14 +1,15 @@
 package service
 
 import (
+	"errors"
+	"fmt"
+
 	"StreamCore/internal/pkg/constants"
 	"StreamCore/internal/pkg/pack"
 	"StreamCore/kitex_gen/common"
 	"StreamCore/kitex_gen/user"
 	"StreamCore/pkg/util"
 	"StreamCore/pkg/util/jwt"
-	"errors"
-	"fmt"
 )
 
 func (s *UserService) Login(req *user.LoginReq) (*common.UserInfo, *common.AuthenticationInfo, error) {
