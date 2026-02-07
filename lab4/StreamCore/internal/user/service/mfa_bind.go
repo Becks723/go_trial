@@ -1,8 +1,8 @@
 package service
 
 import (
+	"StreamCore/internal/pkg/constants"
 	"StreamCore/kitex_gen/user"
-	"StreamCore/pkg/constants"
 	"errors"
 	"fmt"
 	"time"

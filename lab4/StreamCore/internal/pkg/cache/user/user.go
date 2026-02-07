@@ -1,7 +1,7 @@
 package user
 
 import (
-	"StreamCore/pkg/constants"
+	"StreamCore/internal/pkg/constants"
 	"context"
 	"fmt"
 	"strconv"

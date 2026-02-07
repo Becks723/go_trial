@@ -53,7 +53,7 @@ func ParseToken(token string, secret string) (claims *userCustomClaims, err erro
 
 	claims, ok := tk.Claims.(*userCustomClaims)
 	if !ok {
-		err = errors.New("Unknown claims type.")
+		err = errors.New("unknown claims type")
 		return
 	}
 	return claims, nil
