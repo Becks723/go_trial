@@ -1,14 +1,15 @@
 package service
 
 import (
+	"context"
+	"fmt"
+
 	"StreamCore/biz/domain"
 	"StreamCore/biz/model/comment"
 	"StreamCore/biz/model/common"
 	"StreamCore/biz/model/like"
 	"StreamCore/biz/repo"
 	"StreamCore/pkg/util"
-	"context"
-	"fmt"
 )
 
 type LikeCommentService struct {
@@ -65,7 +66,8 @@ func (svc *LikeCommentService) CommentPublish(ctx context.Context, req *comment.
 		tmp := util.String2Uint(req.CommentId)
 		parentId = &tmp
 	} else {
-		err = fmt.Errorf("Either video_id or comment_id needs to be specified.")
+		err = fmt.Errorf("either video_id or comment_id needs to be specified")
+		return
 	}
 
 	// db create
@@ -92,7 +94,7 @@ func (svc *LikeCommentService) CommentList(ctx context.Context, query *comment.L
 		cid := util.String2Uint(query.CommentId)
 		comments, err = svc.repo.ListSubComments(cid, limit, page)
 	} else {
-		err = fmt.Errorf("Either video_id or comment_id needs to be specified.")
+		err = fmt.Errorf("either video_id or comment_id needs to be specified")
 	}
 	if err != nil {
 		return

@@ -59,7 +59,7 @@ func (s *Strategy) Enqueue(ctx context.Context, d domain) error {
 	case s.updateQueue <- d:
 		return nil // success
 	default:
-		return fmt.Errorf("Update queue overflow for model:%s", d.WbId())
+		return fmt.Errorf("update queue overflow for model:%s", d.WbId())
 	}
 }
 
@@ -97,13 +97,13 @@ func (s *Strategy) dbBgWorker() {
 			}
 		case <-s.cancelCtx.Done():
 			s.flushBatchToDB(context.Background(), batch) // clean batch
-			draining := true
-			for draining {
+			for {
 				select {
 				case d, ok := <-s.updateQueue:
 					if !ok {
-						draining = false
-						break
+						// channel closed
+						s.flushBatchToDB(context.Background(), batch)
+						return
 					}
 					batch = append(batch, d.ToWbModel(s.cancelCtx))
 					if len(batch) > s.batchSize {
@@ -111,13 +111,12 @@ func (s *Strategy) dbBgWorker() {
 						batch = batch[:0]
 					}
 				default:
-					draining = false // queue empty
+					// queue empty: drain complete
+					s.flushBatchToDB(context.Background(), batch)
+					return
 				}
-				s.flushBatchToDB(context.Background(), batch) // final batch
-				return
 			}
 		}
-
 	}
 }
 
@@ -128,8 +127,9 @@ func (s *Strategy) flushBatchToDB(ctx context.Context, batch []interface{}) {
 	s.dbWriteMutex.Lock()
 	defer s.dbWriteMutex.Unlock()
 
-	err := s.repo.BatchUpdate(ctx, batch)
-	if err != nil {
+	/*err*/
+	_ = s.repo.BatchUpdate(ctx, batch)
+	/*if err != nil {
 		// TODO: handle db write failure
-	}
+	}*/
 }

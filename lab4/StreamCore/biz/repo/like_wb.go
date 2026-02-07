@@ -1,15 +1,18 @@
 package repo
 
 import (
-	"StreamCore/biz/repo/model"
-	"StreamCore/biz/repo/wb"
 	"context"
 	"sync"
 	"time"
+
+	"StreamCore/biz/repo/model"
+	"StreamCore/biz/repo/wb"
 )
 
-var lOnce sync.Once
-var lwbc *wb.Strategy
+var (
+	lOnce sync.Once
+	lwbc  *wb.Strategy
+)
 
 func likeWbc() *wb.Strategy {
 	lOnce.Do(func() {
@@ -23,8 +26,7 @@ func likeWbc() *wb.Strategy {
 	return lwbc
 }
 
-type rbRepoCoordinator struct {
-}
+type rbRepoCoordinator struct{}
 
 func (c *rbRepoCoordinator) BatchUpdate(ctx context.Context, batch []interface{}) error {
 	if len(batch) == 0 {

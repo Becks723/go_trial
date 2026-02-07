@@ -1,14 +1,6 @@
 package service
 
 import (
-	"StreamCore/biz/domain"
-	"StreamCore/biz/model/common"
-	"StreamCore/biz/model/user"
-	"StreamCore/biz/repo"
-	cache "StreamCore/biz/repo/cache/user"
-	"StreamCore/pkg/constants"
-	"StreamCore/pkg/env"
-	"StreamCore/pkg/util"
 	"bytes"
 	"context"
 	"encoding/base64"
@@ -20,6 +12,14 @@ import (
 	"strings"
 	"time"
 
+	"StreamCore/biz/domain"
+	"StreamCore/biz/model/common"
+	"StreamCore/biz/model/user"
+	"StreamCore/biz/repo"
+	cache "StreamCore/biz/repo/cache/user"
+	"StreamCore/pkg/constants"
+	"StreamCore/pkg/env"
+	"StreamCore/pkg/util"
 	"github.com/pquerna/otp"
 	"github.com/pquerna/otp/totp"
 )
@@ -99,7 +99,7 @@ func (s *UserService) GetInfo(ctx context.Context, query *user.InfoQuery) (data 
 	// convert string id to uint
 	uid, err := util.ParseUint(query.UserId)
 	if err != nil {
-		err = errors.New("Bad uid format.")
+		err = errors.New("bad uid format")
 		return
 	}
 
@@ -122,14 +122,14 @@ func (s *UserService) UploadAvatar(ctx context.Context, fileHeader *multipart.Fi
 	curUid := retrieveUid(ctx)
 
 	if !util.IsValidImage(fileHeader) {
-		err = errors.New("Bad image format.")
+		err = errors.New("bad image format")
 		return
 	}
 
 	// exceeds image limit
 	limit := env.Instance().IO_ImageSizeLimit
 	if fileHeader.Size > util.ToByte(limit) {
-		err = fmt.Errorf("Exceeds image size limit (current %dmb but limits %dmb)", limit, util.ToMb(fileHeader.Size))
+		err = fmt.Errorf("exceeds image size limit (current %fmb but limits %.2fmb)", limit, util.ToMb(fileHeader.Size))
 		return
 	}
 
@@ -175,7 +175,9 @@ func (s *UserService) MFAQrcode(ctx context.Context, req *user.MFAQrcodeReq) (*u
 	}
 
 	var buf bytes.Buffer
-	png.Encode(&buf, img)                                    // encode img to png (binary)
+	if err = png.Encode(&buf, img); err != nil { // encode img to png (binary)
+		return nil, err
+	}
 	qrcode := base64.StdEncoding.EncodeToString(buf.Bytes()) // base64
 
 	// cache secret
@@ -218,7 +220,7 @@ func (s *UserService) MFABind(ctx context.Context, req *user.MFABindReq) error {
 	if failCount > constants.TOTPFailureLimit { // 防爆破
 		return errors.New("failure exceeds limit, please try again later")
 	}
-	success, err := totp.ValidateCustom(req.Code, pending, time.Now(), totp.ValidateOpts{
+	success, _ := totp.ValidateCustom(req.Code, pending, time.Now(), totp.ValidateOpts{
 		Period:    constants.TOTPInterval,
 		Algorithm: otp.AlgorithmSHA1,
 		Digits:    6,

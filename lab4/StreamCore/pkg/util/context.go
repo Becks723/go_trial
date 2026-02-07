@@ -15,11 +15,11 @@ func RetrieveUserId(ctx context.Context) (uint, error) {
 			return uid, nil
 		}
 	}
-	return 0, errors.New("Error retrieving uid.")
+	return 0, errors.New("error retrieving uid")
 }
 
 func ContextWithUid(ctx context.Context, c *app.RequestContext) context.Context {
 	obj, _ := c.Get("uid")
 	uid, _ := obj.(uint)
-	return context.WithValue(ctx, "uid", uid)
+	return context.WithValue(ctx, "uid", uid) //nolint:staticcheck
 }

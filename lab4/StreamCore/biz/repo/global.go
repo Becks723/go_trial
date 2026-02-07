@@ -1,12 +1,12 @@
 package repo
 
 import (
-	"StreamCore/biz/repo/model"
-	"StreamCore/config"
 	"fmt"
 	"log"
 	"net/url"
 
+	"StreamCore/biz/repo/model"
+	"StreamCore/config"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )

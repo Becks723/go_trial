@@ -1,13 +1,13 @@
 package user
 
 import (
-	rd "StreamCore/biz/repo/redis"
-	"StreamCore/pkg/constants"
 	"context"
 	"fmt"
 	"strconv"
 	"time"
 
+	rd "StreamCore/biz/repo/redis"
+	"StreamCore/pkg/constants"
 	"github.com/redis/go-redis/v9"
 )
 

@@ -1,10 +1,11 @@
 package service
 
 import (
+	"sync"
+
 	"StreamCore/biz/repo"
 	usercache "StreamCore/biz/repo/cache/user"
 	"StreamCore/biz/repo/es"
-	"sync"
 )
 
 var (
