@@ -6,6 +6,8 @@ CONFIG_PATH=$(DIR)/config
 IDL_PATH=$(DIR)/idl
 OUTPUT_PATH=$(DIR)/output
 API_PATH=$(DIR)/cmd/api
+# 自动获取 go.mod 的 module 名
+MODULE := $(shell grep "^module" go.mod | awk '{print $$2}')
 
 # 服务名
 SERVICES=api user video interaction social
@@ -35,4 +37,12 @@ env-up:
 env-down:
 	@cd ./docker && docker compose down
 
-
+# 生成指定微服务的 kitex 脚手架代码
+.PHONY: kitex-gen-%
+kitex-gen-%:
+	@service_name=$*; \
+	echo "$(PREFIX) Generating kitex code for $$service_name..."; \
+	mkdir -p cmd/$$service_name; \
+	cd cmd/$$service_name && kitex -module $(MODULE) -service $$service_name \
+		-gen-path ../../kitex_gen ../../idl/$$service_name.thrift; \
+	echo "$(PREFIX) kitex generate completed for $$service_name"
