@@ -46,3 +46,8 @@ kitex-gen-%:
 	cd cmd/$$service_name && kitex -module $(MODULE) -service $$service_name \
 		-gen-path ../../kitex_gen ../../idl/$$service_name.thrift; \
 	echo "$(PREFIX) kitex generate completed for $$service_name"
+
+# 更新api网关的 hertz 脚手架代码
+.PHONY: hz-update-api
+hz-update-api:
+	@hz update --idl idl/api.thrift
