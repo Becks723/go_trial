@@ -17,12 +17,36 @@ import (
 func Register(r *server.Hertz) {
 
 	root := r.Group("/", rootMw()...)
+	root.GET("/chat", append(_chathandlerMw(), api.ChatHandler)...)
 	{
 		_auth := root.Group("/auth", _authMw()...)
 		{
 			_mfa := _auth.Group("/mfa", _mfaMw()...)
 			_mfa.POST("/bind", append(_mfabindMw(), api.MFABind)...)
 			_mfa.GET("/qrcode", append(_mfaqrcodeMw(), api.MFAQrcode)...)
+		}
+	}
+	{
+		_chat := root.Group("/chat", _chatMw()...)
+		{
+			_group := _chat.Group("/group", _groupMw()...)
+			_group.POST("/apply", append(_applyjoingroupMw(), api.ApplyJoinGroup)...)
+			_apply := _group.Group("/apply", _applyMw()...)
+			_apply.POST("/respond", append(_respondgroupapplyMw(), api.RespondGroupApply)...)
+			_group.POST("/create", append(_creategroupMw(), api.CreateGroup)...)
+			{
+				_history := _group.Group("/history", _historyMw()...)
+				_history.GET("/all", append(_listgroupmessagesallMw(), api.ListGroupMessagesAll)...)
+				_history.GET("/page", append(_listgroupmessagesMw(), api.ListGroupMessages)...)
+			}
+		}
+		{
+			_whisper := _chat.Group("/whisper", _whisperMw()...)
+			{
+				_history0 := _whisper.Group("/history", _history0Mw()...)
+				_history0.GET("/all", append(_listwhispermessagesallMw(), api.ListWhisperMessagesAll)...)
+				_history0.GET("/page", append(_listwhispermessagesMw(), api.ListWhisperMessages)...)
+			}
 		}
 	}
 	{

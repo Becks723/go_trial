@@ -158,3 +158,71 @@ func _visitMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }
+
+func _chathandlerMw() []app.HandlerFunc {
+	return []app.HandlerFunc{middleware.JWTAuthFunc()}
+}
+
+func _chatMw() []app.HandlerFunc {
+	return []app.HandlerFunc{middleware.JWTAuthFunc()}
+}
+
+func _groupMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _applyjoingroupMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _creategroupMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _historyMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _listgroupmessagesallMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _listgroupmessagesMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _history0Mw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _listwhispermessagesallMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _listwhispermessagesMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _whisperMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _applyMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _respondgroupapplyMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}

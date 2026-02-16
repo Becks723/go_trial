@@ -4,6 +4,8 @@ include "user.thrift"
 include "video.thrift"
 include "interaction.thrift"
 include "social.thrift"
+include "chat.thrift"
+include "group.thrift"
 
 service UserApi {
     user.RegisterResp  Register(1: required user.RegisterReq req) (api.post="/user/register")
@@ -36,4 +38,23 @@ service SocialApi {
     social.ListFollowsResp   ListFollows(1: required social.ListFollowsQuery req) (api.get="/following/list")
     social.ListFollowersResp ListFollowers(1: required social.ListFollowersQuery req) (api.get="/follower/list")
     social.ListFriendsResp   ListFriends(1: required social.ListFriendsQuery req) (api.get="/friends/list")
+}
+
+service ChatApi {
+    chat.ListWhisperMessagesAllResp ListWhisperMessagesAll(1: required chat.ListWhisperMessagesAllQuery req) (api.get="/chat/whisper/history/all")
+    chat.ListWhisperMessagesResp ListWhisperMessages(1: required chat.ListWhisperMessagesQuery req) (api.get="/chat/whisper/history/page")
+    chat.ListGroupMessagesAllResp ListGroupMessagesAll(1: required chat.ListGroupMessagesAllQuery req) (api.get="/chat/group/history/all")
+    chat.ListGroupMessagesResp ListGroupMessages(1: required chat.ListGroupMessagesQuery req) (api.get="/chat/group/history/page")
+}
+
+service GroupApi {
+    group.CreateGroupResp CreateGroup(1: required group.CreateGroupReq req) (api.post="/chat/group/create")
+    group.ApplyJoinGroupResp ApplyJoinGroup(1: required group.ApplyJoinGroupReq req) (api.post="/chat/group/apply")
+    group.RespondGroupApplyResp RespondGroupApply(1: required group.RespondGroupApplyReq req) (api.post="/chat/group/apply/respond")
+}
+
+struct PlaceholderResp {}
+
+service WsApi {
+    PlaceholderResp ChatHandler() (api.get="/chat")
 }

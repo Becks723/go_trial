@@ -8,6 +8,8 @@ const (
 	VideoServiceName       = "video"
 	InteractionServiceName = "interaction"
 	SocialServiceName      = "social"
+	ChatServiceName        = "chat"
+	GroupServiceName       = "group"
 
 	MaxConnections = 1000
 	MaxQPS         = 100
@@ -39,4 +41,23 @@ const (
 	FollowAction_Follow   = 0
 	FollowAction_Unfollow = 1
 	SocialCacheExpiration = 30 * time.Minute
+
+	ChatMsgTypeWhisper = 1
+	ChatMsgTypeGroup   = 2
+
+	ChatDeliverStatusPending = 0
+	ChatDeliverStatusDone    = 1
+
+	ChatGroupRoleOwner  = 1
+	ChatGroupRoleMember = 2
+
+	ChatGroupMemberStatusActive = 0
+	ChatGroupMemberStatusLeft   = 1
+
+	ChatGroupApplyStatusPending  = 0
+	ChatGroupApplyStatusApproved = 1
+	ChatGroupApplyStatusRejected = 2
+
+	ChatGroupApplyActionApprove = 1
+	ChatGroupApplyActionReject  = 2
 )
