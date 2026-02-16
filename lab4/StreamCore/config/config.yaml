@@ -46,3 +46,11 @@ services:
     name: social
     addr:
       - 0.0.0.0:20005
+  chat:
+    name: chat
+    addr:
+      - 0.0.0.0:20006
+  group:
+    name: group
+    addr:
+      - 0.0.0.0:20007

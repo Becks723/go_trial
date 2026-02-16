@@ -4,18 +4,22 @@ import (
 	"log"
 	"sync"
 
+	"StreamCore/api/rpc"
 	"StreamCore/internal/pkg/base/infra"
 	"StreamCore/internal/pkg/cache"
+	"StreamCore/internal/pkg/constants"
 	"StreamCore/internal/pkg/db"
 	"StreamCore/internal/pkg/mq"
+	"StreamCore/kitex_gen/group/groupservice"
 	"github.com/elastic/go-elasticsearch/v8"
 )
 
 type InfraSet struct {
-	Cache *cache.CacheSet
-	DB    *db.DatabaseSet
-	ES    *elasticsearch.TypedClient
-	MQ    *mq.MQSet
+	Cache       *cache.CacheSet
+	DB          *db.DatabaseSet
+	ES          *elasticsearch.TypedClient
+	MQ          *mq.MQSet
+	GroupClient groupservice.Client
 }
 
 var (
@@ -72,5 +76,15 @@ func WithMQ() Option {
 			log.Fatal(err)
 		}
 		s.MQ = mq.NewMQSet(conn)
+	}
+}
+
+func WithGroupClient() Option {
+	return func(s *InfraSet) {
+		c, err := rpc.InitRPCClient(constants.GroupServiceName, groupservice.NewClient)
+		if err != nil {
+			log.Fatal(err)
+		}
+		s.GroupClient = *c
 	}
 }

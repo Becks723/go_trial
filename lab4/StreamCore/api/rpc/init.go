@@ -5,6 +5,8 @@ import (
 
 	"StreamCore/config"
 	"StreamCore/internal/pkg/constants"
+	"StreamCore/kitex_gen/chat/chatservice"
+	"StreamCore/kitex_gen/group/groupservice"
 	"StreamCore/kitex_gen/interaction/interactionservice"
 	"StreamCore/kitex_gen/social/socialservice"
 	"StreamCore/kitex_gen/user/userservice"
@@ -18,6 +20,8 @@ var (
 	videoClient  videoservice.Client
 	iaClient     interactionservice.Client
 	socialClient socialservice.Client
+	chatClient   chatservice.Client
+	groupClient  groupservice.Client
 )
 
 func Init() {
@@ -25,19 +29,25 @@ func Init() {
 	initVideoRPC()
 	initSocialRPC()
 	initInteractionRPC()
+	initChatRPC()
+	initGroupRPC()
 }
 
-func initRPCClient[T any](serviceName string, newClientFunc func(string, ...client.Option) (T, error)) (*T, error) {
+func InitRPCClient[T any](serviceName string, newClientFunc func(string, ...client.Option) (T, error)) (*T, error) {
 	config := config.Instance()
 	r, err := etcd.NewEtcdResolver([]string{config.Etcd.Addr})
 	if err != nil {
-		return nil, fmt.Errorf("initRPCClient: error etcd.NewEtcdResolver: %w", err)
+		return nil, fmt.Errorf("InitRPCClient: error etcd.NewEtcdResolver: %w", err)
 	}
 	c, err := newClientFunc(serviceName,
 		client.WithResolver(r),
 		client.WithMuxConnection(constants.MuxConnection))
 	if err != nil {
-		return nil, fmt.Errorf("initRPCClient: error newClientFunc: %w", err)
+		return nil, fmt.Errorf("InitRPCClient: error newClientFunc: %w", err)
 	}
 	return &c, nil
+}
+
+func initRPCClient[T any](serviceName string, newClientFunc func(string, ...client.Option) (T, error)) (*T, error) {
+	return InitRPCClient(serviceName, newClientFunc)
 }

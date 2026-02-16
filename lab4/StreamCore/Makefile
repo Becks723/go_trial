@@ -10,7 +10,7 @@ API_PATH=$(DIR)/cmd/api
 MODULE := $(shell grep "^module" go.mod | awk '{print $$2}')
 
 # 服务名
-SERVICES=api user video interaction social
+SERVICES=api user video interaction social chat group
 service=$(word 1, $@)
 
 PREFIX="[MAKEFILE]"
