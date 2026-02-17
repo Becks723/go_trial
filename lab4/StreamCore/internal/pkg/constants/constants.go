@@ -33,6 +33,7 @@ const (
 	LikeTarType_Comment = 2
 	LikeAction_Like     = 1
 	LikeAction_Unlike   = 2
+	UserLikesCacheLimit = 200
 
 	VideoVisitQueueSize                   = 5000
 	VideoVisitBatchSize                   = 1000
