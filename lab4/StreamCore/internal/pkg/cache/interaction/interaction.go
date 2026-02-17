@@ -3,12 +3,12 @@ package interaction
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"StreamCore/internal/pkg/constants"
 	"StreamCore/internal/pkg/domain"
 	"StreamCore/pkg/util"
 	"github.com/redis/go-redis/v9"
-	"time"
 )
 
 type InteractionCache interface {
