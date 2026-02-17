@@ -5,15 +5,17 @@ import (
 	"fmt"
 
 	"StreamCore/internal/pkg/constants"
+	"StreamCore/internal/pkg/domain"
 	"StreamCore/pkg/util"
 	"github.com/redis/go-redis/v9"
+	"time"
 )
 
 type InteractionCache interface {
-	OnLiked(ctx context.Context, tarType int, uid, tarId uint) error
+	OnLiked(ctx context.Context, tarType int, uid, tarId uint, time time.Time) error
 	OnUnliked(ctx context.Context, tarType int, uid, tarId uint) error
-	GetUserLikedVideos(ctx context.Context, uid uint) ([]uint, error)
-	SetUserLikedVideos(ctx context.Context, uid uint, vids []uint) error
+	GetUserLikedVideosRange(ctx context.Context, uid uint, start, stop int64) ([]uint, error)
+	SetUserLikedVideos(ctx context.Context, uid uint, likes []*domain.Like) error
 }
 
 func NewInteractionCache(rdb *redis.Client) InteractionCache {
@@ -22,21 +24,26 @@ func NewInteractionCache(rdb *redis.Client) InteractionCache {
 	}
 }
 
-func (c *iacache) OnLiked(ctx context.Context, tarType int, uid, tarId uint) error {
-	// 1. incr like count
-	// 2. add biz_id to user_id:biz_type set
-	// 3. add user_id to biz_id:biz_type set
-	// TODO: atomic? lua?
-
+func (c *iacache) OnLiked(ctx context.Context, tarType int, uid, tarId uint, time time.Time) error {
 	err := c.rdb.Incr(ctx, c.likeCountKey(tarType, tarId)).Err()
 	if err != nil {
 		return err
 	}
-	err = c.rdb.SAdd(ctx, c.userLikesKey(tarType, uid), tarId).Err()
-	if err != nil {
-		return err
-	}
-	err = c.rdb.SAdd(ctx, c.likedUsersKey(tarType, tarId), uid).Err()
+
+	zaddIfExists := redis.NewScript(`
+		if redis.call("EXISTS", KEYS[1]) == 1 then
+			redis.call("ZADD", KEYS[1], ARGV[1], ARGV[2])
+			local size = redis.call("ZCARD", KEYS[1])
+			local limit = tonumber(ARGV[3])
+			if size > limit then
+				redis.call("ZREMRANGEBYRANK", KEYS[1], 0, size - limit - 1)
+			end
+			return 1
+		else
+			return 0
+		end
+	`)
+	err = zaddIfExists.Run(ctx, c.rdb, []string{c.userLikesKey(tarType, uid)}, time.UnixMilli(), tarId, constants.UserLikesCacheLimit).Err()
 	if err != nil {
 		return err
 	}
@@ -44,28 +51,20 @@ func (c *iacache) OnLiked(ctx context.Context, tarType int, uid, tarId uint) err
 }
 
 func (c *iacache) OnUnliked(ctx context.Context, tarType int, uid, tarId uint) error {
-	// 1. incr unlike count
-	// 2. remove biz_id from user_id:biz_type set
-	// 3. remove user_id from biz_id:biz_type set
-	// TODO: atomic? lua?
-
 	err := c.rdb.Incr(ctx, c.unlikeCountKey(tarType, tarId)).Err()
 	if err != nil {
 		return err
 	}
-	err = c.rdb.SRem(ctx, c.userLikesKey(tarType, uid), tarId).Err()
-	if err != nil {
-		return err
-	}
-	err = c.rdb.SRem(ctx, c.likedUsersKey(tarType, tarId), uid).Err()
+
+	err = c.rdb.ZRem(ctx, c.userLikesKey(tarType, uid), tarId).Err()
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func (c *iacache) GetUserLikedVideos(ctx context.Context, uid uint) ([]uint, error) {
-	members, err := c.rdb.SMembers(ctx, c.userLikesKey(constants.LikeTarType_Video, uid)).Result()
+func (c *iacache) GetUserLikedVideosRange(ctx context.Context, uid uint, start, stop int64) ([]uint, error) {
+	members, err := c.rdb.ZRange(ctx, c.userLikesKey(constants.LikeTarType_Video, uid), start, stop).Result()
 	if err != nil {
 		return nil, err
 	}
@@ -77,19 +76,24 @@ func (c *iacache) GetUserLikedVideos(ctx context.Context, uid uint) ([]uint, err
 	return vids, nil
 }
 
-func (c *iacache) SetUserLikedVideos(ctx context.Context, uid uint, vids []uint) error {
+func (c *iacache) SetUserLikedVideos(ctx context.Context, uid uint, likes []*domain.Like) error {
 	key := c.userLikesKey(constants.LikeTarType_Video, uid)
-	err := c.rdb.Del(ctx, key).Err()
-	if err != nil {
+	if err := c.rdb.Del(ctx, key).Err(); err != nil {
+		return err
+	}
+
+	if len(likes) == 0 {
 		return nil
 	}
 
-	members := make([]interface{}, len(vids))
-	for i, vid := range vids {
-		members[i] = vid
+	zMembers := make([]redis.Z, len(likes))
+	for i, like := range likes {
+		zMembers[i] = redis.Z{
+			Score:  float64(like.Time.UnixMilli()),
+			Member: like.TargetId,
+		}
 	}
-	err = c.rdb.SAdd(ctx, key, members).Err()
-	if err != nil {
+	if err := c.rdb.ZAdd(ctx, key, zMembers...).Err(); err != nil {
 		return err
 	}
 	return nil
@@ -105,10 +109,6 @@ func (c *iacache) unlikeCountKey(tarType int, tarId uint) string {
 
 func (c *iacache) userLikesKey(tarType int, uid uint) string {
 	return fmt.Sprintf("user_likes:%d:%d", uid, tarType)
-}
-
-func (c *iacache) likedUsersKey(tarType int, tarId uint) string {
-	return fmt.Sprintf("liked_users:%d:%d", tarId, tarType)
 }
 
 type iacache struct {

@@ -39,18 +39,6 @@ func (s *InteractionService) PublishLike(uid uint, req *interaction.PublishLikeR
 		tarId = cid
 	}
 
-	// cache
-	switch req.ActionType {
-	case 1:
-		if err = s.cache.OnLiked(s.ctx, tarType, uid, tarId); err != nil {
-			return fmt.Errorf("error cache.OnLiked: %w", err)
-		}
-	case 2:
-		if err = s.cache.OnUnliked(s.ctx, tarType, uid, tarId); err != nil {
-			return fmt.Errorf("error cache.OnUnliked: %w", err)
-		}
-	}
-
 	// mq
 	err = s.mq.PublishLikeEvent(s.ctx, &model.LikeEvent{
 		TarType: tarType,
@@ -65,7 +53,61 @@ func (s *InteractionService) PublishLike(uid uint, req *interaction.PublishLikeR
 	return nil
 }
 
-func (s *InteractionService) consumeLike(ctx context.Context) {
+func (s *InteractionService) consumeLikeEvent(ctx context.Context, ev *model.LikeEvent) error {
+	if ev.Action == constants.LikeAction_Like {
+		return s.consumeLike(ctx, ev)
+	} else {
+		return s.consumeUnlike(ctx, ev)
+	}
+}
+
+func (s *InteractionService) consumeLike(ctx context.Context, ev *model.LikeEvent) error {
+	tarType, tarId, uid, t := ev.TarType, ev.TarId, ev.Uid, ev.Time
+	lastLike, err := s.db.GetLike(ctx, tarType, uid, tarId)
+	if err != nil { // not recorded before
+		if err = s.db.CreateLike(ctx, tarType, uid, tarId, t); err != nil {
+			return fmt.Errorf("error db.CreateLike: %w", err)
+		}
+	} else { // recorded before
+		if lastLike.Time.After(t) && // ignore former request
+			lastLike.Status == constants.LikeAction_Like { // ignore repeated like
+			return nil
+		}
+		err = s.db.ToggleLikeStatus(ctx, tarType, uid, tarId)
+		if err != nil {
+			return fmt.Errorf("error db.ToggleLikeStatus: %w", err)
+		}
+	}
+	// write cache
+	if err = s.cache.OnLiked(ctx, tarType, uid, tarId, t); err != nil {
+		return fmt.Errorf("error cache.OnLiked: %w", err)
+	}
+	return nil
+}
+
+func (s *InteractionService) consumeUnlike(ctx context.Context, ev *model.LikeEvent) error {
+	tarType, tarId, uid, t := ev.TarType, ev.TarId, ev.Uid, ev.Time
+	lastLike, err := s.db.GetLike(ctx, tarType, uid, tarId)
+	if err != nil { // not recorded before
+		return nil
+	} else {
+		if lastLike.Time.After(t) && // ignore former request
+			lastLike.Status == constants.LikeAction_Unlike { // ignore repeated unlike
+			return nil
+		}
+		err = s.db.ToggleLikeStatus(ctx, tarType, uid, tarId)
+		if err != nil {
+			return fmt.Errorf("error db.ToggleLikeStatus: %w", err)
+		}
+	}
+	// write cache
+	if err = s.cache.OnUnliked(ctx, tarType, uid, tarId); err != nil {
+		return fmt.Errorf("error db.OnUnliked: %w", err)
+	}
+	return nil
+}
+
+func (s *InteractionService) consumer(ctx context.Context) {
 	c, err := s.mq.Consumer()
 	if err != nil {
 		// TODO: log consumer init error
@@ -83,52 +125,11 @@ func (s *InteractionService) consumeLike(ctx context.Context) {
 		}
 
 		// >>>> consume like event <<<<
-		if ev.Action == constants.LikeAction_Like {
-			if err = s.publishLikeToDB(ctx, ev.TarType, ev.Uid, ev.TarId, ev.Time); err != nil { //nolint:staticcheck
-				// TODO: log
-			}
+		if err = s.consumeLikeEvent(ctx, &ev); err != nil {
+
 		} else {
-			if err = s.publishUnlikeToDB(ctx, ev.TarType, ev.Uid, ev.TarId, ev.Time); err != nil { //nolint:staticcheck
-				// TODO: log
-			}
+			c.Ack(msg)
 		}
 		// =============================
-
-		c.Ack(msg)
 	}
-}
-
-func (s *InteractionService) publishLikeToDB(ctx context.Context, tarType int, uid, tarId uint, time time.Time) error {
-	lastLike, err := s.db.GetLike(ctx, tarType, uid, tarId)
-	if err != nil { // not recorded before
-		if err = s.db.CreateLike(ctx, tarType, uid, tarId, time); err != nil {
-			return fmt.Errorf("error db.CreateLike: %w", err)
-		}
-		return nil
-	}
-
-	if lastLike.Time.Before(time) && // ignore former request
-		lastLike.Status == constants.LikeAction_Unlike { // ignore repeated like
-		err = s.db.ToggleLikeStatus(ctx, tarType, uid, tarId)
-		if err != nil {
-			return fmt.Errorf("error db.ToggleLikeStatus: %w", err)
-		}
-	}
-	return nil
-}
-
-func (s *InteractionService) publishUnlikeToDB(ctx context.Context, tarType int, uid, tarId uint, time time.Time) error {
-	lastLike, err := s.db.GetLike(ctx, tarType, uid, tarId)
-	if err != nil { // not recorded before
-		return nil
-	}
-
-	if lastLike.Time.Before(time) && // ignore former request
-		lastLike.Status == constants.LikeAction_Like { // ignore repeated unlike
-		err = s.db.ToggleLikeStatus(ctx, tarType, uid, tarId)
-		if err != nil {
-			return fmt.Errorf("error db.ToggleLikeStatus: %w", err)
-		}
-	}
-	return nil
 }

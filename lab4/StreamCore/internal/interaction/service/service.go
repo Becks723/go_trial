@@ -34,6 +34,6 @@ var consumeOnce sync.Once
 
 func (s *InteractionService) initConsumer() {
 	consumeOnce.Do(func() {
-		go s.consumeLike(context.Background())
+		go s.consumer(context.Background())
 	})
 }
