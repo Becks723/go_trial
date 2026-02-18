@@ -83,6 +83,51 @@ services:
     networks:
       - streamcore
 
+  prometheus:
+    container_name: streamcore-prometheus
+    image: prom/prometheus:latest
+    volumes:
+      - ../config/prometheus:/etc/prometheus
+    ports:
+      - "9090:9090"
+    networks:
+      - streamcore
+
+  node-exporter:
+    container_name: streamcore-node-exporter
+    image: prom/node-exporter:latest
+    ports:
+      - "9100:9100"
+    networks:
+      - streamcore
+
+  redis-exporter:
+    container_name: streamcore-redis-exporter
+    image: oliver006/redis_exporter
+    ports:
+      - "9121:9121"
+    networks:
+      - streamcore
+
+  mysql-exporter:
+    container_name: streamcore-mysql-exporter
+    image: prom/mysqld-exporter
+    ports:
+      - "9104:9104"
+    command:
+      - "--mysqld.username=exporter:123456"
+      - "--mysqld.address=127.0.0.1:3306"
+    networks:
+      - streamcore
+
+  rabbitmq-exporter:
+    container_name: streamcore-rabbitmq-exporter
+    image: kbudde/rabbitmq-exporter
+    ports:
+      - "9419:9419"
+    networks:
+      - streamcore
+
 networks:
   streamcore:
     driver: bridge
