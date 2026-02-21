@@ -13,7 +13,8 @@ type config struct {
 	General  generalConfig `mapstructure:"general"`
 	Redis    *redis        `mapstructure:"redis"`
 	RabbitMQ *rabbitmq     `mapstructure:"rabbitmq"`
-	Etcd     *etcd
+	Etcd     *etcd         `mapstructure:"etcd"`
+	Otel     *otel         `mapstructure:"otel"`
 	Service  *svc
 }
 
@@ -85,6 +86,10 @@ type rabbitmq struct {
 
 type etcd struct {
 	Addr string
+}
+
+type otel struct {
+	CollectorAddr string `mapstructure:"collector_addr"`
 }
 
 type svc struct {

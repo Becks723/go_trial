@@ -12,6 +12,8 @@ import (
 	"StreamCore/kitex_gen/user/userservice"
 	"StreamCore/kitex_gen/video/videoservice"
 	"github.com/cloudwego/kitex/client"
+	"github.com/cloudwego/kitex/pkg/rpcinfo"
+	"github.com/kitex-contrib/obs-opentelemetry/tracing"
 	etcd "github.com/kitex-contrib/registry-etcd"
 )
 
@@ -41,7 +43,10 @@ func InitRPCClient[T any](serviceName string, newClientFunc func(string, ...clie
 	}
 	c, err := newClientFunc(serviceName,
 		client.WithResolver(r),
-		client.WithMuxConnection(constants.MuxConnection))
+		client.WithMuxConnection(constants.MuxConnection),
+		client.WithSuite(tracing.NewClientSuite()),
+		client.WithClientBasicInfo(&rpcinfo.EndpointBasicInfo{ServiceName: serviceName}),
+	)
 	if err != nil {
 		return nil, fmt.Errorf("InitRPCClient: error newClientFunc: %w", err)
 	}
