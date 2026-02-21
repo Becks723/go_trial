@@ -9,10 +9,13 @@ import (
 	"StreamCore/api/router"
 	"StreamCore/api/rpc"
 	"StreamCore/config"
+	"StreamCore/internal/pkg/base"
 	"StreamCore/internal/pkg/constants"
 	"StreamCore/pkg/util"
+	"context"
 	"github.com/cloudwego/hertz/pkg/app/server"
 	"github.com/hertz-contrib/cors"
+	"github.com/hertz-contrib/obs-opentelemetry/tracing"
 )
 
 var (
@@ -31,9 +34,22 @@ func main() {
 	if !ok {
 		log.Fatalf("%s no port available", logPrefix)
 	}
+
+	// 初始化 OpenTelemetry
+	p := base.NewOtelProvider(serviceName, config.Otel.CollectorAddr)
+	defer func() {
+		if err := p.Shutdown(context.Background()); err != nil {
+			log.Fatalf("%s Otel provider shutdown error: %v", logPrefix, err)
+		}
+	}()
+	// 初始化 OpenTelemetry Tracing
+	tracer, tcfg := tracing.NewServerTracer()
+
 	h := server.New(
 		server.WithHostPorts(listenAddr),
-		server.WithHandleMethodNotAllowed(true))
+		server.WithHandleMethodNotAllowed(true),
+		tracer,
+	)
 
 	h.Use(cors.New(cors.Config{
 		AllowOrigins:     []string{"*"},
@@ -43,6 +59,7 @@ func main() {
 		ExposeHeaders:    []string{"Content-Length"},
 		MaxAge:           12 * time.Hour,
 	}))
+	h.Use(tracing.ServerMiddleware(tcfg)) // tracing中间件
 
 	h.Static("/static", "./uploads")
 
