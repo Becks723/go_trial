@@ -20,6 +20,7 @@ func Register(r *server.Hertz) {
 	root.GET("/chat", append(_chathandlerMw(), api.ChatHandler)...)
 	{
 		_auth := root.Group("/auth", _authMw()...)
+		_auth.POST("/refresh", append(_refreshtokenMw(), api.RefreshToken)...)
 		{
 			_mfa := _auth.Group("/mfa", _mfaMw()...)
 			_mfa.POST("/bind", append(_mfabindMw(), api.MFABind)...)

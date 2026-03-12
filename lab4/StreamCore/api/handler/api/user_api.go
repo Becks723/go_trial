@@ -58,8 +58,9 @@ func Login(ctx context.Context, c *app.RequestContext) {
 
 	if !pack.RespBizError(c, resp.Base) {
 		pack.RespWithData(c, map[string]any{
-			"data": resp.Data,
-			"auth": resp.Auth,
+			"data":  resp.Data,
+			"auth":  resp.Auth,
+			"token": resp.Token,
 		})
 	}
 }
@@ -180,6 +181,30 @@ func MFAVerify(ctx context.Context, c *app.RequestContext) {
 	}
 
 	if !pack.RespBizError(c, resp.Base) {
-		pack.RespSuccess(c)
+		pack.RespWithData(c, resp.Data)
+	}
+}
+
+// RefreshToken .
+// @router /auth/refresh [POST]
+func RefreshToken(ctx context.Context, c *app.RequestContext) {
+	var err error
+	var req api.RefreshTokenReq
+	err = c.BindAndValidate(&req)
+	if err != nil {
+		pack.RespParamError(c, err)
+		return
+	}
+
+	resp, err := rpc.RefreshTokenRPC(ctx, &user.RefreshTokenReq{
+		Token: req.Token,
+	})
+	if err != nil {
+		pack.RespRPCError(c, err)
+		return
+	}
+
+	if !pack.RespBizError(c, resp.Base) {
+		pack.RespWithData(c, resp.Data)
 	}
 }

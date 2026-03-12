@@ -14,16 +14,9 @@ struct UserInfo {
     6: required string avatar_url
 }
 
-struct AuthenticationInfo {
+struct TokenInfo {
     1: required string access_token
     2: required string refresh_token
-    3: required bool mfa_required     // 是否需要MFA校验
-    4: required string mfa_token      // MFA token
-}
-
-struct MFAInfo {
-    1: required string secret
-    2: required string qrcode
 }
 
 struct VideoInfo {

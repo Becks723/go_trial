@@ -1,6 +1,8 @@
 package user
 
 import (
+	"context"
+
 	"StreamCore/internal/pkg/db/model"
 	"StreamCore/internal/pkg/db/pack"
 	"StreamCore/internal/pkg/domain"
@@ -28,4 +30,18 @@ func (repo *userdb) GetById(id uint) (u *domain.User, err error) {
 		return nil, err
 	}
 	return pack.User(&po), nil
+}
+
+func (repo *userdb) GetTokenId(ctx context.Context, uid uint) (string, error) {
+	tokenId := ""
+	err := repo.db.WithContext(ctx).
+		Model(&model.UserModel{}).
+		Select("token_id").
+		Where("id = ?", uid).
+		Scan(&tokenId).
+		Error
+	if err != nil {
+		return "", err
+	}
+	return tokenId, nil
 }

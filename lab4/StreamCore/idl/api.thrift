@@ -12,6 +12,7 @@ service UserApi {
     user.LoginResp     Login(1: required user.LoginReq req) (api.post="/user/login")
     user.InfoResp      GetInfo(1: required user.InfoQuery req) (api.get="/user/info")
     user.AvatarResp    UploadAvatar(1: required user.AvatarReq req) (api.put="/user/avatar/upload")
+    user.RefreshTokenResp RefreshToken(1: required user.RefreshTokenReq req) (api.post="/auth/refresh")
     user.MFAQrcodeResp MFAQrcode(1: required user.MFAQrcodeReq req) (api.get="/auth/mfa/qrcode")
     user.MFABindResp   MFABind(1: required user.MFABindReq req) (api.post="/auth/mfa/bind")
     user.MFAVerifyResp MFAVerify(1: required user.MFAVerifyReq req) (api.post="/auth/mfa/verify")

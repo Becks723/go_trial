@@ -123,9 +123,10 @@ var fieldIDToName_LoginReq = map[int16]string{
 }
 
 type LoginResp struct {
-	Base *common.BaseResp           `thrift:"base,1,required" frugal:"1,required,common.BaseResp" json:"base"`
-	Data *common.UserInfo           `thrift:"data,2,required" frugal:"2,required,common.UserInfo" json:"data"`
-	Auth *common.AuthenticationInfo `thrift:"auth,3,required" frugal:"3,required,common.AuthenticationInfo" json:"auth"`
+	Base  *common.BaseResp  `thrift:"base,1,required" frugal:"1,required,common.BaseResp" json:"base"`
+	Data  *common.UserInfo  `thrift:"data,2,optional" frugal:"2,optional,common.UserInfo" json:"data,omitempty"`
+	Auth  *MFAInfo          `thrift:"auth,3,optional" frugal:"3,optional,MFAInfo" json:"auth,omitempty"`
+	Token *common.TokenInfo `thrift:"token,4,optional" frugal:"4,optional,common.TokenInfo" json:"token,omitempty"`
 }
 
 func NewLoginResp() *LoginResp {
@@ -153,13 +154,22 @@ func (p *LoginResp) GetData() (v *common.UserInfo) {
 	return p.Data
 }
 
-var LoginResp_Auth_DEFAULT *common.AuthenticationInfo
+var LoginResp_Auth_DEFAULT *MFAInfo
 
-func (p *LoginResp) GetAuth() (v *common.AuthenticationInfo) {
+func (p *LoginResp) GetAuth() (v *MFAInfo) {
 	if !p.IsSetAuth() {
 		return LoginResp_Auth_DEFAULT
 	}
 	return p.Auth
+}
+
+var LoginResp_Token_DEFAULT *common.TokenInfo
+
+func (p *LoginResp) GetToken() (v *common.TokenInfo) {
+	if !p.IsSetToken() {
+		return LoginResp_Token_DEFAULT
+	}
+	return p.Token
 }
 func (p *LoginResp) SetBase(val *common.BaseResp) {
 	p.Base = val
@@ -167,8 +177,11 @@ func (p *LoginResp) SetBase(val *common.BaseResp) {
 func (p *LoginResp) SetData(val *common.UserInfo) {
 	p.Data = val
 }
-func (p *LoginResp) SetAuth(val *common.AuthenticationInfo) {
+func (p *LoginResp) SetAuth(val *MFAInfo) {
 	p.Auth = val
+}
+func (p *LoginResp) SetToken(val *common.TokenInfo) {
+	p.Token = val
 }
 
 func (p *LoginResp) IsSetBase() bool {
@@ -183,6 +196,10 @@ func (p *LoginResp) IsSetAuth() bool {
 	return p.Auth != nil
 }
 
+func (p *LoginResp) IsSetToken() bool {
+	return p.Token != nil
+}
+
 func (p *LoginResp) String() string {
 	if p == nil {
 		return "<nil>"
@@ -194,6 +211,45 @@ var fieldIDToName_LoginResp = map[int16]string{
 	1: "base",
 	2: "data",
 	3: "auth",
+	4: "token",
+}
+
+type MFAInfo struct {
+	MfaRequired bool   `thrift:"mfa_required,1,required" frugal:"1,required,bool" json:"mfa_required"`
+	MfaToken    string `thrift:"mfa_token,2,required" frugal:"2,required,string" json:"mfa_token"`
+}
+
+func NewMFAInfo() *MFAInfo {
+	return &MFAInfo{}
+}
+
+func (p *MFAInfo) InitDefault() {
+}
+
+func (p *MFAInfo) GetMfaRequired() (v bool) {
+	return p.MfaRequired
+}
+
+func (p *MFAInfo) GetMfaToken() (v string) {
+	return p.MfaToken
+}
+func (p *MFAInfo) SetMfaRequired(val bool) {
+	p.MfaRequired = val
+}
+func (p *MFAInfo) SetMfaToken(val string) {
+	p.MfaToken = val
+}
+
+func (p *MFAInfo) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("MFAInfo(%+v)", *p)
+}
+
+var fieldIDToName_MFAInfo = map[int16]string{
+	1: "mfa_required",
+	2: "mfa_token",
 }
 
 type InfoQuery struct {
@@ -227,7 +283,7 @@ var fieldIDToName_InfoQuery = map[int16]string{
 
 type InfoResp struct {
 	Base *common.BaseResp `thrift:"base,1,required" frugal:"1,required,common.BaseResp" json:"base"`
-	Data *common.UserInfo `thrift:"data,2,required" frugal:"2,required,common.UserInfo" json:"data"`
+	Data *common.UserInfo `thrift:"data,2,optional" frugal:"2,optional,common.UserInfo" json:"data,omitempty"`
 }
 
 func NewInfoResp() *InfoResp {
@@ -321,7 +377,7 @@ var fieldIDToName_AvatarReq = map[int16]string{
 
 type AvatarResp struct {
 	Base *common.BaseResp `thrift:"base,1,required" frugal:"1,required,common.BaseResp" json:"base"`
-	Data *common.UserInfo `thrift:"data,2,required" frugal:"2,required,common.UserInfo" json:"data"`
+	Data *common.UserInfo `thrift:"data,2,optional" frugal:"2,optional,common.UserInfo" json:"data,omitempty"`
 }
 
 func NewAvatarResp() *AvatarResp {
@@ -375,6 +431,91 @@ var fieldIDToName_AvatarResp = map[int16]string{
 	2: "data",
 }
 
+type RefreshTokenReq struct {
+	Token string `thrift:"token,1,required" frugal:"1,required,string" json:"token"`
+}
+
+func NewRefreshTokenReq() *RefreshTokenReq {
+	return &RefreshTokenReq{}
+}
+
+func (p *RefreshTokenReq) InitDefault() {
+}
+
+func (p *RefreshTokenReq) GetToken() (v string) {
+	return p.Token
+}
+func (p *RefreshTokenReq) SetToken(val string) {
+	p.Token = val
+}
+
+func (p *RefreshTokenReq) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("RefreshTokenReq(%+v)", *p)
+}
+
+var fieldIDToName_RefreshTokenReq = map[int16]string{
+	1: "token",
+}
+
+type RefreshTokenResp struct {
+	Base *common.BaseResp  `thrift:"base,1,required" frugal:"1,required,common.BaseResp" json:"base"`
+	Data *common.TokenInfo `thrift:"data,2,optional" frugal:"2,optional,common.TokenInfo" json:"data,omitempty"`
+}
+
+func NewRefreshTokenResp() *RefreshTokenResp {
+	return &RefreshTokenResp{}
+}
+
+func (p *RefreshTokenResp) InitDefault() {
+}
+
+var RefreshTokenResp_Base_DEFAULT *common.BaseResp
+
+func (p *RefreshTokenResp) GetBase() (v *common.BaseResp) {
+	if !p.IsSetBase() {
+		return RefreshTokenResp_Base_DEFAULT
+	}
+	return p.Base
+}
+
+var RefreshTokenResp_Data_DEFAULT *common.TokenInfo
+
+func (p *RefreshTokenResp) GetData() (v *common.TokenInfo) {
+	if !p.IsSetData() {
+		return RefreshTokenResp_Data_DEFAULT
+	}
+	return p.Data
+}
+func (p *RefreshTokenResp) SetBase(val *common.BaseResp) {
+	p.Base = val
+}
+func (p *RefreshTokenResp) SetData(val *common.TokenInfo) {
+	p.Data = val
+}
+
+func (p *RefreshTokenResp) IsSetBase() bool {
+	return p.Base != nil
+}
+
+func (p *RefreshTokenResp) IsSetData() bool {
+	return p.Data != nil
+}
+
+func (p *RefreshTokenResp) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("RefreshTokenResp(%+v)", *p)
+}
+
+var fieldIDToName_RefreshTokenResp = map[int16]string{
+	1: "base",
+	2: "data",
+}
+
 type MFAQrcodeReq struct {
 }
 
@@ -396,7 +537,7 @@ var fieldIDToName_MFAQrcodeReq = map[int16]string{}
 
 type MFAQrcodeResp struct {
 	Base *common.BaseResp `thrift:"base,1,required" frugal:"1,required,common.BaseResp" json:"base"`
-	Data *common.MFAInfo  `thrift:"data,2,required" frugal:"2,required,common.MFAInfo" json:"data"`
+	Data *MFAQrcodeInfo   `thrift:"data,2,optional" frugal:"2,optional,MFAQrcodeInfo" json:"data,omitempty"`
 }
 
 func NewMFAQrcodeResp() *MFAQrcodeResp {
@@ -415,9 +556,9 @@ func (p *MFAQrcodeResp) GetBase() (v *common.BaseResp) {
 	return p.Base
 }
 
-var MFAQrcodeResp_Data_DEFAULT *common.MFAInfo
+var MFAQrcodeResp_Data_DEFAULT *MFAQrcodeInfo
 
-func (p *MFAQrcodeResp) GetData() (v *common.MFAInfo) {
+func (p *MFAQrcodeResp) GetData() (v *MFAQrcodeInfo) {
 	if !p.IsSetData() {
 		return MFAQrcodeResp_Data_DEFAULT
 	}
@@ -426,7 +567,7 @@ func (p *MFAQrcodeResp) GetData() (v *common.MFAInfo) {
 func (p *MFAQrcodeResp) SetBase(val *common.BaseResp) {
 	p.Base = val
 }
-func (p *MFAQrcodeResp) SetData(val *common.MFAInfo) {
+func (p *MFAQrcodeResp) SetData(val *MFAQrcodeInfo) {
 	p.Data = val
 }
 
@@ -448,6 +589,44 @@ func (p *MFAQrcodeResp) String() string {
 var fieldIDToName_MFAQrcodeResp = map[int16]string{
 	1: "base",
 	2: "data",
+}
+
+type MFAQrcodeInfo struct {
+	Secret string `thrift:"secret,1,required" frugal:"1,required,string" json:"secret"`
+	Qrcode string `thrift:"qrcode,2,required" frugal:"2,required,string" json:"qrcode"`
+}
+
+func NewMFAQrcodeInfo() *MFAQrcodeInfo {
+	return &MFAQrcodeInfo{}
+}
+
+func (p *MFAQrcodeInfo) InitDefault() {
+}
+
+func (p *MFAQrcodeInfo) GetSecret() (v string) {
+	return p.Secret
+}
+
+func (p *MFAQrcodeInfo) GetQrcode() (v string) {
+	return p.Qrcode
+}
+func (p *MFAQrcodeInfo) SetSecret(val string) {
+	p.Secret = val
+}
+func (p *MFAQrcodeInfo) SetQrcode(val string) {
+	p.Qrcode = val
+}
+
+func (p *MFAQrcodeInfo) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("MFAQrcodeInfo(%+v)", *p)
+}
+
+var fieldIDToName_MFAQrcodeInfo = map[int16]string{
+	1: "secret",
+	2: "qrcode",
 }
 
 type MFABindReq struct {
@@ -565,7 +744,8 @@ var fieldIDToName_MFAVerifyReq = map[int16]string{
 }
 
 type MFAVerifyResp struct {
-	Base *common.BaseResp `thrift:"base,1,required" frugal:"1,required,common.BaseResp" json:"base"`
+	Base *common.BaseResp  `thrift:"base,1,required" frugal:"1,required,common.BaseResp" json:"base"`
+	Data *common.TokenInfo `thrift:"data,2,optional" frugal:"2,optional,common.TokenInfo" json:"data,omitempty"`
 }
 
 func NewMFAVerifyResp() *MFAVerifyResp {
@@ -583,12 +763,28 @@ func (p *MFAVerifyResp) GetBase() (v *common.BaseResp) {
 	}
 	return p.Base
 }
+
+var MFAVerifyResp_Data_DEFAULT *common.TokenInfo
+
+func (p *MFAVerifyResp) GetData() (v *common.TokenInfo) {
+	if !p.IsSetData() {
+		return MFAVerifyResp_Data_DEFAULT
+	}
+	return p.Data
+}
 func (p *MFAVerifyResp) SetBase(val *common.BaseResp) {
 	p.Base = val
+}
+func (p *MFAVerifyResp) SetData(val *common.TokenInfo) {
+	p.Data = val
 }
 
 func (p *MFAVerifyResp) IsSetBase() bool {
 	return p.Base != nil
+}
+
+func (p *MFAVerifyResp) IsSetData() bool {
+	return p.Data != nil
 }
 
 func (p *MFAVerifyResp) String() string {
@@ -600,6 +796,7 @@ func (p *MFAVerifyResp) String() string {
 
 var fieldIDToName_MFAVerifyResp = map[int16]string{
 	1: "base",
+	2: "data",
 }
 
 type UserService interface {
@@ -610,6 +807,8 @@ type UserService interface {
 	GetInfo(ctx context.Context, req *InfoQuery) (r *InfoResp, err error)
 
 	UploadAvatar(ctx context.Context, req *AvatarReq) (r *AvatarResp, err error)
+
+	RefreshToken(ctx context.Context, req *RefreshTokenReq) (r *RefreshTokenResp, err error)
 
 	MFAQrcode(ctx context.Context, req *MFAQrcodeReq) (r *MFAQrcodeResp, err error)
 
@@ -919,6 +1118,82 @@ func (p *UserServiceUploadAvatarResult) String() string {
 }
 
 var fieldIDToName_UserServiceUploadAvatarResult = map[int16]string{
+	0: "success",
+}
+
+type UserServiceRefreshTokenArgs struct {
+	Req *RefreshTokenReq `thrift:"req,1,required" frugal:"1,required,RefreshTokenReq" json:"req"`
+}
+
+func NewUserServiceRefreshTokenArgs() *UserServiceRefreshTokenArgs {
+	return &UserServiceRefreshTokenArgs{}
+}
+
+func (p *UserServiceRefreshTokenArgs) InitDefault() {
+}
+
+var UserServiceRefreshTokenArgs_Req_DEFAULT *RefreshTokenReq
+
+func (p *UserServiceRefreshTokenArgs) GetReq() (v *RefreshTokenReq) {
+	if !p.IsSetReq() {
+		return UserServiceRefreshTokenArgs_Req_DEFAULT
+	}
+	return p.Req
+}
+func (p *UserServiceRefreshTokenArgs) SetReq(val *RefreshTokenReq) {
+	p.Req = val
+}
+
+func (p *UserServiceRefreshTokenArgs) IsSetReq() bool {
+	return p.Req != nil
+}
+
+func (p *UserServiceRefreshTokenArgs) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("UserServiceRefreshTokenArgs(%+v)", *p)
+}
+
+var fieldIDToName_UserServiceRefreshTokenArgs = map[int16]string{
+	1: "req",
+}
+
+type UserServiceRefreshTokenResult struct {
+	Success *RefreshTokenResp `thrift:"success,0,optional" frugal:"0,optional,RefreshTokenResp" json:"success,omitempty"`
+}
+
+func NewUserServiceRefreshTokenResult() *UserServiceRefreshTokenResult {
+	return &UserServiceRefreshTokenResult{}
+}
+
+func (p *UserServiceRefreshTokenResult) InitDefault() {
+}
+
+var UserServiceRefreshTokenResult_Success_DEFAULT *RefreshTokenResp
+
+func (p *UserServiceRefreshTokenResult) GetSuccess() (v *RefreshTokenResp) {
+	if !p.IsSetSuccess() {
+		return UserServiceRefreshTokenResult_Success_DEFAULT
+	}
+	return p.Success
+}
+func (p *UserServiceRefreshTokenResult) SetSuccess(x interface{}) {
+	p.Success = x.(*RefreshTokenResp)
+}
+
+func (p *UserServiceRefreshTokenResult) IsSetSuccess() bool {
+	return p.Success != nil
+}
+
+func (p *UserServiceRefreshTokenResult) String() string {
+	if p == nil {
+		return "<nil>"
+	}
+	return fmt.Sprintf("UserServiceRefreshTokenResult(%+v)", *p)
+}
+
+var fieldIDToName_UserServiceRefreshTokenResult = map[int16]string{
 	0: "success",
 }
 
