@@ -745,7 +745,7 @@ var fieldIDToName_MFAVerifyReq = map[int16]string{
 
 type MFAVerifyResp struct {
 	Base *common.BaseResp  `thrift:"base,1,required" frugal:"1,required,common.BaseResp" json:"base"`
-	Data *common.TokenInfo `thrift:"data,2,required" frugal:"2,required,common.TokenInfo" json:"data"`
+	Data *common.TokenInfo `thrift:"data,2,optional" frugal:"2,optional,common.TokenInfo" json:"data,omitempty"`
 }
 
 func NewMFAVerifyResp() *MFAVerifyResp {
