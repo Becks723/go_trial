@@ -124,8 +124,8 @@ var fieldIDToName_LoginReq = map[int16]string{
 
 type LoginResp struct {
 	Base  *common.BaseResp  `thrift:"base,1,required" frugal:"1,required,common.BaseResp" json:"base"`
-	Data  *common.UserInfo  `thrift:"data,2,required" frugal:"2,required,common.UserInfo" json:"data"`
-	Auth  *MFAInfo          `thrift:"auth,3,required" frugal:"3,required,MFAInfo" json:"auth"`
+	Data  *common.UserInfo  `thrift:"data,2,optional" frugal:"2,optional,common.UserInfo" json:"data,omitempty"`
+	Auth  *MFAInfo          `thrift:"auth,3,optional" frugal:"3,optional,MFAInfo" json:"auth,omitempty"`
 	Token *common.TokenInfo `thrift:"token,4,optional" frugal:"4,optional,common.TokenInfo" json:"token,omitempty"`
 }
 
@@ -283,7 +283,7 @@ var fieldIDToName_InfoQuery = map[int16]string{
 
 type InfoResp struct {
 	Base *common.BaseResp `thrift:"base,1,required" frugal:"1,required,common.BaseResp" json:"base"`
-	Data *common.UserInfo `thrift:"data,2,required" frugal:"2,required,common.UserInfo" json:"data"`
+	Data *common.UserInfo `thrift:"data,2,optional" frugal:"2,optional,common.UserInfo" json:"data,omitempty"`
 }
 
 func NewInfoResp() *InfoResp {
@@ -377,7 +377,7 @@ var fieldIDToName_AvatarReq = map[int16]string{
 
 type AvatarResp struct {
 	Base *common.BaseResp `thrift:"base,1,required" frugal:"1,required,common.BaseResp" json:"base"`
-	Data *common.UserInfo `thrift:"data,2,required" frugal:"2,required,common.UserInfo" json:"data"`
+	Data *common.UserInfo `thrift:"data,2,optional" frugal:"2,optional,common.UserInfo" json:"data,omitempty"`
 }
 
 func NewAvatarResp() *AvatarResp {
@@ -462,7 +462,7 @@ var fieldIDToName_RefreshTokenReq = map[int16]string{
 
 type RefreshTokenResp struct {
 	Base *common.BaseResp  `thrift:"base,1,required" frugal:"1,required,common.BaseResp" json:"base"`
-	Data *common.TokenInfo `thrift:"data,2,required" frugal:"2,required,common.TokenInfo" json:"data"`
+	Data *common.TokenInfo `thrift:"data,2,optional" frugal:"2,optional,common.TokenInfo" json:"data,omitempty"`
 }
 
 func NewRefreshTokenResp() *RefreshTokenResp {
@@ -537,7 +537,7 @@ var fieldIDToName_MFAQrcodeReq = map[int16]string{}
 
 type MFAQrcodeResp struct {
 	Base *common.BaseResp `thrift:"base,1,required" frugal:"1,required,common.BaseResp" json:"base"`
-	Data *MFAQrcodeInfo   `thrift:"data,2,required" frugal:"2,required,MFAQrcodeInfo" json:"data"`
+	Data *MFAQrcodeInfo   `thrift:"data,2,optional" frugal:"2,optional,MFAQrcodeInfo" json:"data,omitempty"`
 }
 
 func NewMFAQrcodeResp() *MFAQrcodeResp {

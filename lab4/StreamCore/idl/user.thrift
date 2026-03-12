@@ -18,8 +18,8 @@ struct LoginReq {
 
 struct LoginResp {
     1: required common.BaseResp base
-    2: required common.UserInfo data
-    3: required MFAInfo auth
+    2: optional common.UserInfo data
+    3: optional MFAInfo auth
     4: optional common.TokenInfo token // 令牌（可选，当未开启MFA时）
 }
 
@@ -34,7 +34,7 @@ struct InfoQuery {
 
 struct InfoResp {
     1: required common.BaseResp base
-    2: required common.UserInfo data
+    2: optional common.UserInfo data
 }
 
 struct AvatarReq {
@@ -43,7 +43,7 @@ struct AvatarReq {
 
 struct AvatarResp {
     1: required common.BaseResp base
-    2: required common.UserInfo data
+    2: optional common.UserInfo data
 }
 
 struct RefreshTokenReq {
@@ -52,14 +52,14 @@ struct RefreshTokenReq {
 
 struct RefreshTokenResp {
     1: required common.BaseResp base
-    2: required common.TokenInfo data
+    2: optional common.TokenInfo data
 }
 
 struct MFAQrcodeReq {}
 
 struct MFAQrcodeResp {
     1: required common.BaseResp base
-    2: required MFAQrcodeInfo data
+    2: optional MFAQrcodeInfo data
 }
 
 struct MFAQrcodeInfo {
@@ -83,7 +83,7 @@ struct MFAVerifyReq {
 
 struct MFAVerifyResp {
     1: required common.BaseResp base
-    2: required common.TokenInfo data
+    2: optional common.TokenInfo data
 }
 
 service UserService {
