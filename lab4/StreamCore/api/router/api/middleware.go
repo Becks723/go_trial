@@ -13,7 +13,7 @@ func rootMw() []app.HandlerFunc {
 }
 
 func _authMw() []app.HandlerFunc {
-	return []app.HandlerFunc{middleware.JWTAuthFunc()}
+	return nil
 }
 
 func _mfaMw() []app.HandlerFunc {
@@ -22,13 +22,11 @@ func _mfaMw() []app.HandlerFunc {
 }
 
 func _mfabindMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{middleware.JWTAuthFunc()}
 }
 
 func _mfaqrcodeMw() []app.HandlerFunc {
-	// your code...
-	return nil
+	return []app.HandlerFunc{middleware.JWTAuthFunc()}
 }
 
 func _commentMw() []app.HandlerFunc {
@@ -228,6 +226,11 @@ func _respondgroupapplyMw() []app.HandlerFunc {
 }
 
 func _mfaverifyMw() []app.HandlerFunc {
+	// your code...
+	return nil
+}
+
+func _refreshtokenMw() []app.HandlerFunc {
 	// your code...
 	return nil
 }

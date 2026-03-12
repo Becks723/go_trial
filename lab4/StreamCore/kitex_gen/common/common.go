@@ -118,98 +118,42 @@ var fieldIDToName_UserInfo = map[int16]string{
 	6: "avatar_url",
 }
 
-type AuthenticationInfo struct {
+type TokenInfo struct {
 	AccessToken  string `thrift:"access_token,1,required" frugal:"1,required,string" json:"access_token"`
 	RefreshToken string `thrift:"refresh_token,2,required" frugal:"2,required,string" json:"refresh_token"`
-	MfaRequired  bool   `thrift:"mfa_required,3,required" frugal:"3,required,bool" json:"mfa_required"`
-	MfaToken     string `thrift:"mfa_token,4,required" frugal:"4,required,string" json:"mfa_token"`
 }
 
-func NewAuthenticationInfo() *AuthenticationInfo {
-	return &AuthenticationInfo{}
+func NewTokenInfo() *TokenInfo {
+	return &TokenInfo{}
 }
 
-func (p *AuthenticationInfo) InitDefault() {
+func (p *TokenInfo) InitDefault() {
 }
 
-func (p *AuthenticationInfo) GetAccessToken() (v string) {
+func (p *TokenInfo) GetAccessToken() (v string) {
 	return p.AccessToken
 }
 
-func (p *AuthenticationInfo) GetRefreshToken() (v string) {
+func (p *TokenInfo) GetRefreshToken() (v string) {
 	return p.RefreshToken
 }
-
-func (p *AuthenticationInfo) GetMfaRequired() (v bool) {
-	return p.MfaRequired
-}
-
-func (p *AuthenticationInfo) GetMfaToken() (v string) {
-	return p.MfaToken
-}
-func (p *AuthenticationInfo) SetAccessToken(val string) {
+func (p *TokenInfo) SetAccessToken(val string) {
 	p.AccessToken = val
 }
-func (p *AuthenticationInfo) SetRefreshToken(val string) {
+func (p *TokenInfo) SetRefreshToken(val string) {
 	p.RefreshToken = val
 }
-func (p *AuthenticationInfo) SetMfaRequired(val bool) {
-	p.MfaRequired = val
-}
-func (p *AuthenticationInfo) SetMfaToken(val string) {
-	p.MfaToken = val
-}
 
-func (p *AuthenticationInfo) String() string {
+func (p *TokenInfo) String() string {
 	if p == nil {
 		return "<nil>"
 	}
-	return fmt.Sprintf("AuthenticationInfo(%+v)", *p)
+	return fmt.Sprintf("TokenInfo(%+v)", *p)
 }
 
-var fieldIDToName_AuthenticationInfo = map[int16]string{
+var fieldIDToName_TokenInfo = map[int16]string{
 	1: "access_token",
 	2: "refresh_token",
-	3: "mfa_required",
-	4: "mfa_token",
-}
-
-type MFAInfo struct {
-	Secret string `thrift:"secret,1,required" frugal:"1,required,string" json:"secret"`
-	Qrcode string `thrift:"qrcode,2,required" frugal:"2,required,string" json:"qrcode"`
-}
-
-func NewMFAInfo() *MFAInfo {
-	return &MFAInfo{}
-}
-
-func (p *MFAInfo) InitDefault() {
-}
-
-func (p *MFAInfo) GetSecret() (v string) {
-	return p.Secret
-}
-
-func (p *MFAInfo) GetQrcode() (v string) {
-	return p.Qrcode
-}
-func (p *MFAInfo) SetSecret(val string) {
-	p.Secret = val
-}
-func (p *MFAInfo) SetQrcode(val string) {
-	p.Qrcode = val
-}
-
-func (p *MFAInfo) String() string {
-	if p == nil {
-		return "<nil>"
-	}
-	return fmt.Sprintf("MFAInfo(%+v)", *p)
-}
-
-var fieldIDToName_MFAInfo = map[int16]string{
-	1: "secret",
-	2: "qrcode",
 }
 
 type VideoInfo struct {

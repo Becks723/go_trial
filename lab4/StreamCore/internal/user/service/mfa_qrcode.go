@@ -7,12 +7,12 @@ import (
 	"strconv"
 
 	"StreamCore/internal/pkg/constants"
-	"StreamCore/kitex_gen/common"
+	"StreamCore/kitex_gen/user"
 	"github.com/pquerna/otp/totp"
 )
 
 // MFAQrcode 生成mfa的密钥和二维码
-func (s *UserService) MFAQrcode(uid uint) (*common.MFAInfo, error) {
+func (s *UserService) MFAQrcode(uid uint) (*user.MFAQrcodeInfo, error) {
 	var err error
 
 	// generate totp secret
@@ -46,7 +46,7 @@ func (s *UserService) MFAQrcode(uid uint) (*common.MFAInfo, error) {
 		return nil, err
 	}
 
-	data := new(common.MFAInfo)
+	data := new(user.MFAQrcodeInfo)
 	data.Secret = secret
 	data.Qrcode = qrcode
 	return data, nil

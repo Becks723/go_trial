@@ -41,6 +41,13 @@ var serviceMethods = map[string]kitex.MethodInfo{
 		false,
 		kitex.WithStreamingMode(kitex.StreamingNone),
 	),
+	"RefreshToken": kitex.NewMethodInfo(
+		refreshTokenHandler,
+		newUserServiceRefreshTokenArgs,
+		newUserServiceRefreshTokenResult,
+		false,
+		kitex.WithStreamingMode(kitex.StreamingNone),
+	),
 	"MFAQrcode": kitex.NewMethodInfo(
 		mFAQrcodeHandler,
 		newUserServiceMFAQrcodeArgs,
@@ -200,6 +207,24 @@ func newUserServiceUploadAvatarResult() interface{} {
 	return user.NewUserServiceUploadAvatarResult()
 }
 
+func refreshTokenHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
+	realArg := arg.(*user.UserServiceRefreshTokenArgs)
+	realResult := result.(*user.UserServiceRefreshTokenResult)
+	success, err := handler.(user.UserService).RefreshToken(ctx, realArg.Req)
+	if err != nil {
+		return err
+	}
+	realResult.Success = success
+	return nil
+}
+func newUserServiceRefreshTokenArgs() interface{} {
+	return user.NewUserServiceRefreshTokenArgs()
+}
+
+func newUserServiceRefreshTokenResult() interface{} {
+	return user.NewUserServiceRefreshTokenResult()
+}
+
 func mFAQrcodeHandler(ctx context.Context, handler interface{}, arg, result interface{}) error {
 	realArg := arg.(*user.UserServiceMFAQrcodeArgs)
 	realResult := result.(*user.UserServiceMFAQrcodeResult)
@@ -299,6 +324,16 @@ func (p *kClient) UploadAvatar(ctx context.Context, req *user.AvatarReq) (r *use
 	_args.Req = req
 	var _result user.UserServiceUploadAvatarResult
 	if err = p.c.Call(ctx, "UploadAvatar", &_args, &_result); err != nil {
+		return
+	}
+	return _result.GetSuccess(), nil
+}
+
+func (p *kClient) RefreshToken(ctx context.Context, req *user.RefreshTokenReq) (r *user.RefreshTokenResp, err error) {
+	var _args user.UserServiceRefreshTokenArgs
+	_args.Req = req
+	var _result user.UserServiceRefreshTokenResult
+	if err = p.c.Call(ctx, "RefreshToken", &_args, &_result); err != nil {
 		return
 	}
 	return _result.GetSuccess(), nil

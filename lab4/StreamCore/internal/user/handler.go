@@ -39,13 +39,14 @@ func (s *UserServiceImpl) Register(ctx context.Context, req *user.RegisterReq) (
 func (s *UserServiceImpl) Login(ctx context.Context, req *user.LoginReq) (resp *user.LoginResp, err error) {
 	resp = new(user.LoginResp)
 
-	data, auth, err := service.NewUserService(ctx, s.infra).Login(req)
+	data, auth, token, err := service.NewUserService(ctx, s.infra).Login(req)
 	if err != nil {
 		resp.Base = pack.BuildBaseResp(err)
 	} else {
 		resp.Base = pack.BuildSuccessResp()
 		resp.Data = data
 		resp.Auth = auth
+		resp.Token = token
 	}
 	return resp, nil
 }
@@ -74,6 +75,20 @@ func (s *UserServiceImpl) UploadAvatar(ctx context.Context, req *user.AvatarReq)
 	}
 
 	data, err := service.NewUserService(ctx, s.infra).UploadAvatar(uid, req.Data)
+	if err != nil {
+		resp.Base = pack.BuildBaseResp(err)
+	} else {
+		resp.Base = pack.BuildSuccessResp()
+		resp.Data = data
+	}
+	return resp, nil
+}
+
+// RefreshToken implements the UserServiceImpl interface.
+func (s *UserServiceImpl) RefreshToken(ctx context.Context, req *user.RefreshTokenReq) (resp *user.RefreshTokenResp, err error) {
+	resp = new(user.RefreshTokenResp)
+
+	data, err := service.NewUserService(ctx, s.infra).RefreshToken(req.Token)
 	if err != nil {
 		resp.Base = pack.BuildBaseResp(err)
 	} else {
@@ -124,16 +139,12 @@ func (s *UserServiceImpl) MFABind(ctx context.Context, req *user.MFABindReq) (re
 func (s *UserServiceImpl) MFAVerify(ctx context.Context, req *user.MFAVerifyReq) (resp *user.MFAVerifyResp, err error) {
 	resp = new(user.MFAVerifyResp)
 
-	uid, err := rpccontext.RetrieveLoginUid(ctx)
-	if err != nil {
-		return nil, fmt.Errorf("UserService.MFAVerify: get login uid failed: %w", err)
-	}
-
-	err = service.NewUserService(ctx, s.infra).MFAVerify(uid, req)
+	data, err := service.NewUserService(ctx, s.infra).MFAVerify(req)
 	if err != nil {
 		resp.Base = pack.BuildBaseResp(err)
-	} else {
-		resp.Base = pack.BuildSuccessResp()
+		return resp, nil
 	}
+	resp.Base = pack.BuildSuccessResp()
+	resp.Data = data
 	return resp, nil
 }

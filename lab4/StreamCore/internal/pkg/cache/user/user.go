@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"StreamCore/internal/pkg/constants"
+	"errors"
 	"github.com/redis/go-redis/v9"
 )
 
@@ -47,6 +48,9 @@ func (c *usercache) IsTOTPTimestepMarked(ctx context.Context, uid uint, code str
 	timestep := time.Now().UnixMilli() / constants.TOTPInterval
 	key := c.totpTimestepKey(uid, timestep)
 	cache, err := c.rdb.Get(ctx, key).Result()
+	if errors.Is(err, redis.Nil) {
+		return false, nil
+	}
 	if err != nil {
 		return false, err
 	}

@@ -23,3 +23,8 @@ func (u *User) GetId() uint {
 func (u *User) GetUsername() string {
 	return u.Username
 }
+
+type RefreshToken struct {
+	Uid uint
+	Id  string // token id
+}

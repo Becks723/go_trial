@@ -71,6 +71,19 @@ func UploadAvatarRPC(ctx context.Context, req *user.AvatarReq) (*user.AvatarResp
 	return resp, nil
 }
 
+func RefreshTokenRPC(ctx context.Context, req *user.RefreshTokenReq) (*user.RefreshTokenResp, error) {
+	if userClient == nil {
+		return nil, errors.New("user rpc client not initialized")
+	}
+
+	resp, err := userClient.RefreshToken(ctx, req)
+	if err != nil {
+		return nil, fmt.Errorf("refresh token rpc call failed: %w", err)
+	}
+
+	return resp, nil
+}
+
 func MFAQrcodeRPC(ctx context.Context, req *user.MFAQrcodeReq) (*user.MFAQrcodeResp, error) {
 	if userClient == nil {
 		return nil, errors.New("user rpc client not initialized")

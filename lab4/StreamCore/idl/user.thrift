@@ -19,7 +19,13 @@ struct LoginReq {
 struct LoginResp {
     1: required common.BaseResp base
     2: required common.UserInfo data
-    3: required common.AuthenticationInfo auth
+    3: required MFAInfo auth
+    4: optional common.TokenInfo token // 令牌（可选，当未开启MFA时）
+}
+
+struct MFAInfo {
+    1: required bool mfa_required     // 是否需要MFA校验
+    2: required string mfa_token      // MFA token
 }
 
 struct InfoQuery {
@@ -40,11 +46,25 @@ struct AvatarResp {
     2: required common.UserInfo data
 }
 
+struct RefreshTokenReq {
+    1: required string token  // old refresh token
+}
+
+struct RefreshTokenResp {
+    1: required common.BaseResp base
+    2: required common.TokenInfo data
+}
+
 struct MFAQrcodeReq {}
 
 struct MFAQrcodeResp {
     1: required common.BaseResp base
-    2: required common.MFAInfo data
+    2: required MFAQrcodeInfo data
+}
+
+struct MFAQrcodeInfo {
+    1: required string secret
+    2: required string qrcode
 }
 
 struct MFABindReq {
@@ -63,6 +83,7 @@ struct MFAVerifyReq {
 
 struct MFAVerifyResp {
     1: required common.BaseResp base
+    2: required common.TokenInfo data
 }
 
 service UserService {
@@ -70,6 +91,7 @@ service UserService {
     LoginResp     Login(1: required LoginReq req)
     InfoResp      GetInfo(1: required InfoQuery req)
     AvatarResp    UploadAvatar(1: required AvatarReq req)
+    RefreshTokenResp RefreshToken(1: required RefreshTokenReq req)
     MFAQrcodeResp MFAQrcode(1: required MFAQrcodeReq req)
     MFABindResp   MFABind(1: required MFABindReq req)
     MFAVerifyResp MFAVerify(1: required MFAVerifyReq req)

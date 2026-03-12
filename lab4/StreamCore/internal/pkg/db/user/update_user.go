@@ -1,6 +1,8 @@
 package user
 
 import (
+	"context"
+
 	"StreamCore/internal/pkg/db/model"
 	"StreamCore/internal/pkg/db/pack"
 	"StreamCore/internal/pkg/domain"
@@ -25,5 +27,13 @@ func (repo *userdb) UpdateTOTPSecret(uid uint, secret string) error {
 		Model(&model.UserModel{}).
 		Where("id = ?", uid).
 		Update("totp_secret", secret).
+		Error
+}
+
+func (repo *userdb) UpdateTokenId(ctx context.Context, uid uint, id string) error {
+	return repo.db.WithContext(ctx).
+		Model(&model.UserModel{}).
+		Where("id = ?", uid).
+		Update("token_id", id).
 		Error
 }

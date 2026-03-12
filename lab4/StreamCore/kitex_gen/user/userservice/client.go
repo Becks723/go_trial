@@ -15,6 +15,7 @@ type Client interface {
 	Login(ctx context.Context, req *user.LoginReq, callOptions ...callopt.Option) (r *user.LoginResp, err error)
 	GetInfo(ctx context.Context, req *user.InfoQuery, callOptions ...callopt.Option) (r *user.InfoResp, err error)
 	UploadAvatar(ctx context.Context, req *user.AvatarReq, callOptions ...callopt.Option) (r *user.AvatarResp, err error)
+	RefreshToken(ctx context.Context, req *user.RefreshTokenReq, callOptions ...callopt.Option) (r *user.RefreshTokenResp, err error)
 	MFAQrcode(ctx context.Context, req *user.MFAQrcodeReq, callOptions ...callopt.Option) (r *user.MFAQrcodeResp, err error)
 	MFABind(ctx context.Context, req *user.MFABindReq, callOptions ...callopt.Option) (r *user.MFABindResp, err error)
 	MFAVerify(ctx context.Context, req *user.MFAVerifyReq, callOptions ...callopt.Option) (r *user.MFAVerifyResp, err error)
@@ -67,6 +68,11 @@ func (p *kUserServiceClient) GetInfo(ctx context.Context, req *user.InfoQuery, c
 func (p *kUserServiceClient) UploadAvatar(ctx context.Context, req *user.AvatarReq, callOptions ...callopt.Option) (r *user.AvatarResp, err error) {
 	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
 	return p.kClient.UploadAvatar(ctx, req)
+}
+
+func (p *kUserServiceClient) RefreshToken(ctx context.Context, req *user.RefreshTokenReq, callOptions ...callopt.Option) (r *user.RefreshTokenResp, err error) {
+	ctx = client.NewCtxWithCallOptions(ctx, callOptions)
+	return p.kClient.RefreshToken(ctx, req)
 }
 
 func (p *kUserServiceClient) MFAQrcode(ctx context.Context, req *user.MFAQrcodeReq, callOptions ...callopt.Option) (r *user.MFAQrcodeResp, err error) {

@@ -7,16 +7,15 @@ import (
 	"github.com/golang-jwt/jwt/v5"
 )
 
-type userCustomClaims struct {
-	UserId   uint
-	Username string
+type customClaims[T any] struct {
+	Payload T
 	jwt.RegisteredClaims
 }
 
-func GenerateAccessToken(uid uint, secret string, expiresIn time.Duration) (result string, err error) {
+func GenerateAccessToken[T any](payload T, secret string, expiresIn time.Duration) (result string, err error) {
 	exp := time.Now().Add(expiresIn)
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, userCustomClaims{
-		UserId: uid,
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, customClaims[T]{
+		Payload: payload,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    "StreamCore",
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -26,10 +25,10 @@ func GenerateAccessToken(uid uint, secret string, expiresIn time.Duration) (resu
 	return token.SignedString([]byte(secret))
 }
 
-func GenerateRefreshToken(uid uint, secret string, expiresIn time.Duration) (result string, err error) {
+func GenerateRefreshToken[T any](payload T, secret string, expiresIn time.Duration) (result string, err error) {
 	exp := time.Now().Add(expiresIn)
-	token := jwt.NewWithClaims(jwt.SigningMethodHS256, userCustomClaims{
-		UserId: uid,
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, customClaims[T]{
+		Payload: payload,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:    "StreamCore",
 			IssuedAt:  jwt.NewNumericDate(time.Now()),
@@ -39,22 +38,18 @@ func GenerateRefreshToken(uid uint, secret string, expiresIn time.Duration) (res
 	return token.SignedString([]byte(secret))
 }
 
-func HoursOf(n int) time.Duration {
-	return time.Hour * time.Duration(n)
-}
-
-func ParseToken(token string, secret string) (claims *userCustomClaims, err error) {
-	tk, err := jwt.ParseWithClaims(token, &userCustomClaims{}, func(t *jwt.Token) (any, error) {
+func ParseToken[T any](token string, secret string) (payload T, expiresAt time.Time, err error) {
+	tk, err := jwt.ParseWithClaims(token, &customClaims[T]{}, func(t *jwt.Token) (any, error) {
 		return []byte(secret), nil
 	})
 	if err != nil {
 		return
 	}
 
-	claims, ok := tk.Claims.(*userCustomClaims)
+	claims, ok := tk.Claims.(*customClaims[T])
 	if !ok {
 		err = errors.New("unknown claims type")
 		return
 	}
-	return claims, nil
+	return claims.Payload, claims.ExpiresAt.Time, nil
 }
