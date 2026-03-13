@@ -32,7 +32,7 @@ func (repo *userdb) GetById(id uint) (u *domain.User, err error) {
 	return pack.User(&po), nil
 }
 
-func (repo *userdb) GetTokenId(ctx context.Context, uid uint) (string, error) {
+func (repo *userdb) GetTokenId(ctx context.Context, uid uint) string {
 	tokenId := ""
 	err := repo.db.WithContext(ctx).
 		Model(&model.UserModel{}).
@@ -41,7 +41,8 @@ func (repo *userdb) GetTokenId(ctx context.Context, uid uint) (string, error) {
 		Scan(&tokenId).
 		Error
 	if err != nil {
-		return "", err
+		// TODO: log
+		return ""
 	}
-	return tokenId, nil
+	return tokenId
 }
