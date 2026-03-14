@@ -1,0 +1,34 @@
+name: Go test
+
+permissions:
+  contents: read
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  test:
+    name: Unit test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v6
+
+      - name: Setup Go
+        uses: actions/setup-go@v6
+        with:
+          go-version: '1.25'
+          cache: 'false'
+
+      - name: Download Dependencies
+        run: go mod tidy
+        working-directory: ./lab4/StreamCore
+
+      - name: Run tests
+        run: make test # MAKEFILE
+        working-directory: ./lab4/StreamCore
